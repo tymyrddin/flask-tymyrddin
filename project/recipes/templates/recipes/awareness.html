@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="blogpost-container card-overlay">
+
+    <div class="page__article">
+        <h1>Raising security awareness</h1>
+        <hr class="light">
+    </div>
+
+    <div class="page__article_white">
+        <h2>The usual suspects</h2>
+        <p>A lot of funds are spent on security equipment, firewalls, encryption, pentesting, red teaming, you name it.
+            And if someone can walk out the door with files under their arm, or a manager signs off on a control which
+            does not work, or if someone clicks on a link in a phishing email, the keys to the king or queendom may
+            well be within reach of an adversary.</p>
+        <p>Curiosities, biases, and susceptibilities, can all be potential gateways. The good news is,
+            these very human traits can also be used to <b>improve</b> security.</p>
+
+        <p><b>Confirmation bias</b> can make people assume an attack is done by a specific nation-state or threat actor. There
+            may be less "evil" hackers and more "good" professionals to be responsible. Confirming that
+            looking at alternative scenarios, and actively challenging existing belief systems can work to improve
+            security stances.</p>
+        <p><b>Bandwagon bias</b> leads to taking the road traveled by everyone else. An example is managers signing off on
+            controls to address a specific risk because the same controls are used by others or perceived to be used by
+            others, while in that particular context, the particular control does not work or is only partially effective.
+            How about jumping on the bandwagon of building more diverse teams, fostering critical thinking, and
+            encouraging devil’s advocate perspectives.</p>
+        <p><b>Hindsight bias</b> can cause vulnerabilities to remain undiscovered, even with many eyes on the code. When such
+            a vulnerability is found, we can apply hindsight bias to the hindsight bias, and learn about the dangers of
+            this particular bias.</p>
+        <p>People more and more gather information from reading articles, the internet and sharing with colleagues.
+            <b>Anchoring bias</b> can cause risks with low likelihood or low impact to be viewed as more likely to happen than
+            they really are in a specific context. Apply anchoring bias to improving internal communication on
+            determining raw risks and residual risks.</p>
+
+        <h2>Test driven efforts</h2>
+        <p>There is no way to measure the success of security awareness efforts unless the behaviours that need to
+            change are (continuously) identified.</p>
+        <p>Measuring raising security awareness success requires building an evaluation framework that uses communication,
+            simulated events, event logging and monitoring, and assessments to test its effectiveness from
+            multiple perspectives. And in organisational contexts, nothing will work if management does not create an
+            environment in which people (can) trust leadership to be learning too.</p>
+        <p>And then get going making security fun, growing security thinking, care and guts, while tracking progress
+            from currently perceived state to the next desired state.</p>
+
+        <h2>Hands-on workshops</h2>
+        <p>Learning goes best when it is made fun, takes one day, is done off-site, and includes discussing experiences.</p>
+        <p>Experiential learning is the process of learning through hands-on experience, building upon what one knows to
+            expand that knowledge into action. It is one of the most beneficial types of learning because one gets out
+            of an experience what one puts in, and allows people to better retain what is learned and can be used for
+            raising awareness.</p>
+        <p>That which was experienced can not be unexperienced.</p>
+
+        <h2>Simulations and roleplay</h2>
+        <p>After having done some experiential training, up next could be simulations set up for specific situations
+            in specific contexts of the organisation. This can even go as far as
+            <a href="../teaming">colourful teaming</a> where a red team and blue team play out imaginary attack and
+            defense scenarios.</p>
+
+        <h2>Human-readable guides</h2>
+        <p>Just like in pentesting, reports and guides have to be adapted for specific audiences, without “talking down”.
+            The term “human-readable” implies information that is meaningful for people and that can be comprehended
+            quickly. I do try.</p>
+        <p>The very best guides are produced by and for the people in an organisation, after a hands-on exercise in a
+            workshop, or after a simulation.</p>
+    </div>
+
+    <div><hr class="light"></div>
+    <div class="recipe-container">
+
+        <div class="card">
+            <a href="https://uu.tymyrddin.dev/labs/">
+                <img
+                    src="/static/img/labs.png"
+                    alt="Labs"
+                    class="card__image" />
+                <div class="card__body">
+                    <h2 class="recipe-title-long">Hands-on challenges</h2>
+                    <p>Links to labs</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="card">
+            <a href="https://uu.tymyrddin.dev/games/">
+                <img
+                    src="/static/img/games.png"
+                    alt="Labs"
+                    class="card__image" />
+                <div class="card__body">
+                    <h2 class="recipe-title-long">Games to steal from</h2>
+                    <p>Links to table and card games</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="card">
+        <a href="https://uu.tymyrddin.dev/writeups/">
+            <img
+                src="/static/img/writing.png"
+                alt="Writeups"
+                class="card__image" />
+            <div class="card__body">
+                <h2 class="recipe-title-long">Colourful notes, and writeups</h2>
+                <p>Red, blue, green, purple</p>
+            </div>
+        </a>
+    </div>
+
+    </div>
+</div>
+{% endblock %}
+

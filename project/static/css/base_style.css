@@ -1,0 +1,337 @@
+:root {
+  /* color variables */
+  --clr-primary: #304ffe;
+  --clr-primary-hover: #29e6a7;
+  --clr-primary-dark: #039d69;
+  --clr-gray100: #f0f7f8;
+  --clr-gray200: #cfd8dc;
+  --clr-gray300: #a7b7be;
+  --clr-gray400: #6b7e86;
+  --clr-gray500: #425a65;
+
+  /* border radius */
+  --radius: 0.2rem;
+}
+
+/* PlayPen Sans font
+ *****************/
+
+@font-face {
+    font-family: 'playpensans';
+    src: url('PlaypenSans-VariableFont_wght.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Overall Styling
+ *****************/
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: rgba(25,25,25,1);
+  background-image: url('../site/background.png');
+/*  background-position: center; /* Center the image */
+  background-repeat: repeat; /* Do not repeat the image */
+/*  background-size: cover; /* Resize the background image to cover the entire container */
+  color: white;
+  font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'playpensans', Arial, sans-serif;
+/*  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif; */
+  line-height: 1.4;
+}
+
+li {
+  list-style: disc;
+  margin-left: 24px;
+}
+
+.card-overlay {
+  border-radius: var(--radius);
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.35); /* Black background with 0.65 opacity */
+  box-shadow: 0 0 88px 0 rgba(0, 0, 0, 0.52);
+  color: #f1f1f1;
+  /*width: 100%;*/
+  padding: 0.5rem 1rem;
+}
+
+
+/* Navigation Bar
+ ****************/
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0.5rem 0.4rem;
+  background: url(../site/header.png) !important;
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-color: rgba(25,25,25,1); /* Black background with 0.4 opacity */
+  font-family: 'playpensans', Arial, sans-serif;
+/*  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif; -webkit-transition: all 0.35s; -moz-transition: all 0.35s; transition: all 0.35s; */
+  font-weight: normal;
+  font-style: normal;
+  box-shadow: 0 0 88px 0 rgba(0, 0, 0, 0.52);
+  color: #191919;
+}
+
+
+@media screen and (min-width: 900px) {
+  header {
+    padding: 1rem 2rem;
+    flex-direction: row;
+    text-align: center;
+  }
+}
+
+header h1 {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1rem;
+  padding-bottom: 0.6rem;
+}
+
+header h1 a {
+  text-decoration: none;
+  color: rgba(255,153,51,1);
+}
+
+@media screen and (min-width: 900px) {
+    header h1 {
+      text-align: none;
+      font-size: 0.9rem;
+      padding-bottom: 0;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    header h1 {
+        text-align: none;
+        font-size: 0.9rem;
+    }
+}
+
+
+nav {
+  margin: auto 0;
+}
+
+nav ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  list-style: none;
+}
+
+@media screen and (min-width: 900px) {
+  nav ul {
+    justify-content: space-between;
+  }
+}
+
+.nav__link, .nav__link:visited {
+  text-decoration: none;
+  font-size: 0.7rem;
+  color: white;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.nav__item + .nav__item {
+  margin-left: 0.5rem;
+}
+
+@media screen and (min-width: 900px) {
+    .nav__link, .nav__link:visited {
+        font-size: 0.9rem;
+    }
+
+    .nav__item + .nav__item {
+        margin-left: 2.0rem;
+    }
+}
+
+/* Cards
+ *******/
+.recipe-container {
+  margin: 2.0rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 0.3fr));
+  grid-gap: 1.0rem;
+  justify-content: center;
+}
+
+@media screen and (min-width: 1081px) {
+  .recipe-container {
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 0.3fr));
+    grid-gap: 1.0rem;
+  }
+}
+
+.card {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+  border-radius: var(--radius);
+}
+
+.card a {
+  text-decoration: none;
+}
+
+.card__image {
+  height: 16rem;
+  width: 100%;
+  object-fit: cover;
+}
+
+.card__body {
+  width: 100%;
+  font-family: 'playpensans', Arial, sans-serif;
+  text-align: center;
+  padding: 1rem 1rem;
+  position: absolute;
+  top: 70%;
+  background: rgba(0, 0, 0, 0.6); /* Black background with 0.4 opacity */
+  color: #f1f1f1; /* Grey text */
+}
+
+.card__body h2 {
+  padding-bottom: 0.5rem;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.0em;
+}
+
+.card__body p {
+  padding-bottom: 0.5rem;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 0.9em;
+}
+
+.recipe-title-long {
+  font-size: 1.2rem;
+  padding-bottom: 0.35rem;
+}
+
+.recipe-title-extra-long {
+  font-size: 1.0rem;
+  padding-bottom: 0.55rem;
+}
+
+.card__body p {
+  font-weight: lighter;
+}
+
+.recipe-badge {
+  border-radius: 6px;
+  padding: 4px;
+  display: inline-block;
+  font-size: 0.8em;
+  margin-top: 6px;
+}
+
+.badge1 {
+  background-color: green;
+  color: white;
+}
+
+.badge2 {
+  background-color: purple;
+  color: white;
+}
+
+
+/* Footer
+ ********/
+footer {
+  font-family: 'playpensans', Arial, sans-serif;
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1rem 0;
+  background: url(../site/footer.png) !important;
+  background-repeat: no-repeat;
+  background-size: auto;
+}
+
+footer a {
+  text-decoration: none;
+  color: rgba(170,170,170,1);
+}
+
+
+/* Error Page Styling
+ ********************/
+.errorpage-title {
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 1em;
+}
+
+.errorpage-section {
+  text-align: center;
+  font-size: 1.15rem;
+  margin-bottom: 1em;
+}
+
+/* Code Styling
+ ********************/
+
+pre {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* For all <code> */
+code {
+  font-family: monospace;
+  font-size: inherit;
+  margin: 0.1rem 0;
+}
+
+/* Code in text */
+p > code,
+li > code,
+dd > code,
+td > code {
+  background: transparent;
+  word-wrap: break-word;
+  box-decoration-break: clone;
+  padding: .1rem .1rem .2rem;
+  border-radius: .2rem;
+}
+
+pre code {
+  display: block;
+  background: none;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: scroll;
+  max-width: 100%;
+  min-width: 100px;
+  padding: 0;
+}
+
+@media print {
+	pre {
+		overflow-x: auto;
+		white-space: pre-wrap;
+		white-space: -moz-pre-wrap !important;
+		white-space: -pre-wrap;
+		white-space: -o-pre-wrap;
+		word-wrap: break-word;
+		background: #fff;
+	}
+}

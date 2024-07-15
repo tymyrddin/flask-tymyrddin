@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Ty Myrddin Main</title>
+
+        <!-- Favicons -->
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicons/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicons/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicons/favicon-16x16.png') }}">
+        <link rel="manifest" href="{{ url_for('static', filename='favicons/site.webmanifest') }}">
+        <link rel="mask-icon" href="{{ url_for('static', filename='favicons/safari-pinned-tab.svg') }}" color="#333333">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicons/favicon.ico') }}" type="image/x-icon">
+        <meta name="msapplication-TileColor" content="#333333">
+        <meta name="theme-color" content="#000000">
+
+        <!-- Local CSS file for styling the application-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style.css') }}">
+
+        <!-- Additional Styling -->
+        {% block styling %}
+        {% endblock %}
+    </head>
+
+    <body>
+        <header>
+            <h1>Ty Myrddin</h1>
+            <nav>
+                <ul>
+                    <li class="nav__item"><a href="{{ url_for('recipes.recipes') }}" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="{{ url_for('blog.blog') }}" class="nav__link">Blogs</a></li>
+                    <li class="nav__item"><a href="{{ url_for('blog.about') }}" class="nav__link">About</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="content">
+            <!-- child template -->
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <footer>
+            <p><a href="https://www.tymyrddin.dev/">Ty Myrddin</a> (2024)</p>
+        </footer>
+    </body>
+</html>

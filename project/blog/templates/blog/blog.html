@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blog_style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="blog-container">
+
+    <div class="blog-post-card card-overlay">
+        <img
+          src="{{ url_for('static', filename='img/unseen-university-library.png') }}"
+          alt="Unseen University Library"
+          class="blog-post-card__image" />
+        <div class="blog-post-card__body">
+            <h2>Improbability Blog</h2>
+            <p>The blog of the Unseen University. With perfectly ordinary articles on wizardy and security issues, and some tongue in cheek articles with answers to "Is this the Laundry?".</p>
+        </div>
+        <div class="blog-post-card__link">
+            <a href="https://uu.tymyrddin.dev/blog/">The librarian loves bananas more than apples.</a>
+        </div>
+    </div>
+
+    <div class="blog-post-card card-overlay">
+        <img
+          src="{{ url_for('static', filename='img/milliways.png') }}"
+          alt="Inside Milliways"
+          class="blog-post-card__image" />
+        <div class="blog-post-card__body">
+            <h2>Cuisine Starlight</h2>
+            <p>Articles written while exploring artificial intelligence, on the chaos, on mlops, on security scanning, and on packaging after having working code in a notebook. No Laundry involved.</p>
+        </div>
+        <div class="blog-post-card__link">
+            <a href="https://milliways.tymyrddin.dev/blog/">In the beginning the Universe was created.</a>
+        </div>
+    </div>
+
+    <div class="blog-post-card card-overlay">
+        <img
+          src="{{ url_for('static', filename='img/sisters.png') }}"
+          alt="Wyrd sisters"
+          class="blog-post-card__image" />
+        <div class="blog-post-card__body">
+            <h2>Oink Blog</h2>
+            <p>Written by Witches flying about, while thinking headology thoughts on all kinds of things. Things that try to look like things often do look more like things than things.</p>
+        </div>
+        <div class="blog-post-card__link">
+            <a href="https://oink.tymyrddin.dev/">Using 100% recycled words.</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
