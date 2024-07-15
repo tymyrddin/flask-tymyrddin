@@ -1,9 +1,9 @@
 """
 This file (test_recipes.py) contains the functional tests for the `recipes` blueprint.
 """
-from project.recipes.routes import awareness_recipes_names, dinner_recipes_names, \
-                                   baked_goods_recipes_names, side_dishes_recipes_names, \
-                                   dessert_recipes_names, drink_recipes_names
+# from project.recipes.routes import awareness_recipes_names, pentesting_recipes_names, \
+#                                  baked_goods_recipes_names, side_dishes_recipes_names, \
+#                                  dessert_recipes_names, drink_recipes_names
 
 
 def test_get_home_page(test_client):
@@ -12,9 +12,8 @@ def test_get_home_page(test_client):
     WHEN the '/' page is requested (GET)
     THEN check the response is valid
     """
-    header_items = [b'Kennedy Family Recipes', b'Recipes', b'Blog', b'About']
-    recipe_types = [b'Breakfast', b'Dinner', b'Side Dishes',
-                    b'Dessert', b'Drinks', b'Baked Goods']
+    header_items = [b'Ty Myrddin', b'Home', b'Blogs', b'About']
+    recipe_types = [b'Raising security awareness', b'Pentesting', b'Colourful teaming']
     response = test_client.get('/')
     assert response.status_code == 200
     for header_item in header_items:
@@ -23,176 +22,41 @@ def test_get_home_page(test_client):
         assert recipe_type in response.data
 
 
-def test_get_breakfast_recipes(test_client):
+def test_get_awareness_page(test_client):
     """
     GIVEN a Flask application configured for testing
-    WHEN the '/breakfast/' page is requested (GET)
+    WHEN the '/awareness/' page is requested (GET)
     THEN check the response is valid
     """
-    recipes = [b'Pancakes', b'Honey Bran Muffins', b'Acai Bowl',
-               b'Breakfast Scramble', b'Pumpkin Donuts', b'Waffles',
-               b'Omelette', b'Chocolate Donuts', b'Oatmeal', b'Morning Glory Muffins']
-    response = test_client.get('/breakfast/')
+    headings = [b'The usual suspects', b'Test driven efforts', b'Hands-on workshops']
+    response = test_client.get('/awareness/')
     assert response.status_code == 200
-    for recipe in recipes:
-        assert recipe in response.data
+    for heading in headings:
+        assert heading in response.data
 
 
-def test_get_individual_breakfast_recipes(test_client):
+def test_get_pentesting_page(test_client):
     """
     GIVEN a Flask application configured for testing
-    WHEN the '/breakfast/<recipe_name>' page is requested (GET)
+    WHEN the '/pentesting/' page is requested (GET)
     THEN check the response is valid
     """
-    for recipe_name in awareness_recipes_names:
-        response = test_client.get(f'/breakfast/{recipe_name}/')
-        assert response.status_code == 200
-        assert str.encode(recipe_name) in response.data
-
-
-def test_get_invalid_individual_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/<recipe_type>>/<recipe_name>' page is requested (GET) with invalid recipe names
-    THEN check that 404 errors are returned
-    """
-    invalid_recipe_names = ['acai_bowls', 'french_toast', 'breakfast_burrito', 'abcd']
-    for recipe_name in invalid_recipe_names:
-        response = test_client.get(f'/breakfast/{recipe_name}/')
-        assert response.status_code == 404
-        response = test_client.get(f'/dinner/{recipe_name}/')
-        assert response.status_code == 404
-        response = test_client.get(f'/baked_goods/{recipe_name}/')
-        assert response.status_code == 404
-        response = test_client.get(f'/side_dishes/{recipe_name}/')
-        assert response.status_code == 404
-        response = test_client.get(f'/dessert/{recipe_name}/')
-        assert response.status_code == 404
-        response = test_client.get(f'/drink/{recipe_name}/')
-        assert response.status_code == 404
-
-
-def test_get_dinner_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/dinner/' page is requested (GET)
-    THEN check the response is valid
-    """
-    recipes = [b'Steak Fajitas', b'Ground Beef Tacos', b'Pizza', b'Sweet Fire Chicken', b'Tri-Tip',
-               b'Shredded Chicken', b'Taquitos', b'Red Lentil Chili']
-    response = test_client.get('/dinner/')
+    headings = [b'The difference between scanning and pentesting', b'What needs testing?', b'Bureaucracy required']
+    response = test_client.get('/pentesting/')
     assert response.status_code == 200
-    for recipe in recipes:
-        assert recipe in response.data
+    for heading in headings:
+        assert heading in response.data
 
 
-def test_get_individual_dinner_recipes(test_client):
+def test_get_teaming_page(test_client):
     """
     GIVEN a Flask application configured for testing
-    WHEN the '/dinner/<recipe_name>' page is requested (GET)
+    WHEN the '/teaming/' page is requested (GET)
     THEN check the response is valid
     """
-    for recipe_name in dinner_recipes_names:
-        response = test_client.get(f'/dinner/{recipe_name}/')
-        assert response.status_code == 200
-        assert str.encode(recipe_name) in response.data
-
-
-def test_get_baked_goods_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/baked_goods/' page is requested (GET)
-    THEN check the response is valid
-    """
-    recipes = [b'Bagels', b'French Bread', b'Pitas (No Yeast)', b'Irish Soda Bread', b'Soft Rolls', b'Pizza Dough', b'Pitas']
-    response = test_client.get('/baked_goods/')
+    headings = [b'Red and blue teams', b'Purple teams', b'Ingredients for success']
+    response = test_client.get('/teaming/')
     assert response.status_code == 200
-    for recipe in recipes:
-        assert recipe in response.data
+    for heading in headings:
+        assert heading in response.data
 
-
-def test_get_individual_baked_goods_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/baked_goods/<recipe_name>' page is requested (GET)
-    THEN check the response is valid
-    """
-    for recipe_name in baked_goods_recipes_names:
-        response = test_client.get(f'/baked_goods/{recipe_name}/')
-        assert response.status_code == 200
-        assert str.encode(recipe_name) in response.data
-
-
-def test_get_side_dishes_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/side_dishes/' page is requested (GET)
-    THEN check the response is valid
-    """
-    recipes = [b'Sweet Potatoes', b'Spanish Rice', b'Jasmine Rice', b'Fruit Salad']
-    response = test_client.get('/side_dishes/')
-    assert response.status_code == 200
-    for recipe in recipes:
-        assert recipe in response.data
-
-
-def test_get_individual_side_dishes_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/side_dishes/<recipe_name>' page is requested (GET)
-    THEN check the response is valid
-    """
-    for recipe_name in side_dishes_recipes_names:
-        response = test_client.get(f'/side_dishes/{recipe_name}/')
-        assert response.status_code == 200
-        assert str.encode(recipe_name) in response.data
-
-
-def test_get_dessert_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/dessert/' page is requested (GET)
-    THEN check the response is valid
-    """
-    recipes = [b'Brownies', b'Chocolate Chip Cookies', b'Linzer Cookies', b'Sugar Cookies', b'Flourless Chocolate Cake']
-    response = test_client.get('/dessert/')
-    assert response.status_code == 200
-    for recipe in recipes:
-        assert recipe in response.data
-
-
-def test_get_individual_dessert_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/dessert/<recipe_name>' page is requested (GET)
-    THEN check the response is valid
-    """
-    for recipe_name in dessert_recipes_names:
-        response = test_client.get(f'/dessert/{recipe_name}/')
-        assert response.status_code == 200
-        assert str.encode(recipe_name) in response.data
-
-
-def test_get_drink_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/drink/' page is requested (GET)
-    THEN check the response is valid
-    """
-    recipes = [b'Berry Smoothie', b'Chocolate Milk Shake', b'Apple Cider Vinegar Drink']
-    response = test_client.get('/drink/')
-    assert response.status_code == 200
-    for recipe in recipes:
-        assert recipe in response.data
-
-
-def test_get_individual_drink_recipes(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/drink/<recipe_name>' page is requested (GET)
-    THEN check the response is valid
-    """
-    for recipe_name in drink_recipes_names:
-        response = test_client.get(f'/drink/{recipe_name}/')
-        assert response.status_code == 200
-        assert str.encode(recipe_name) in response.data

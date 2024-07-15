@@ -1,5 +1,5 @@
 from . import recipes_blueprint
-from flask import render_template, abort
+from flask import render_template
 
 
 awareness_recipes_names = []
@@ -28,4 +28,3 @@ def pentesting_recipes():
 @recipes_blueprint.route('/teaming/')
 def teaming_recipes():
     return render_template('recipes/teaming.html')
-

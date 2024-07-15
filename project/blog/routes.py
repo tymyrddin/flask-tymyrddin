@@ -2,7 +2,7 @@ from . import blog_blueprint
 from flask import render_template, abort
 
 
-blog_post_titles = []
+blog_post_titles = ['Improbability Blog', 'Cuisine Starlight', 'Oink Blog']
 
 
 @blog_blueprint.route('/blog/')
