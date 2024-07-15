@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Ty Myrddin Main</title>
+
+        <!-- Favicons -->
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
+        <link rel="manifest" href="/static/favicons/site.webmanifest">
+        <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#333333">
+        <link rel="shortcut icon" href="/static/favicons/favicon.ico" type="image/x-icon">
+        <meta name="msapplication-TileColor" content="#333333">
+        <meta name="theme-color" content="#000000">
+
+        <!-- Local CSS file for styling the application-->
+        <link rel="stylesheet" href="/static/css/base_style.css">
+
+        <!-- Additional Styling -->
+        
+<link rel="stylesheet" href="/static/css/blogpost_style.css">
+<link rel="stylesheet" href="/static/css/page_style.css">
+
+    </head>
+
+    <body>
+        <header>
+            <h1>Ty Myrddin</h1>
+            <nav>
+                <ul>
+                    <li class="nav__item"><a href="/" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="/blog/" class="nav__link">Blogs</a></li>
+                    <li class="nav__item"><a href="/about/" class="nav__link">About</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="content">
+            <!-- child template -->
+            
+<div class="blogpost-container card-overlay">
+
+    <div class="page__article">
+        <h1>Colourful teaming</h1>
+        <hr class="light">
+    </div>
+
+    <div class="page__article_white">
+        <h2>Red and blue teams</h2>
+
+        <p>Red teaming is a term borrowed from the military. In military exercises, the red team simulates attack
+            techniques to test the reaction capabilities of a defending blue team against known adversary strategies.</p>
+
+        <p>In cybersecurity, the red team emulates a real threat actor's Tactics, Techniques and Procedures (TTPs)
+            for measuring how well the blue team responds and test any security controls in place. Usually the blue
+            team is made up of members of a
+            <a href="https://purple.tymyrddin.dev/docs/soc/sirt">security incident response team (SIRT)</a> and/or
+            <a href="https://purple.tymyrddin.dev/docs/soc/soc">security operations team (SOC)</a>.</p>
+
+        <p>Red teaming does not replace <a href="../pentesting">penetration testing</a>. It complements it by focusing
+            on detection and response rather than prevention. Red teaming improves penetration testing by taking into
+            account more attack surfaces:</p>
+        <ul>
+            <li><p>Technical Infrastructure: Like in a regular penetration test, a red team will try to uncover
+                technical vulnerabilities, with a much higher emphasis on stealth and evasion.</p></li>
+            <li><p>Social Engineering: Targeting people through phishing campaigns, phone calls or social media to
+                trick them into revealing information that should remain private.</p></li>
+            <li><p>Physical Intrusion: Using techniques like lockpicking, RFID cloning, exploiting weaknesses in
+                electronic access control devices to access restricted areas of facilities.</p></li>
+        </ul>
+
+        <p>The objective of such exercises is <b>not</b> for the red team to “beat” the blue team. But of course,
+                human traits.</p>
+
+        <h2>Purple teams</h2>
+
+        <p>The scope and goals for purple team operations are very similar to the operations defined for a red team.
+            The main difference is that focus lies on transparency and collaboration between red, blue, engineering,
+            and management teams.</p>
+        <p>If attacks succeed and are not caught, detections are fixed and implemented, and attacks are run again right
+            away–until there is a measurable improvement.</p>
+
+        <h2>Ingredients for success</h2>
+
+        <p>A gray hat red or purple team are usually better at simulating real attackers, but does have to consider
+            legal and organisational policies when operating. This has implications on how realistic certain scenarios
+            can be played out – and some scenarios can be played out on paper or using tabletop exercises.
+            Re-inventing the wheel is silly, so may we use <a href="https://uu.tymyrddin.dev/games/">existing games</a>
+            as inspiration, and adapt those to a local context to <a href="../awareness">not fall in bias traps</a>.</p>
+    </div>
+
+    <div><hr class="light"></div>
+    <div class="recipe-container">
+
+        <div class="card">
+            <a href="https://red.tymyrddin.dev/">
+                <img
+                    src="/static/img/redteam.png"
+                    alt="Red Team"
+                    class="card__image" />
+                <div class="card__body">
+                    <h2 class="recipe-title-long">Red team</h2>
+                    <p>Patterns and techniques</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="card">
+            <a href="https://blue.tymyrddin.dev/">
+                <img
+                    src="/static/img/blueteam.png"
+                    alt="Blue Team"
+                    class="card__image" />
+                <div class="card__body">
+                    <h2 class="recipe-title-long">Blue team</h2>
+                    <p>Defence, SOC, and mitigations</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="card">
+            <a href="https://purple.tymyrddin.dev/">
+                <img
+                    src="/static/img/purpleteam.png"
+                    alt="Purple Team"
+                    class="card__image" />
+                <div class="card__body">
+                    <h2 class="recipe-title-long">Purple team</h2>
+                    <p>Laws of the forest</p>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+        </main>
+
+        <footer>
+            <p><a href="https://www.tymyrddin.dev/">Ty Myrddin</a> (2024)</p>
+        </footer>
+    </body>
+</html>
