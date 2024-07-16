@@ -1,7 +1,7 @@
 """
 This file (test_blog.py) contains the functional tests for the `blog` blueprint.
 """
-from project.blog.routes import blog_post_titles
+# from project.blog.routes import blog_post_titles
 
 
 def test_get_blog_page(test_client):
@@ -38,7 +38,7 @@ def test_get_invalid_request(test_client):
     WHEN the '/idonotexist' page is requested (GET)
     THEN check that the 404 page is returned
     """
-    headings =[b'Page Not Found (404)', b'Go Home']
+    headings = [b'Uh,oh, 404, not found', b'Here, for whatever reason, is the world']
     response = test_client.get('/idonotexist/')
     assert response.status_code == 404
     for heading in headings:
