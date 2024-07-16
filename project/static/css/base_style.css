@@ -1,6 +1,6 @@
 :root {
   /* color variables */
-  --clr-primary: #304ffe;
+  --clr-primary: #ff9933;
   --clr-primary-hover: #29e6a7;
   --clr-primary-dark: #039d69;
   --clr-gray100: #f0f7f8;
@@ -200,30 +200,53 @@ nav ul {
   width: 100%;
   font-family: 'playpensans', Arial, sans-serif;
   text-align: center;
-  padding: 1rem 1rem;
+  padding: 0.5rem 0.5rem;
   position: absolute;
-  top: 70%;
-  background: rgba(0, 0, 0, 0.6); /* Black background with 0.4 opacity */
-  color: #f1f1f1; /* Grey text */
+  top: 85%;
+  background: #ff9933; /* Black background with 0.4 opacity */
+  color: black; /* Grey text */
 }
 
 .card__body h2 {
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+  font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.0em;
+}
+
+.card__body__in__page {
+  width: 100%;
+  font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
+  text-align: center;
+  padding: 0.5rem 0.5rem;
+  position: absolute;
+  top: 85%;
+  background: #ff9933; /* Black background with 0.4 opacity */
+  color: black; /* Grey text */
+}
+
+.card__body__in__page h2 {
+  margin-top: 0rem;
+  padding: 0rem;
+  font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
   font-weight: normal;
   font-style: normal;
   font-size: 1.0em;
 }
 
 .card__body p {
-  padding-bottom: 0.5rem;
+  padding: 0;
+  font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
   font-weight: normal;
   font-style: normal;
-  font-size: 0.9em;
+  font-size: 1.0em;
 }
 
 .recipe-title-long {
   font-size: 1.2rem;
-  padding-bottom: 0.35rem;
+  padding-bottom: 0.3rem;
+  padding-top: 0.3rem;
 }
 
 .recipe-title-extra-long {
@@ -232,7 +255,7 @@ nav ul {
 }
 
 .card__body p {
-  font-weight: lighter;
+  font-weight: normal;
 }
 
 .recipe-badge {

@@ -77,12 +77,11 @@
         <div class="card">
             <a href="https://uu.tymyrddin.dev/labs/">
                 <img
-                    src="/static/img/labs.png"
+                    src="{{ url_for('static', filename='img/labs.png') }}"
                     alt="Labs"
                     class="card__image" />
-                <div class="card__body">
+                <div class="card__body__in__page">
                     <h2 class="recipe-title-long">Hands-on challenges</h2>
-                    <p>Links to labs</p>
                 </div>
             </a>
         </div>
@@ -90,12 +89,11 @@
         <div class="card">
             <a href="https://uu.tymyrddin.dev/games/">
                 <img
-                    src="/static/img/games.png"
+                    src="{{ url_for('static', filename='img/games.png') }}"
                     alt="Labs"
                     class="card__image" />
-                <div class="card__body">
+                <div class="card__body__in__page">
                     <h2 class="recipe-title-long">Games to steal from</h2>
-                    <p>Links to table and card games</p>
                 </div>
             </a>
         </div>
@@ -103,12 +101,11 @@
         <div class="card">
         <a href="https://uu.tymyrddin.dev/writeups/">
             <img
-                src="/static/img/writing.png"
+                src="{{ url_for('static', filename='img/writing.png') }}"
                 alt="Writeups"
                 class="card__image" />
-            <div class="card__body">
+            <div class="card__body__in__page">
                 <h2 class="recipe-title-long">Colourful notes, and writeups</h2>
-                <p>Red, blue, green, purple</p>
             </div>
         </a>
     </div>
