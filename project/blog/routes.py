@@ -13,3 +13,8 @@ def blog():
 @blog_blueprint.route('/about/')
 def about():
     return render_template('blog/about.html')
+
+
+@blog_blueprint.route("/contact/")
+def contact():
+    return render_template("blog/contact.html")
