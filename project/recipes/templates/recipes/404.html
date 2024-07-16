@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="errorpage-title" style="color:Orange;">Uh,oh, 404, not found</h1>
+<div class="errorpage-section">
+    <a href="{{ url_for('recipes.recipes') }}">
+          <img
+          src="{{ url_for('static', filename='img/404-no-panic.png') }}"
+          alt="Wyrd sisters"
+          class="blog-post-card__image" />
+    </a>
+  <h2><br /><a href="{{ url_for('recipes.recipes') }}" style="color:Orange;text-decoration:none;text-transform:uppercase;">
+      Here, for whatever reason, is the world. <br />
+      And it revolves around a small unregarded yellow sun at <br />
+      nine hundred miles an hour (nineteen miles a second), <br />
+      far out in the uncharted backwaters of the unfashionable end of <br />
+      the western spiral arm of a Galaxy. <br />
+      A Galaxy containing a hundred billion stars, a hundred thousand <br />
+      light years side to side, bulging in the middle. <br />
+      Out by us, it is only three thousand light years wide. That planet. <br />
+      With you and me on it, for now.</a></h2>
+</div>
+{% endblock %}
