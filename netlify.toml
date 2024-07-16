@@ -7,3 +7,8 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "no-referrer"
     Permissions-Policy = "geolocation=(); midi=(); notifications=(); push=(); sync-xhr=(); accelerometer=(); gyroscope=(); magnetometer=(); payment=(); camera=(); microphone=(); usb=(); xr=(); speaker=(self); vibrate=(); fullscreen=(self)"
+
+[[redirects]]
+from = "/*"
+to = "/404/index.html"
+status = 404
