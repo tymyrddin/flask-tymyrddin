@@ -32,6 +32,19 @@ def test_get_about_page(test_client):
         assert heading in response.data
 
 
+def test_get_404_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/404/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'Uh,oh, 404, not found', b'Here, for whatever reason, is the world']
+    response = test_client.get('/404/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
 def test_get_invalid_request(test_client):
     """
     GIVEN a Flask application configured for testing

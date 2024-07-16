@@ -28,3 +28,8 @@ def pentesting_recipes():
 @recipes_blueprint.route('/teaming/')
 def teaming_recipes():
     return render_template('recipes/teaming.html')
+
+
+@recipes_blueprint.route('/404/')
+def fourohfour_recipes():
+    return render_template('recipes/404.html')
