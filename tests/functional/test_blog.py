@@ -45,6 +45,19 @@ def test_get_contact_page(test_client):
         assert heading in response.data
 
 
+def test_get_thankyou_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/thankyou/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'Thank you']
+    response = test_client.get('/thankyou/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
 def test_get_404_page(test_client):
     """
     GIVEN a Flask application configured for testing

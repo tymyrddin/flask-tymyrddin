@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="blogpost-container card-overlay">
+
+    <div class="page__article">
+        <h1>About</h1>
+        <hr class="light">
+    </div>
+
+    <div class="page__article_white">
+        <p>Thank you. I will get back to you as soon as possible.</p>
+    </div>
+
+</div>
+{% endblock %}

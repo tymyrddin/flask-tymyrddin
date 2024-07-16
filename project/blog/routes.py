@@ -18,3 +18,8 @@ def about():
 @blog_blueprint.route("/contact/")
 def contact():
     return render_template("blog/contact.html")
+
+
+@blog_blueprint.route("/thankyou/")
+def thankyou():
+    return render_template("blog/thankyou.html")

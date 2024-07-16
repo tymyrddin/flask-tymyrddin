@@ -16,9 +16,11 @@
     <div class="page__article form">
         <form
           name="contact"
-          netlify
+          method="POST"
           netlify-honeypot="bot-field"
-          data-netlify="true">
+          data-netlify="true"
+          action="/thankyou/"
+          netlify>
           <p class="hidden"  style="opacity: 0;">
             <label>
               Don’t fill this out if you’re human: <input type="hidden" name="bot-field" />
