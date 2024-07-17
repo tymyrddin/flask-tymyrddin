@@ -32,6 +32,32 @@ def test_get_about_page(test_client):
         assert heading in response.data
 
 
+def test_get_projects_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/projects/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'I have room']
+    response = test_client.get('/projects/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
+def test_get_ipa_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/ipa/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'IPA project']
+    response = test_client.get('/ipa/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
 def test_get_contact_page(test_client):
     """
     GIVEN a Flask application configured for testing
