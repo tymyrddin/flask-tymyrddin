@@ -14,7 +14,48 @@
     </div>
 
     <div class="page__article_white">
-        <p>I will get back to you as soon as possible.</p>
+        <p style="text-align: center;">I will get back to you as soon as possible.</p>
+    </div>
+
+    <div><hr class="light"></div>
+    <div class="recipe-container">
+
+        <div class="card">
+            <a href="{{ url_for('recipes.awareness_recipes') }}">
+                <img
+                  src="{{ url_for('static', filename='img/security-awareness.png') }}"
+                  alt="Security awareness"
+                  class="card__image" />
+                <div class="card__body__in__page">
+                    <h2 class="recipe-title-long">Raising security awareness</h2>
+                </div>
+            </a>
+        </div>
+
+        <div class="card">
+            <a href="https://green.tymyrddin.dev/">
+                <img
+                    src="{{ url_for('static', filename='img/greenteam.png') }}"
+                    alt="Garden"
+                    class="card__image" />
+                <div class="card__body__in__page">
+                    <h2 class="recipe-title-long">Raising privacy awareness</h2>
+                </div>
+            </a>
+        </div>
+
+        <div class="card">
+            <a href="../ipa">
+                <img
+                    src="{{ url_for('static', filename='img/ipa.png') }}"
+                    alt="Sisters again"
+                    class="card__image" />
+                <div class="card__body__in__page">
+                    <h2 class="recipe-title-long">IPA project</h2>
+                </div>
+            </a>
+        </div>
+
     </div>
 
 </div>
