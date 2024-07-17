@@ -6,7 +6,6 @@ from project import create_app
 # instance using the development configuration
 app = create_app()
 
-
 # Create an instance of Freezer for generating the static files from
 # the Flask application routes ('/', '/breakfast', etc.)
 freezer = Freezer(app)

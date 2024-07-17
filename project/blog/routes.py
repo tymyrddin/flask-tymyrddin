@@ -15,6 +15,11 @@ def about():
     return render_template('blog/about.html')
 
 
+@blog_blueprint.route('/documents/')
+def documents():
+    return render_template('blog/documents.html')
+
+
 @blog_blueprint.route('/projects/')
 def projects():
     return render_template('recipes/projects.html')

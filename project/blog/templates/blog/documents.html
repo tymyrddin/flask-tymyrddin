@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="blogpost-container card-overlay">
+
+    <div class="page__article">
+        <h1>Legalities</h1>
+        <hr class="light">
+    </div>
+
+    <div class="page__article_white">
+        <h2>Ty Myrddin</h2>
+            <p>Ty Myrddin is based in Dordrecht with KvK number 94171637 and VAT number NL005069703B91.</p>
+            <p>Upon request, I will send you a validated extract from the Dutch trade register.</p>
+        <h2>AVG legalities</h2>
+            <p>In a nutshell, your security and privacy and mine, and that of our data, are important to me. This site has
+                no tracking functionalities, no cookies, not even visitor analytics.
+            </p>
+            <p><a href="{{ url_for('static', filename='documents/privacystatement.pdf') }}">privacystatement.pdf</a></p>
+            <p><a href="{{ url_for('static', filename='documents/privacyverklaring.pdf') }}">privacyverklaring.pdf</a></p>
+    </div>
+</div>
+
+{% endblock %}

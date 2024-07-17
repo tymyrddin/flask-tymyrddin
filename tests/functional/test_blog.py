@@ -58,6 +58,19 @@ def test_get_ipa_page(test_client):
         assert heading in response.data
 
 
+def test_get_documents_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/documents/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'Legalities']
+    response = test_client.get('/documents/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
 def test_get_contact_page(test_client):
     """
     GIVEN a Flask application configured for testing
