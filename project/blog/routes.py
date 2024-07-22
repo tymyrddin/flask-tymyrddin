@@ -22,7 +22,7 @@ def documents():
 
 @blog_blueprint.route('/projects/')
 def projects():
-    return render_template('recipes/projects.html')
+    return render_template('blog/projects.html')
 
 
 @blog_blueprint.route('/ipa/')

@@ -3,6 +3,7 @@
 {% block styling %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/material.css') }}" type="text/css">
 {% endblock %}
 
 {% block content %}
@@ -14,25 +15,45 @@
     </div>
 
     <div class="page__article_white">
-        <p>Digital security is a fascinating field to work in; it is not the good guys vs bad guys, not white hats vs gray hats vs black hats. And although I have the necessary computer science, math and teaching degrees, it is not about education and certifications. It is about a love for puzzling, not being afraid of new experiences, and about a lifetime of learning.</p>
+        <div class="row">
 
-        <h2>Ingredients for success</h2>
-        <p>Likewise, technical knowledge is important, but that is just logic. It is more about understanding people, what makes them tick, and <a href="../awareness">supporting their learning</a>, that will give better results.</p>
-        <p>Working with threats and threat modelling requires a paranoia mindset, which can be unhealthy for our minds, and can be rendered less harmful with some humour and unserious seriousness.</p>
-
-        <h2>Services</h2>
-        <p>Large organisations and corporations can afford to use <a href="../teaming">colourful teaming</a>. Smaller organisations can probably not afford such costs at all, unless we get creative and find new forms. And there is no one-size-fits-all. The hardest part is finding a common ground to start from and an agreed-upon desired state to work towards.</p>
-        <p>As long as there are vulnerabilities, people's devices, their data, and people themselves are at risk. It is the job of (security) professionals and researchers to prevent, find, and fix vulnerabilities, before an attacker takes advantage and inflicts harm. Even more, I am to impart as much knowledge as those I support wish to have, and I have. In my books, it is my job to put myself out of a job.</p>
-        <p>I offer low-budget support for people and not-for-profit organisations.</p>
-        <h2>Contact</h2>
-        <p><a href="../contact">Contact me</a> to discover how we could work together.</p>
-
-
+          <div class="column service-box">
+              <em class="fa fa-4x fa-paper-plane text-primary"></em>
+              <h3>No instant transportation</h3>
+              <p class="text-muted">Digital security is a fascinating field to work in; it is not the good guys vs bad guys, white hats vs gray hats vs black hats, or about computer science, math and teaching degrees (although I have them). Technical knowledge is important, but that is just logic.</p>
+              <p>A love for puzzling, not being afraid of new experiences, a lifetime of learning, understanding what makes people tick, and <a href="../awareness">supporting others</a>, will give better results.</p>
+          </div>
+          <div class="column service-box">
+              <em class="fa fa-4x fa-solid fa-newspaper text-primary"></em>
+              <h3>Never Up To Date</h3>
+              <p>People's devices, their data, and people themselves can be at risk. We need to prevent, find, and fix these vulnerabilities, before an attacker takes advantage.</p>
+              <p class="text-muted">I do not assume I know it all, nor that which was valid yesterday, will be valid today. I keep researching and learning. All the time. I can transfer the knowledge and skills I do have that make sense in context, and offer positive attitudes to learning.</p>
+              </div>
+          <div class="column service-box">
+              <em class="fa fa-4x fa-heart text-primary"></em>
+              <h3>With Love</h3>
+              <p class="text-muted">Working with threats and threat modelling requires a paranoia mindset. A higher paranoia level makes it harder for an attacker to go undetected. It all depends on the possible impact what level of paranoia is needed.</p>
+              <p>This can be unhealthy for our minds. I use humour. Laughing brings oxygen to the brain, which reduces the effects of (professional) paranoia, which is necessary when lives can be at stake. On top of that, an oxygenated mind is more relaxed and has a much greater capacity for learning.</p>
+          </div>
+          <div class="column service-box">
+              <em class="material-icons md-64 text-primary">usb</em>
+              <h3>Does not always work with your device</h3>
+              <p>Large organisations and corporations can afford to use <a href="../teaming">colourful teaming</a>. Smaller organisations can perhaps not afford such costs at all, unless we get creative and find new forms which ar just as effective, or more useful. </p>
+              <p class="text-muted">The hardest part is finding a common ground to start from and an agreed-upon desired state to work towards.</p>
+              <p>There is no one-size-fits-all. I offer low-budget support for not-for-profit organisations.</p>
+          </div>
+        </div>
     </div>
-    <div><hr class="light"></div>
+
+    <div class="page__article">
+
+        <div class="page-post-card__link">
+            <a href="{{ url_for('blog.contact') }}">Contact me to discover how we could work together</a>
+        </div>
+        <hr class="light">
+    </div>
 
     <div class="recipe-container">
-
         <div class="card">
             <a href="https://www.root-me.org/Barzh?lang=en">
                 <img
@@ -68,8 +89,8 @@
                 </div>
             </a>
         </div>
-
     </div>
+
 </div>
 
 {% endblock %}

@@ -1,10 +1,12 @@
 import pytest
 from project import create_app
+from flask_font_awesome import FontAwesome
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def test_client():
     flask_app = create_app()
+    font_awesome = FontAwesome(flask_app)
 
     # Create a test client using the Flask application configured for testing
     with flask_app.test_client() as testing_client:

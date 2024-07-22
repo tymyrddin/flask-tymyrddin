@@ -20,6 +20,9 @@
   margin: 1rem 0;
 }
 
+.blogpost-container h3 {
+  text-transform: uppercase;
+
 .blogpost__date {
   text-align: center;
   font-size: 0.9rem;
