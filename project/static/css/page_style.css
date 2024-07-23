@@ -53,6 +53,14 @@ p {
 .page__article_white {
   background-color: white;
   color: black;
+  text-align: left;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.page__article_white2 {
+  background-color: white;
+  color: black;
   text-align: center;
   margin: 2rem auto;
   padding: 1rem;
