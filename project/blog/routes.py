@@ -1,5 +1,5 @@
 from . import blog_blueprint
-from flask import render_template, abort
+from flask import render_template
 
 
 blog_post_titles = ['Improbability Blog', 'Cuisine Starlight', 'Oink Blog']
