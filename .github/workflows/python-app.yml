@@ -28,5 +28,3 @@ jobs:
       run: |
         pip install pytest
         pytest --cov-report term-missing --cov=project
-    - name: coverage.py badge
-      uses: tj-actions/coverage-badge-py@v2.0.3
