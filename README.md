@@ -8,7 +8,7 @@ This Flask application displays at https://tymyrddin.dev/.
 
 ## Website
 
-[Frozen-Flask](https://pythonhosted.org/Frozen-Flask/) is
+JAMStack: [Frozen-Flask](https://pythonhosted.org/Frozen-Flask/) is
 used to generate the static files based on the routes specified in the Flask app.  These static files are hosted on
 [Netlify](https://www.netlify.com).
 
@@ -21,7 +21,7 @@ used to generate the static files based on the routes specified in the Flask app
 
 ## Installation Instructions
 
-Pull down the source code from this GitLab repository:
+Pull down the source code from this repository:
 
 ```sh
 git clone git@github.com:tymyrddin/flask-tymyrddin.git
