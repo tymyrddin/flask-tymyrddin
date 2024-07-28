@@ -38,18 +38,53 @@
             </div>
         </a>
     </div>
+</div>
 
-    <div class="card">
-        <a href="../ipa">
-            <img
-                src="{{ url_for('static', filename='img/ipa.png') }}"
-                alt="Sisters again"
-                class="card__image" />
-            <div class="card__body__in__page">
-                <h2 class="recipe-title-long">IPA project</h2>
-            </div>
-        </a>
-    </div>
+<div><br/></div>
+
+<div class="recipe-container">
+
+        <div class="card">
+            <a href="https://uu.tymyrddin.dev/scenario-logics/">
+                <img
+                    src="{{ url_for('static', filename='img/strategy.png') }}"
+                    alt="The Ankh Morpork guard"
+                    class="card__image" />
+                <div class="card__body__in__page">
+                    <h2 class="recipe-title-long">Looking forward</h2>
+                </div>
+            </a>
+        </div>
+
+        <div class="card">
+            <a href="https://landscape.tymyrddin.dev/">
+                <img
+                    src="{{ url_for('static', filename='img/threat-landscape.png') }}"
+                    alt="Disc world"
+                    class="card__image" />
+                <div class="card__body__in__page">
+                    <h2 class="recipe-title-long">Digital defence @home</h2>
+                </div>
+            </a>
+        </div>
+
+        <div class="card">
+            <a href="../ipa">
+                <img
+                    src="{{ url_for('static', filename='img/ipa.png') }}"
+                    alt="Sisters again"
+                    class="card__image" />
+                <div class="card__body__in__page">
+                    <h2 class="recipe-title-long">IPA project</h2>
+                </div>
+            </a>
+        </div>
+
+</div>
+
+<div><br /></div>
+
+<div class="recipe-container">
 
     <div class="card">
         <a href="https://uu.tymyrddin.dev/">
@@ -88,4 +123,5 @@
     </div>
 
 </div>
+
 {% endblock %}
