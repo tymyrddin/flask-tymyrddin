@@ -203,7 +203,7 @@ nav ul {
   padding: 0.5rem 0.5rem;
   position: absolute;
   top: 85%;
-  background: #ff9933; /* Black background with 0.4 opacity */
+  background: rgba(0, 0, 0, 0.8);/*#ff9933; Black background with 0.4 opacity */
   color: black; /* Grey text */
 }
 
@@ -213,6 +213,7 @@ nav ul {
   font-weight: normal;
   font-style: normal;
   font-size: 1.0em;
+  color: #ff9933;
 }
 
 .card__body__in__page {
