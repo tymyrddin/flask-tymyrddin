@@ -4,4 +4,3 @@ Markdown==3.6
 pytest==8.2.2
 pytest-cov==5.0.0
 flake8==7.1.0
-Font-Awesome-Flask==0.1.4
