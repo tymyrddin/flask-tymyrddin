@@ -177,7 +177,7 @@ input[type=text], input[type=email], select, textarea {
   box-sizing: border-box; /* Make sure that padding and width stays in place */
   margin-top: 1rem; /* Add a top margin */
   margin-bottom: 1rem; /* Bottom margin */
-  resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
+  resize: vertical; /* Allow the user to vertically resize the textarea (not horizontally) */
   font-size: 1.0rem;
 }
 
