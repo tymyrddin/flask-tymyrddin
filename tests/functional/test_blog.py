@@ -51,7 +51,7 @@ def test_get_ipa_page(test_client):
     WHEN the '/ipa/' page is requested (GET)
     THEN check the response is valid
     """
-    headings = [b'IPA project']
+    headings = [b'IPA Project']
     response = test_client.get('/ipa/')
     assert response.status_code == 200
     for heading in headings:
@@ -66,6 +66,19 @@ def test_get_documents_page(test_client):
     """
     headings = [b'Legalities']
     response = test_client.get('/documents/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
+def test_get_forward_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/forward/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'Looking forward']
+    response = test_client.get('/forward/')
     assert response.status_code == 200
     for heading in headings:
         assert heading in response.data

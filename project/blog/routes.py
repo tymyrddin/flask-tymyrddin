@@ -30,6 +30,11 @@ def ipa():
     return render_template('recipes/ipa.html')
 
 
+@blog_blueprint.route('/forward/')
+def forward():
+    return render_template('blog/forward.html')
+
+
 @blog_blueprint.route("/contact/")
 def contact():
     return render_template("blog/contact.html")
