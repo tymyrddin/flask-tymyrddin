@@ -12,9 +12,22 @@ def test_get_home_page(test_client):
     WHEN the '/' page is requested (GET)
     THEN check the response is valid
     """
-    header_items = [b'Ty Myrddin', b'Home', b'Blogs', b'About']
-    recipe_types = [b'Raising security awareness', b'Pentesting', b'Colourful teaming']
+    header_items = [b'Ty Myrddin']
     response = test_client.get('/')
+    assert response.status_code == 200
+    for header_item in header_items:
+        assert header_item in response.data
+
+
+def test_get_portfolio(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/' page is requested (GET)
+    THEN check the response is valid
+    """
+    header_items = [b'Portfolio']
+    response = test_client.get('/portfolio/')
+    recipe_types = [b'Digital defence @home', b'IPA Project', b'FastAPI, Test-driven, Docker (dependency hell)']
     assert response.status_code == 200
     for header_item in header_items:
         assert header_item in response.data
@@ -35,28 +48,93 @@ def test_get_awareness_page(test_client):
         assert heading in response.data
 
 
-def test_get_pentesting_page(test_client):
+def test_get_about_page(test_client):
     """
     GIVEN a Flask application configured for testing
-    WHEN the '/pentesting/' page is requested (GET)
+    WHEN the '/about/' page is requested (GET)
     THEN check the response is valid
     """
-    headings = [b'The difference between scanning and pentesting', b'What needs testing?', b'Bureaucracy required']
-    response = test_client.get('/pentesting/')
+    headings = [b'No instant transportation', b'Never Up To Date', b'With Love']
+    response = test_client.get('/about/')
     assert response.status_code == 200
     for heading in headings:
         assert heading in response.data
 
 
-def test_get_teaming_page(test_client):
+def test_get_documents_page(test_client):
     """
     GIVEN a Flask application configured for testing
-    WHEN the '/teaming/' page is requested (GET)
+    WHEN the '/documents/' page is requested (GET)
     THEN check the response is valid
     """
-    headings = [b'Red and blue teams', b'Purple teams', b'Ingredients for success']
-    response = test_client.get('/teaming/')
+    headings = [b'Legalities']
+    response = test_client.get('/documents/')
     assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
+def test_get_contact_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/about/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'Contact']
+    response = test_client.get('/contact/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
+def test_get_thankyou_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/thankyou/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'Thank you']
+    response = test_client.get('/thankyou/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
+def test_get_ipa_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/ipa/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'IPA Project']
+    response = test_client.get('/ipa/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
+def test_get_404_page(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/404/' page is requested (GET)
+    THEN check the response is valid
+    """
+    headings = [b'Uh,oh, 404, not found', b'Here, for whatever reason, is the world']
+    response = test_client.get('/404/')
+    assert response.status_code == 200
+    for heading in headings:
+        assert heading in response.data
+
+
+def test_get_invalid_request(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/idonotexist' page is requested (GET)
+    THEN check that the 404 page is returned
+    """
+    headings = [b'Uh,oh, 404, not found', b'Here, for whatever reason, is the world']
+    response = test_client.get('/idonotexist/')
+    assert response.status_code == 404
     for heading in headings:
         assert heading in response.data
 

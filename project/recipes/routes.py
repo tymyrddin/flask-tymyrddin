@@ -9,10 +9,7 @@ teaming_recipes_names = []
 
 @recipes_blueprint.route('/')
 def recipes():
-    return render_template('recipes/recipes.html',
-                           number_of_awareness_recipes=len(awareness_recipes_names),
-                           number_of_pentesting_recipes=len(pentesting_recipes_names),
-                           number_of_teaming_recipes=len(teaming_recipes_names))
+    return render_template('recipes/recipes.html')
 
 
 @recipes_blueprint.route('/awareness/')
@@ -20,16 +17,36 @@ def awareness_recipes():
     return render_template('recipes/awareness.html')
 
 
-@recipes_blueprint.route('/pentesting/')
-def pentesting_recipes():
-    return render_template('recipes/pentesting.html')
+@recipes_blueprint.route('/portfolio/')
+def portfolio_recipes():
+    return render_template('recipes/portfolio.html')
 
 
-@recipes_blueprint.route('/teaming/')
-def teaming_recipes():
-    return render_template('recipes/teaming.html')
+@recipes_blueprint.route('/about/')
+def about():
+    return render_template('recipes/about.html')
+
+
+@recipes_blueprint.route('/documents/')
+def documents():
+    return render_template('recipes/documents.html')
 
 
 @recipes_blueprint.route('/404/')
 def fourohfour_recipes():
     return render_template('recipes/404.html')
+
+
+@recipes_blueprint.route('/ipa/')
+def ipa():
+    return render_template('recipes/ipa.html')
+
+
+@recipes_blueprint.route("/contact/")
+def contact():
+    return render_template("recipes/contact.html")
+
+
+@recipes_blueprint.route("/thankyou/")
+def thankyou():
+    return render_template("recipes/thankyou.html")

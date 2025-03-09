@@ -1,127 +1,37 @@
 {% extends "base.html" %}
 
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="recipe-container">
+<div class="blogpost-container card-overlay">
 
-    <div class="card">
-        <a href="{{ url_for('recipes.awareness_recipes') }}">
-            <img
-              src="{{ url_for('static', filename='img/security-awareness.png') }}"
-              alt="Security awareness"
-              class="card__image" />
-            <div class="card__body">
-                <h2>Raising security awareness</h2>
-            </div>
-        </a>
+    <div class="page__article">
+        <h1>Ty Myrddin</h1>
+        <h2 align="center">Demystifications in the house of Merlina</h2>
+        <h3 align="center">Researching, learning, teaching, and facilitating for NGO's and small businesses</h3>
+        <hr class="light">
     </div>
 
-    <div class="card">
-        <a href="{{ url_for('recipes.pentesting_recipes') }}">
-            <img
-              src="{{ url_for('static', filename='img/pentest.png') }}"
-              alt="Pentesting"
-              class="card__image" />
-            <div class="card__body">
-                <h2>Pentesting</h2>
-            </div>
-        </a>
+    <div class="page__article_white">
+
+        <p>Hi, I’m Nienke Fokma (alias Nina Barzh), a facilitator and teacher based in Dordrecht, the Netherlands. I
+            specialize in IT technical subjects and IT solutions that help NGO's and small businesses be more secure.
+            With 40+ years of experience in IT in various roles, and a passion for creativity and problem-solving,
+            I'm here to help you achieve your goals.</p>
     </div>
 
-    <div class="card">
-        <a href="{{ url_for('recipes.teaming_recipes') }}">
-            <img
-              src="{{ url_for('static', filename='img/labs.png') }}"
-              alt="Colourful teaming"
-              class="card__image" />
-            <div class="card__body">
-                <h2>Colourful teaming</h2>
-            </div>
-        </a>
-    </div>
-</div>
-
-<div><br/></div>
-
-<div class="recipe-container">
-
-        <div class="card">
-            <a href="../forward">
-                <img
-                    src="{{ url_for('static', filename='img/forward.png') }}"
-                    alt="The Ankh Morpork guard"
-                    class="card__image" />
-                <div class="card__body">
-                    <h2>Looking forward</h2>
-                </div>
-            </a>
+    <div class="page__article">
+        <div class="page-post-card__link">
+            <a href="{{ url_for('recipes.portfolio_recipes') }}">See my work</a>
         </div>
 
-        <div class="card">
-            <a href="https://landscape.tymyrddin.dev/">
-                <img
-                    src="{{ url_for('static', filename='img/threat-landscape.png') }}"
-                    alt="Disc world"
-                    class="card__image" />
-                <div class="card__body">
-                    <h2>Digital defence @home</h2>
-                </div>
-            </a>
+        <div class="page-post-card__link">
+            <a href="{{ url_for('recipes.contact') }}">Ready to get started? Let’s talk!</a>
         </div>
-
-        <div class="card">
-            <a href="../ipa">
-                <img
-                    src="{{ url_for('static', filename='img/ipa.png') }}"
-                    alt="Sisters again"
-                    class="card__image" />
-                <div class="card__body">
-                    <h2>IPA project</h2>
-                </div>
-            </a>
-        </div>
-
-</div>
-
-<div><br /></div>
-
-<div class="recipe-container">
-
-    <div class="card">
-        <a href="https://uu.tymyrddin.dev/">
-            <img
-              src="{{ url_for('static', filename='img/unseen-university-library.png') }}"
-              alt="Security awareness"
-              class="card__image" />
-            <div class="card__body">
-                <h2>Unseen University</h2>
-            </div>
-        </a>
-    </div>
-
-    <div class="card">
-        <a href="https://milliways.tymyrddin.dev/">
-            <img
-              src="{{ url_for('static', filename='img/milliways.png') }}"
-              alt="Milliways"
-              class="card__image" />
-            <div class="card__body">
-                <h2>Restaurant at the end of the Universe</h2>
-            </div>
-        </a>
-    </div>
-
-    <div class="card">
-        <a href="https://wyrd.tymyrddin.dev/">
-            <img
-              src="{{ url_for('static', filename='img/sisters2.png') }}"
-              alt="Sisters on brooms"
-              class="card__image" />
-            <div class="card__body">
-                <h2>Wyrd sisters</h2>
-            </div>
-        </a>
     </div>
 
 </div>
-
 {% endblock %}
