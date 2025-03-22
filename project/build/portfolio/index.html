@@ -258,9 +258,11 @@
                 <p>Flask is a lightweight micro-framework used to quickly build simple web applications. It includes
                     support for Jinja templates (a way to reuse HTML code), request handling, and application
                     signaling.</p>
-                <p>FastAPI’s only purpose is to build backend APIs. There must also be a frontend framework
-                    to display the site to users. The framework is incredibly easy to work with, and it is even
-                    possible to deploy an app with FastAPI through Kinsta and a GitHub repo in minutes.</p>
+                <p>Both FastAPI and Starlette are built on top of Uvicorn, which is an ASGI server, but they serve different
+                    purposes and offer distinct features that can impact performance. Starlette provides the
+                    foundational tools for building web applications. It is lightweight and optimized for speed,
+                    making it suitable for simple applications. FastAPI is built on top of Starlette, adding features
+                    like automatic data validation and serialization.</p>
                 <h3 id="ai">AI</h3>
                 <p>Artificial Intelligence (AI) is undoubtedly revolutionizing numerous fields, from healthcare and
                     finance to transportation and entertainment. Its potential to enhance efficiency, solve complex
@@ -297,13 +299,13 @@
                 </div>
 
                 <div class="card">
-                    <a href="https://github.com/ninabarzh/fastapi-tdd-docker/tree/main">
+                    <a href="https://github.com/ninabarzh/pers/tree/main">
                         <img
                                 src="/static/img/cloud.png"
                                 alt="On-premises cloud"
                                 class="card__image"/>
                         <div class="card__body__in__page">
-                            <h2 class="recipe-title-long">FastAPI, Test-driven, Docker (dependency hell)</h2>
+                            <h2 class="recipe-title-long">Typesense, Starlette Search engine (under construction)</h2>
                         </div>
                     </a>
                 </div>
