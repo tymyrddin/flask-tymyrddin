@@ -300,6 +300,11 @@ footer a {
   color: rgba(170,170,170,1);
 }
 
+footer a:hover {
+  text-decoration: none;
+  color: white;
+}
+
 
 /* Error Page Styling
  ********************/
