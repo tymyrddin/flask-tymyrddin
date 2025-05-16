@@ -9,6 +9,12 @@
     Permissions-Policy = "geolocation=(); midi=(); notifications=(); push=(); sync-xhr=(); accelerometer=(); gyroscope=(); magnetometer=(); payment=(); camera=(); microphone=(); usb=(); xr=(); speaker=(self); vibrate=(); fullscreen=(self)"
 
 [[redirects]]
+  from = "/blog"    # Exact match for '/blog' (no trailing slash)
+  to = "https://broomstick.tymyrddin.dev"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/*"
   to = "https://broomstick.tymyrddin.dev"
   status = 301
