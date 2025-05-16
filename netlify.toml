@@ -9,6 +9,11 @@
     Permissions-Policy = "geolocation=(); midi=(); notifications=(); push=(); sync-xhr=(); accelerometer=(); gyroscope=(); magnetometer=(); payment=(); camera=(); microphone=(); usb=(); xr=(); speaker=(self); vibrate=(); fullscreen=(self)"
 
 [[redirects]]
-from = "/*"
-to = "/404/index.html"
-status = 404
+  from = "/blog/*"
+  to = "https://broomstick.tymyrddin.dev"
+  status = 301
+
+[[redirects]]
+  from = "/*"
+  to = "/404/index.html"
+  status = 404
