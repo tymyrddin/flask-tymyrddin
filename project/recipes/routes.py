@@ -12,11 +12,6 @@ def recipes():
     return render_template('recipes/recipes.html')
 
 
-@recipes_blueprint.route('/awareness/')
-def awareness_recipes():
-    return render_template('recipes/awareness.html')
-
-
 @recipes_blueprint.route('/portfolio/')
 def portfolio_recipes():
     return render_template('recipes/portfolio.html')

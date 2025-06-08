@@ -35,19 +35,6 @@ def test_get_portfolio(test_client):
         assert recipe_type in response.data
 
 
-def test_get_awareness_page(test_client):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/awareness/' page is requested (GET)
-    THEN check the response is valid
-    """
-    headings = [b'The usual suspects', b'Test driven efforts', b'Hands-on workshops']
-    response = test_client.get('/awareness/')
-    assert response.status_code == 200
-    for heading in headings:
-        assert heading in response.data
-
-
 def test_get_about_page(test_client):
     """
     GIVEN a Flask application configured for testing
@@ -77,7 +64,7 @@ def test_get_documents_page(test_client):
 def test_get_contact_page(test_client):
     """
     GIVEN a Flask application configured for testing
-    WHEN the '/about/' page is requested (GET)
+    WHEN the '/contact/' page is requested (GET)
     THEN check the response is valid
     """
     headings = [b'Contact']
