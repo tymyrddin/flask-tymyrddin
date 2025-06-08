@@ -32,11 +32,6 @@ def fourohfour_recipes():
     return render_template('recipes/404.html')
 
 
-@recipes_blueprint.route('/ipa/')
-def ipa():
-    return render_template('recipes/ipa.html')
-
-
 @recipes_blueprint.route("/contact/")
 def contact():
     return render_template("recipes/contact.html")
