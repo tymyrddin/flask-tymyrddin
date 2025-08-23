@@ -16,6 +16,10 @@ def recipes():
 def portfolio_recipes():
     return render_template('recipes/portfolio.html')
 
+@recipes_blueprint.route('/services/')
+def services_recipes():
+    return render_template('recipes/services.html')
+
 
 @recipes_blueprint.route('/about/')
 def about():
