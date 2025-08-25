@@ -242,7 +242,7 @@ nav ul {
   position: absolute;
   top: 85%;
   background: #0A1A2A; /* Dahlia background with 0.4 opacity */
-  color: black; /* Grey text */
+  color: #191919; /* Grey text */
 }
 
 .card__body__in__page h2 {
