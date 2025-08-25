@@ -234,12 +234,6 @@ input[type=submit]:hover {
   text-align: left;
 }
 
-div[data-netlify-recaptcha="true"] {
-  margin-left: auto;
-  margin-right: auto;
-  width: fit-content; /* Or a specific width if needed */
-}
-
 /* Column */
 
 .column {
