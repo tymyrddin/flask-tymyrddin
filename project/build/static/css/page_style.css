@@ -104,17 +104,50 @@ h2 {
 }
 
 .page-post-card__link {
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
+  display: block;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius, 0.375rem);
   background: #0A1A2A;
   text-align: center;
   max-width: 30rem;
   margin: 2rem auto;
+  transition: transform 0.2s ease;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.page-post-card__link:hover {
+  transform: translateY(-5px);
 }
 
 .page-post-card__link a {
   text-decoration: none;
   color: white;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-post-card__link {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+    max-width: 90%; /* Changed from fixed max-width to percentage */
+    margin: 1.5rem auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-post-card__link {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    max-width: 95%; /* More flexible on very small screens */
+    margin: 1rem auto;
+  }
 }
 
 /* Service box styling
@@ -183,7 +216,6 @@ input[type=text], input[type=email], select, textarea {
 
 /* Style the submit button with a specific background color etc */
 input[type=submit] {
-  background-color: #0A1A2A;
   color: white;
   padding: 12px 20px;
   border: none;
@@ -194,13 +226,18 @@ input[type=submit] {
 
 /* When moving the mouse over the submit button, add a darker green color */
 input[type=submit]:hover {
-  background-color: #2A0A0A;
   color: white;
 }
 
 .form {
   margin: 0 2.5rem 0 2.5rem;
   text-align: left;
+}
+
+div[data-netlify-recaptcha="true"] {
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content; /* Or a specific width if needed */
 }
 
 /* Column */
