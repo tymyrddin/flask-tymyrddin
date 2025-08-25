@@ -234,12 +234,6 @@ input[type=submit]:hover {
   text-align: left;
 }
 
-/* Add this to your CSS - it only affects the reCAPTCHA */
-.g-recaptcha {
-    margin: 0 auto;
-    width: 304px; /* Fixed width of the reCAPTcha widget */
-}
-
 /* Column */
 
 .column {
