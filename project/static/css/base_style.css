@@ -32,17 +32,17 @@
 }
 
 body {
-  background-color: rgba(25,25,25,1);
-  background-image: url('../site/background.png');
+  background-color: #2A0A0A;
+/* background-image: url('../site/background.png'); */
 /*  background-position: center; /* Center the image */
-  background-repeat: repeat; /* Do not repeat the image */
+/* background-repeat: repeat; /* Do not repeat the image */
 /*  background-size: cover; /* Resize the background image to cover the entire container */
   color: white;
   font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
 }
 
 a {
-color: #2e963d;
+color: #0A1A2A;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -107,7 +107,7 @@ header h1 {
 
 header h1 a {
   text-decoration: none;
-  color: rgba(255,153,51,1);
+  color: white;
 }
 
 @media screen and (min-width: 900px) {
@@ -290,9 +290,10 @@ footer {
   text-align: center;
   margin: 2rem 0;
   padding: 1rem 0;
-  background: url(../site/footer.png) !important;
-  background-repeat: no-repeat;
-  background-size: auto;
+  background-color: #2A0A0A;
+/*  background: url(../site/footer.png) !important; */
+/*  background-repeat: no-repeat; */
+/*  background-size: auto; */
 }
 
 footer a {

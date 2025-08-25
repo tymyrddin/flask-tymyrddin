@@ -14,17 +14,17 @@
 }
 
 .text-primary {
-  color: #ff9933;
+  color: #662222;
 }
 
 hr {
-  border-color: #ff9933;
+  border-color: #662222;
   border-width: 2px;
   max-width: 3rem;
   margin: auto;
 }
 
-hr.light { border-color: #ff9933; }
+hr.light { border-color: #662222; }
 
 p {
   font-size: 1rem;
@@ -92,7 +92,7 @@ p {
 }
 
 .page__article a, .page__article a:visited {
-  color:#ff9933;
+  color:#662222;
 }
 
 .page__image {
@@ -106,7 +106,7 @@ h2 {
 .page-post-card__link {
   padding: 0.5rem 1rem;
   border-radius: var(--radius);
-  background: #ff9933;
+  background: #0A1A2A;
   text-align: center;
   max-width: 30rem;
   margin: 2rem auto;
@@ -114,7 +114,7 @@ h2 {
 
 .page-post-card__link a {
   text-decoration: none;
-  color: black;
+  color: white;
 }
 
 /* Service box styling
@@ -183,8 +183,8 @@ input[type=text], input[type=email], select, textarea {
 
 /* Style the submit button with a specific background color etc */
 input[type=submit] {
-  background-color: #ff9933;
-  color: black;
+  background-color: #0A1A2A;
+  color: white;
   padding: 12px 20px;
   border: none;
   border-radius: 4px;
@@ -194,8 +194,8 @@ input[type=submit] {
 
 /* When moving the mouse over the submit button, add a darker green color */
 input[type=submit]:hover {
-  background-color: Orange;
-  color: black;
+  background-color: #2A0A0A;
+  color: white;
 }
 
 .form {
