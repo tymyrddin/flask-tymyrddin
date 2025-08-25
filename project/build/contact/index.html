@@ -57,6 +57,7 @@
             method="POST"
             data-netlify="true"
             netlify-honeypot="bot-field"
+            data-netlify-recaptcha="true"
             action="/thankyou/">
 
             <!-- Hidden form-name field for Netlify -->
@@ -77,6 +78,9 @@
             <p>
                 <label>Message: <textarea name="message" required></textarea></label>
             </p>
+
+            <!-- Netlify reCAPTCHA widget -->
+            <div data-netlify-recaptcha="true"></div>
 
             <!-- Submit button -->
             <p>
