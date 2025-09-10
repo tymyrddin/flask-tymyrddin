@@ -27,7 +27,7 @@ def test_get_portfolio(test_client):
     """
     header_items = [b'Portfolio']
     response = test_client.get('/portfolio/')
-    recipe_types = [b'Privacy greenhouse']
+    recipe_types = [b'See around corners']
     assert response.status_code == 200
     for header_item in header_items:
         assert header_item in response.data
