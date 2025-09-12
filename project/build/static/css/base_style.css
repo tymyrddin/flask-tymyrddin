@@ -195,13 +195,14 @@ nav ul {
 }
 
 .card {
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
   position: relative;
   border-radius: var(--radius);
+  padding-bottom: 30%; /* Maak ruimte onder de afbeelding voor de body */
 }
 
 .card a {
@@ -209,7 +210,7 @@ nav ul {
 }
 
 .card__image {
-  height: 16rem;
+  height: 10rem;
   width: 100%;
   object-fit: cover;
 }
@@ -220,9 +221,13 @@ nav ul {
   text-align: center;
   padding: 0.5rem 0.5rem;
   position: absolute;
-  top: 85%;
-  background: rgba(0, 0, 0, 0.8);/*#ff9933; Black background with 0.4 opacity */
-  color: black; /* Grey text */
+  top: 10rem;
+  height: 50%; /* Zorg voor voldoende hoogte */
+  background: #fff;/*#ff9933; rgba(0, 0, 0, 0.8) Black background with 0.4 opacity */
+  color: black; /* Black text */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .card__body h2 {
