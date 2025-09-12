@@ -61,18 +61,45 @@
 
         <div class="page__article">
             <div class="page-post-card__link">
-                <a href="{{ url_for('recipes.contact') }}">Curious where to begin? Use a free half-hour consultation to get a taste of strategic foresight.</a>
+                <a href="{{ url_for('recipes.contact') }}">Curious where to begin? Use a free half-hour consultation to get a taste.</a>
             </div>
         </div>
 
         <h2>Learn by doing</h2>
-        <p><em>Practical, engaging workshops that build relevant skills without overwhelming participants.</em></p>
-        <p>Hands-on, experiential learning inspired by Montessori, Satir, and Weinberg principles.</p>
+        <p><em>Practical, engaging workshops that build relevant skills without overwhelming participants.</em> - Hands-on, experiential learning inspired by Montessori, Satir, and Weinberg principles.</p>
 
-        <ul>
-            <li>Hands-on workshops: <a href="https://green.tymyrddin.dev/docs/l-space/">Guerrilla Gardeners</a>, <a href="https://red.tymyrddin.dev/docs/services/">Myrddin’s Menagerie</a>, <a href="https://blue.tymyrddin.dev/docs/stormforge/">Stormforge</a>, <a href="https://purple.tymyrddin.dev/docs/cross-training/">Cross-training & capability building</a> — practical exercises for digital spaces, simulated adversaries, turbulent scenarios, and multi-skilled team development.</li>
-            <li>Security culture & awareness programmes: Introduce social engineering, phishing simulations, and human factors, tailored to roles and team maturity.</li>
-        </ul>
+        <div class="recipe-container">
+
+            <div class="card">
+                <a href="https://purple.tymyrddin.dev/docs/learning/">
+                    <img
+                        src="{{ url_for('static', filename='img/threat-modelling-and-prep.png') }}"
+                        alt="Blue Team"
+                        class="card__image" />
+                    <div class="card__body">
+                        <p>Practical exercises for digital spaces, simulated adversaries, turbulent scenarios, and multi-skilled team development.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="https://purple.tymyrddin.dev/docs/learning/culture-and-awareness/">
+                    <img
+                        src="{{ url_for('static', filename='img/scenario-planning-and-foresight.png') }}"
+                        alt="Red Team"
+                        class="card__image" />
+                    <div class="card__body">
+                        <p>Security culture & awareness programmes: Introduce social engineering, phishing simulations, and human factors, tailored to roles and team maturity.</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+        <div class="page__article">
+            <div class="page-post-card__link">
+                <a href="{{ url_for('recipes.contact') }}">Transform your team from targets to a resilient, adaptive human firewall.</a>
+            </div>
+        </div>
 
         <h2>Move together</h2>
         <p><em>Coordinate teams and stakeholders more effectively.</em></p>
