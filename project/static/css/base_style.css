@@ -42,7 +42,15 @@ body {
 }
 
 a {
-color: #0A1A2A;
+color: #E65100;
+}
+
+a:hover {
+color: #FF6700;
+}
+
+a:visited {
+color: #BF360C;
 }
 
 h1, h2, h3, h4, h5, h6 {
