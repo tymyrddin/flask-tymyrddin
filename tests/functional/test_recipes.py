@@ -25,7 +25,7 @@ def test_get_portfolio(test_client):
     WHEN the '/' page is requested (GET)
     THEN check the response is valid
     """
-    header_items = [b'Portfolio']
+    header_items = [b'Playground']
     response = test_client.get('/portfolio/')
     recipe_types = [b'See around corners']
     assert response.status_code == 200
