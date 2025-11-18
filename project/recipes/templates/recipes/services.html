@@ -46,13 +46,13 @@
             </div>
 
             <div class="card">
-                <a href="https://purple.tymyrddin.dev/docs/learning/threat-modelling/">
+                <a href="https://purple.tymyrddin.dev/docs/risk-management/">
                     <img
-                        src="{{ url_for('static', filename='img/brainstorming-in-action.png') }}"
+                        src="{{ url_for('static', filename='img/risk-management.png') }}"
                         alt="Purple Team"
                         class="card__image" />
                     <div class="card__body">
-                        <p>Collaborative sessions where teams experiment with scenarios and learn to apply insights immediately.</p>
+                        <p>More hands-on exercises to build up towards operating a risk register, risk model, and internal audits.</p>
                     </div>
                 </a>
             </div>
@@ -65,58 +65,38 @@
             </div>
         </div>
 
-        <h2>Learn by doing</h2>
-        <p><em>Practical, engaging workshops that build relevant skills without overwhelming participants</em> - Hands-on, experiential learning inspired by Montessori, Satir, and Weinberg.</p>
-
-        <div class="recipe-container">
-
-            <div class="card">
-                <a href="https://purple.tymyrddin.dev/docs/learning/">
-                    <img
-                        src="{{ url_for('static', filename='img/relay.png') }}"
-                        alt="Learn by doing"
-                        class="card__image" />
-                    <div class="card__body">
-                        <p>Practical exercises for digital spaces, simulated adversaries, turbulent scenarios, and multi-skilled team development.</p>
-                    </div>
-                </a>
-            </div>
-
-            <div class="card">
-                <a href="https://purple.tymyrddin.dev/docs/learning/culture-and-awareness/">
-                    <img
-                        src="{{ url_for('static', filename='img/awareness.png') }}"
-                        alt="Security culture & awareness programmes"
-                        class="card__image" />
-                    <div class="card__body">
-                        <p>Introduce social engineering, phishing simulations, and human factors, tailored to roles and team maturity.</p>
-                    </div>
-                </a>
-            </div>
-
-        </div>
-        <div class="page__article">
-            <div class="page-post-card__link">
-                <a href="{{ url_for('recipes.contact') }}">Transform your team from targets to a resilient, adaptive human firewall.</a>
-            </div>
-        </div>
-
         <h2>Move together</h2>
         <p><em>Coordinate teams and stakeholders more effectively.</em> - Exercises and tools to uncover dependencies, blind spots, and improve collaborative planning while focusing on real operational security.</p>
 
         <div class="recipe-container">
 
             <div class="card">
-                <a href="https://purple.tymyrddin.dev/docs/choreographies/">
+                <a href="https://purple.tymyrddin.dev/docs/sirt/">
                     <img
-                        src="{{ url_for('static', filename='img/choreos.png') }}"
-                        alt="Facilitated choreographies"
+                        src="{{ url_for('static', filename='img/sirt.png') }}"
+                        alt="Building an Incident Response Team (SIRT)"
                         class="card__image" />
                     <div class="card__body">
-                        <p>Choreographies that guide teams to move in sync, anticipate challenges, and learn from each step.</p>
+                        <p>A lean, agile SIRT focuses on essentials: clear roles, flexible processes, and continuous learning. It avoids heavy bureaucracy.</p>
                     </div>
                 </a>
             </div>
+
+            <div class="card">
+                <a href="https://purple.tymyrddin.dev/docs/soc/">
+                    <img
+                        src="{{ url_for('static', filename='img/soc.png') }}"
+                        alt="Building and operating a Security Operations Centre (SOC)"
+                        class="card__image" />
+                    <div class="card__body">
+                        <p>Unlike traditional, rigid SOCs, a lean and agile SOC focuses on actionable intelligence, fast response, and continuous improvement.</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="recipe-container">
 
             <div class="card">
                 <a href="https://purple.tymyrddin.dev/docs/learning/incident-response/">
@@ -126,6 +106,18 @@
                         class="card__image" />
                     <div class="card__body">
                         <p>Tabletop and live simulations let teams test procedures, explore communication strategies, and practise continuity planning.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="https://purple.tymyrddin.dev/docs/knowledge-transfer/">
+                    <img
+                        src="{{ url_for('static', filename='img/incident-playbook.png') }}"
+                        alt="Knowledge transfer & playbook development"
+                        class="card__image" />
+                    <div class="card__body">
+                        <p>Turn lessons from exercises and incidents into manuals, dashboards, detection playbooks, and workflows, ready to use and extend.</p>
                     </div>
                 </a>
             </div>
@@ -144,35 +136,6 @@
         <h2>Build to last</h2>
         <p><em>Develop resilience that can grow with your organisation</em> - Establish sustainable security practices, capture lessons, and create tools your team can rely on over time.</p>
 
-      <div class="recipe-container">
-
-            <div class="card">
-                <a href="https://purple.tymyrddin.dev/docs/audits/resilience/">
-                    <img
-                        src="{{ url_for('static', filename='img/matrix.png') }}"
-                        alt="Organisational risk audits & resilience assessments"
-                        class="card__image" />
-                    <div class="card__body">
-                        <p>Identify critical assets, dependencies, and potential weak points. Provide actionable insights so teams can prioritise mitigation and monitoring based on real risks.</p>
-                    </div>
-                </a>
-            </div>
-
-            <div class="card">
-                <a href="https://purple.tymyrddin.dev/docs/knowledge-transfer/">
-                    <img
-                        src="{{ url_for('static', filename='img/incident-playbook.png') }}"
-                        alt="Knowledge transfer & playbook development"
-                        class="card__image" />
-                    <div class="card__body">
-                        <p>Turn lessons from exercises and incidents into manuals, dashboards, detection playbooks, and workflows, ready to use and extend as teams grow or rotate roles.</p>
-                    </div>
-                </a>
-            </div>
-
-        </div>
-
-
         <div class="recipe-container">
 
             <div class="card">
@@ -182,9 +145,34 @@
                         alt="The ISO 27001 mountain expedition"
                         class="card__image" />
                     <div class="card__body">
-                        <p>The ISO 27001 summit may look daunting: steep slopes
-of policies, hidden crevasses of risks, and the occasional paperwork avalanche, but with a clear route, right
-gear, and a bit of humour, we can navigate the path step by step.</p>
+                        <p>The ISO 27001 summit may look daunting: steep slopes of policies, hidden risk crevasses,
+                            and paperwork avalanches. We can navigate the climb step by step.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="https://purple.tymyrddin.dev/docs/audits/nis2/">
+                    <img
+                        src="{{ url_for('static', filename='img/river.png') }}"
+                        alt="The NIS2 river crossing"
+                        class="card__image" />
+                    <div class="card__body">
+                        <p>NIS2 can look like a wild river: incident-response hazards lurking beneath, supply-chain
+                            tributaries splitting the flow, and sudden legal rapids, yet we can cross safely.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="https://purple.tymyrddin.dev/docs/audits/resilience/">
+                    <img
+                        src="{{ url_for('static', filename='img/beehive.png') }}"
+                        alt="Organisational risk audits & resilience assessments"
+                        class="card__image" />
+                    <div class="card__body">
+                        <p>Organisational resilience can feel like tending a beehive: hidden weak cells, overworked
+                            drones, and the odd swarm of challenges. We can keep the colony thriving.</p>
                     </div>
                 </a>
             </div>
