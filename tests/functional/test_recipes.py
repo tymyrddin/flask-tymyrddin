@@ -27,7 +27,7 @@ def test_get_portfolio(test_client):
     """
     header_items = [b'Playground']
     response = test_client.get('/portfolio/')
-    recipe_types = [b'See around corners']
+    recipe_types = [b'Seeing around corners']
     assert response.status_code == 200
     for header_item in header_items:
         assert header_item in response.data
@@ -41,7 +41,7 @@ def test_get_about_page(test_client):
     WHEN the '/about/' page is requested (GET)
     THEN check the response is valid
     """
-    headings = [b'Why organisations work with me']
+    headings = [b'Availability']
     response = test_client.get('/about/')
     assert response.status_code == 200
     for heading in headings:
