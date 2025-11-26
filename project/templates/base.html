@@ -39,6 +39,28 @@
             </nav>
         </header>
 
+        {% if news_items %}
+        <div class="news-banner">
+
+            <div class="news-items-wrapper">
+                {% for item in news_items %}
+                <span class="news-item">
+                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
+                    <small>({{ item.date }})</small>
+                </span>
+                {% endfor %}
+
+                {% for item in news_items %}
+                <span class="news-item">
+                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
+                    <small>({{ item.date }})</small>
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+
         <main class="content">
             <!-- child template -->
             {% block content %}

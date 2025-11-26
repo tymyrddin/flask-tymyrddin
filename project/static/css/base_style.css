@@ -397,3 +397,59 @@ pre code {
 	}
 }
 
+/* Banner styling */
+.news-banner {
+    position: relative;
+    max-width: 1080px; /* same as your content width */
+    margin: 0 auto;    /* centre */
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    border-radius: var(--radius);
+    color: white;
+    font-family: 'Merriweather', sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+/* Wrapper for scrolling items */
+.news-items-wrapper {
+    display: inline-flex;
+    animation: scroll-items 20s linear infinite;
+    animation-timing-function: ease-in-out; /* smooth easing */
+}
+
+.news-banner:hover .news-items-wrapper {
+    animation-play-state: paused; /* pause on hover */
+}
+
+/* Each news item */
+.news-item {
+    margin-right: 2rem; /* spacing */
+    display: flex;
+    align-items: center;
+}
+
+.news-item a {
+    color: var(--clr-primary);
+    text-decoration: none;
+}
+
+.news-item a:hover {
+    color: #fff;
+}
+
+/* Keyframes for horizontal scrolling */
+@keyframes scroll-items {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); } /* scroll half the content (duplicate needed) */
+}
+
+/* Optional: smaller font for dates */
+.news-item small {
+    margin-left: 0.25rem;
+    color: var(--clr-gray200);
+}
+
+

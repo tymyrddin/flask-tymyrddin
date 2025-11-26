@@ -1,4 +1,6 @@
 from flask import Flask, render_template
+import json
+import os
 
 
 ######################################
@@ -8,6 +10,21 @@ from flask import Flask, render_template
 def create_app():
     # Create the Flask application
     app = Flask(__name__)
+
+    # Load news data
+    news_path = os.path.join(app.root_path, '..', 'news.json')
+    try:
+        with open(news_path, 'r') as f:
+            news_data = json.load(f)
+    except FileNotFoundError:
+        news_data = []
+    except json.JSONDecodeError:
+        news_data = []
+
+    # Make news available to all templates
+    @app.context_processor
+    def inject_news():
+        return {'news_items': news_data[:3]}  # Latest 2 items
 
     register_blueprints(app)
     register_error_pages(app)
