@@ -24,9 +24,10 @@ def create_app():
     # Make news available to all templates
     @app.context_processor
     def inject_news():
-        return {'news_items': news_data[:3]}  # Latest 2 items
+        return {'news_items': news_data[:3]}  # Latest 3 items
 
     register_blueprints(app)
+    register_routes(app)
     register_error_pages(app)
     return app
 
@@ -45,6 +46,10 @@ def register_blueprints(app):
     app.register_blueprint(recipes_blueprint)
     app.register_blueprint(blog_blueprint)
 
+def register_routes(app):
+    @app.route("/search/")
+    def search_page():
+        return render_template("search.html")
 
 def register_error_pages(app):
     @app.errorhandler(404)

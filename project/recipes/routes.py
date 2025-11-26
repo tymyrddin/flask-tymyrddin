@@ -44,3 +44,4 @@ def contact():
 @recipes_blueprint.route("/thankyou/")
 def thankyou():
     return render_template("recipes/thankyou.html")
+
