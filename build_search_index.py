@@ -3,6 +3,7 @@ import json
 import re
 import urllib.request
 from pathlib import Path
+import html
 
 # List of Sphinx subdomain search indexes with friendly names
 SUBDOMAINS = [
@@ -15,6 +16,19 @@ SUBDOMAINS = [
 
 # Output path
 OUTPUT_FILE = Path("project/static/search/index.json")
+
+
+def unescape_data(data):
+    """Recursively unescape HTML entities in the data structure."""
+    if isinstance(data, str):
+        return html.unescape(data)
+    elif isinstance(data, list):
+        return [unescape_data(item) for item in data]
+    elif isinstance(data, dict):
+        return {key: unescape_data(value) for key, value in data.items()}
+    else:
+        return data
+
 
 combined_index = {
     "sites": [],
@@ -44,6 +58,9 @@ for site in SUBDOMAINS:
             continue
 
         data = json.loads(match.group(1))
+
+        # Unescape HTML entities in all data
+        data = unescape_data(data)
 
         # Count documents
         doc_count = len(data.get('titles', []))
@@ -78,3 +95,4 @@ try:
     print(f"  Total documents: {combined_index['metadata']['total_documents']}")
 except Exception as e:
     print(f"! Could not write combined index: {e}")
+

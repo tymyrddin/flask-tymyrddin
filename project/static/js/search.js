@@ -1,4 +1,70 @@
-(function() {
+// Fetch excerpt from page
+    async function fetchExcerpt(url, searchTerms) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) return '';
+            
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Get main content, avoid nav/footer
+            const main = doc.querySelector('main') || doc.querySelector('article') || doc.body;
+            const bodyText = main.innerText;
+            
+            // Find first occurrence of any search term
+            let bestIndex = -1;
+            let bestTerm = '';
+            
+            searchTerms.forEach(term => {
+                const index = bodyText.toLowerCase().indexOf(term);
+                if (index !== -1 && (bestIndex === -1 || index < bestIndex)) {
+                    bestIndex = index;
+                    bestTerm = term;
+                }
+            });
+            
+            if (bestIndex === -1) {
+                // No term found, return beginning
+                return bodyText.substring(0, 200).trim() + '...';
+            }
+            
+            // Extract ~50 words before and after
+            const words = bodyText.split(/\s+/);
+            let wordIndex = 0;
+            let charCount = 0;
+            
+            // Find which word contains our match
+            for (let i = 0; i < words.length; i++) {
+                if (charCount >= bestIndex) {
+                    wordIndex = i;
+                    break;
+                }
+                charCount += words[i].length + 1;
+            }
+            
+            const startWord = Math.max(0, wordIndex - 50);
+            const endWord = Math.min(words.length, wordIndex + 50);
+            const excerpt = words.slice(startWord, endWord).join(' ');
+            
+            // Highlight search terms
+            let highlighted = excerpt;
+            searchTerms.forEach(term => {
+                const regex = new RegExp(`(${escapeRegex(term)})`, 'gi');
+                highlighted = highlighted.replace(regex, '<mark>$1</mark>');
+            });
+            
+            return (startWord > 0 ? '...' : '') + highlighted + (endWord < words.length ? '...' : '');
+        } catch (error) {
+            console.error('Error fetching excerpt:', error);
+            return '';
+        }
+    }
+
+    // Escape regex special characters
+    function escapeRegex(text) {
+        return text.replace(/[.*+?^${}()|[\]\\]/g, '\\');
+    }(function() {
     let searchData = null;
     let isLoading = true;
     const resultsPerPage = 10;

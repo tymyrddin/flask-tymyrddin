@@ -605,3 +605,23 @@ pre code {
     display: inline-block;
     margin-top: 0.3rem;
 }
+
+.result-excerpt {
+    color: #cfd8dc;
+    line-height: 1.6;
+    margin: 0.75rem 0 0.5rem 0;
+    font-size: 0.95rem;
+}
+
+.result-excerpt.loading {
+    color: #6b7e86;
+    font-style: italic;
+}
+
+.result-excerpt mark {
+    background-color: #ff9933;
+    color: #2A0A0A;
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-weight: bold;
+}
