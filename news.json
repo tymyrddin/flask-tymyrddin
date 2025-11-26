@@ -5,18 +5,13 @@
         "date": "2025-11-26"
     },
     {
-        "title": "Organisational risk audits & resilience assessments",
-        "url": "https://purple.tymyrddin.dev/docs/audits/resilience/",
-        "date": "2025-11-19"
+        "title": "Europe’s hidden security debt",
+        "url": "https://broomstick.tymyrddin.dev/posts/security-debt/",
+        "date": "2025-09-11"
     },
     {
-        "title": "Knowledge transfer and IR playbook development",
-        "url": "https://purple.tymyrddin.dev/docs/knowledge-transfer/",
-        "date": "2025-11-19"
-    },
-    {
-        "title": "Hack the planet? Nah, just hold the door for me",
-        "url": "https://red.tymyrddin.dev/docs/in/real/",
-        "date": "2025-11-19"
+        "title": "The patch sprint protocol: A reluctant guide to cybersecurity hygiene",
+        "url": "https://broomstick.tymyrddin.dev/posts/patch-sprint/",
+        "date": "2025-08-17"
     }
 ]
