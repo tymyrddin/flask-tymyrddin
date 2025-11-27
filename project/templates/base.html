@@ -30,7 +30,7 @@
             <nav>
                 <ul>
                     <li class="nav__item"><a href="{{ url_for('recipes.services_recipes') }}" class="nav__link">Services</a></li>
-                    <li class="nav__item"><a href="{{ url_for('recipes.portfolio_recipes') }}" class="nav__link">Playground</a></li>
+                    <li class="nav__item"><a href="{{ url_for('recipes.portfolio_recipes') }}" class="nav__link">The clacks</a></li>
                     <li class="nav__item"><a href="https://broomstick.tymyrddin.dev" class="nav__link">Broomstick</a></li>
                     <li class="nav__item"><a href="{{ url_for('recipes.about') }}" class="nav__link">About</a></li>
                     <li class="nav__item"><a href="{{ url_for('recipes.documents') }}" class="nav__link">Legalities</a></li>
@@ -41,28 +41,6 @@
 
         </header>
 
-        {% if news_items %}
-        <div class="news-banner">
-
-            <div class="news-items-wrapper">
-                {% for item in news_items %}
-                <span class="news-item">
-                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
-                    <small>({{ item.date }})</small>
-                </span>
-                {% endfor %}
-
-                {% for item in news_items %}
-                <span class="news-item">
-                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
-                    <small>({{ item.date }})</small>
-                </span>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
-
         <main class="content">
             <!-- child template -->
             {% block content %}
@@ -70,7 +48,28 @@
         </main>
 
         <footer>
-            <p><a href="https://www.tymyrddin.dev/">Ty Myrddin</a> - <a rel="me" href="https://mastodon.social/@barzh">Mastodon</a> - <a rel="me" href="https://tube.spdns.org/a/barzh/video-channels">Move IT tube</a> - <a rel="me" href="https://github.com/tymyrddin">Ty Myrddin @GitHub</a> - <a rel="me" href="https://github.com/ninabarzh">Nina Barzh @GitHub</a> - <a rel="me" href="https://gitlab.com/tymyrddin">Gitlab</a> - <a rel="me" href="https://bitbucket.org/tymyrddin/workspace/repositories/">Bitbucket</a></p>
+
+            {% if news_items %}
+            <div class="news-banner">
+
+                <div class="news-items-wrapper">
+                    {% for item in news_items %}
+                    <span class="news-item">
+                        <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
+                        <small>({{ item.date }})</small>
+                    </span>
+                    {% endfor %}
+
+                    {% for item in news_items %}
+                    <span class="news-item">
+                        <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
+                        <small>({{ item.date }})</small>
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
         </footer>
     </body>
 </html>
