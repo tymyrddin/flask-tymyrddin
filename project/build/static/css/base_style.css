@@ -409,7 +409,7 @@ pre code {
 /* Wrapper for scrolling items */
 .news-items-wrapper {
     display: inline-flex;
-    animation: scroll-items 40s linear infinite;
+    animation: scroll-items 42s linear infinite;
     animation-timing-function: ease-in-out; /* smooth easing */
 }
 
