@@ -183,15 +183,15 @@ nav ul {
 .recipe-container {
   margin: 2.0rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 0.3fr));
-  grid-gap: 1.0rem;
+  grid-template-columns: repeat(auto-fit, minmax(27rem, 0.3fr));
+  grid-gap: 1.5rem;
   justify-content: center;
 }
 
 @media screen and (min-width: 1081px) {
   .recipe-container {
-    grid-template-columns: repeat(auto-fit, minmax(22rem, 0.3fr));
-    grid-gap: 1.0rem;
+    grid-template-columns: repeat(auto-fit, minmax(33rem, 0.3fr));
+    grid-gap: 1.5rem;
   }
 }
 
@@ -211,7 +211,7 @@ nav ul {
 }
 
 .card__image {
-  height: 10rem;
+  height: 24rem;
   width: 100%;
   object-fit: cover;
 }
@@ -222,7 +222,7 @@ nav ul {
   text-align: center;
   padding: 0.5rem 0.5rem;
   position: absolute;
-  top: 10rem;
+  top: 20rem;
   height: 50%; /* Zorg voor voldoende hoogte */
   background: #fff;/*#ff9933; rgba(0, 0, 0, 0.8) Black background with 0.4 opacity */
   color: black; /* Black text */
