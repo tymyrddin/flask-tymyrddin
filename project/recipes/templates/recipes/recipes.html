@@ -6,11 +6,49 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="blogpost-container card-overlay">
 
     <div class="page__article_white">
-        <a href="{{ url_for('recipes.services_recipes') }}"><img src="{{ url_for('static', filename='img/jenga-tower.png') }}" alt="Jenga Tower" class="full-bleed-img"></a>
+
+        <div class="jenga-tower-map">
+
+            <!-- Whole tower link wraps the image map -->
+            <a href="{{ url_for('recipes.services_recipes') }}" class="tower-link">
+                <img src="{{ url_for('static', filename='img/jenga-tower.png') }}" usemap="#tower-map" alt="Jenga tower with assumptions" class="full-bleed-img">
+            </a>
+
+            <!-- Image map for individual block clicks -->
+            <map name="tower-map">
+                <area shape="rect" coords="500,171,607,265" href="#block1-note" alt="Assumption: logs arrive on time">
+                <area shape="rect" coords="721,211,812,300" href="#block2-note" alt="Assumption: someone owns this decision">
+                <area shape="rect" coords="516,319,665,442" href="#block3-note" alt="Assumption: processes are followed">
+                <area shape="rect" coords="721,362,805,471" href="#block4-note" alt="Assumption: backups exist">
+                <area shape="rect" coords="524,465,668,640" href="#block5-note" alt="Assumption: staff know the plan">
+            </map>
+
+            <!-- Hover overlays (percentages for responsiveness) -->
+            <div class="block-hover" style="top:23.75%; left:39.06%; width:8.52%; height:12.36%;"></div>
+            <div class="block-hover" style="top:29.31%; left:56.33%; width:7.14%; height:12.36%;"></div>
+            <div class="block-hover" style="top:44.31%; left:40.31%; width:11.02%; height:17.36%;"></div>
+            <div class="block-hover" style="top:50.28%; left:56.33%; width:6.64%; height:15.97%;"></div>
+            <div class="block-hover" style="top:64.58%; left:40.94%; width:11.09%; height:24.31%;"></div>
+
+            <!-- Hover notes -->
+            <div class="hover-note" id="hover1">Assumption: logs arrive on time</div>
+            <div class="hover-note" id="hover2">Assumption: someone owns this decision</div>
+            <div class="hover-note" id="hover3">Assumption: processes are followed</div>
+            <div class="hover-note" id="hover4">Assumption: backups exist</div>
+            <div class="hover-note" id="hover5">Assumption: staff know the plan</div>
+
+        </div>
+
+        <!-- Notes for anchor targets -->
+        <div id="block1-note" class="block-note">Assumption: logs arrive on time</div>
+        <div id="block2-note" class="block-note">Assumption: someone owns this decision</div>
+        <div id="block3-note" class="block-note">Assumption: processes are followed</div>
+        <div id="block4-note" class="block-note">Assumption: backups exist</div>
+        <div id="block5-note" class="block-note">Assumption: staff know the plan</div>
+
     </div>
 
 </div>
