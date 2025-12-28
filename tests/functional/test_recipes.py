@@ -41,7 +41,7 @@ def test_get_about_page(test_client):
     WHEN the '/about/' page is requested (GET)
     THEN check the response is valid
     """
-    headings = [b'Availability']
+    headings = [b'About']
     response = test_client.get('/about/')
     assert response.status_code == 200
     for heading in headings:
