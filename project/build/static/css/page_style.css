@@ -389,42 +389,43 @@ input[type=submit]:hover {
 }
 
 .jenga-tower-map {
-  position: relative;
-  max-width: 1280px;
-  margin: 2em auto;
+    position: relative;
+    max-width: 1280px;
+    width: 100%;
+    margin: 2em auto;
 }
 
 /* Whole tower image */
 .tower-link img {
-  display: block;
-  width: 100%;
-  height: auto;
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 /* Invisible hover overlays */
 .block-hover {
-  position: absolute;
-  cursor: pointer;
+    position: absolute;
+    cursor: pointer;
 }
 
-/* Hover notes inside the image */
+/* Hover notes centered inside the image */
 .hover-note {
-  position: absolute;
-  top: 50%; /* vertical centre of the tower container */
-  left: 50%; /* horizontal centre */
-  transform: translate(-50%, -50%); /* centre exactly */
-  background: rgba(0,0,0,0.6); /* semi-transparent black for readability */
-  color: white; /* text color */
-  font-size: 1.5em; /* bigger text */
-  font-weight: bold;
-  padding: 0.5em 1em;
-  border-radius: 6px;
-  opacity: 0; /* hidden by default */
-  pointer-events: none; /* allows clicks to pass through */
-  transition: opacity 0.2s ease;
-  text-align: center;
-  max-width: 90%; /* prevent overflow on small screens */
-  z-index: 2; /* above image */
+    position: absolute;
+    top: 50%; /* vertical center of image */
+    left: 50%; /* horizontal center */
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    text-align: center;
+    max-width: 90%;
+    z-index: 2;
 }
 
 /* Show note when hovering overlay */
@@ -432,21 +433,20 @@ input[type=submit]:hover {
 .block-hover:nth-of-type(2):hover ~ #hover2,
 .block-hover:nth-of-type(3):hover ~ #hover3,
 .block-hover:nth-of-type(4):hover ~ #hover4,
-.block-hover:nth-of-type(5):hover ~ #hover5 {
-  opacity: 1;
+.block-hover:nth-of-type(5):hover ~ #hover5,
+.block-hover:nth-of-type(6):hover ~ #hover6,
+.block-hover:nth-of-type(7):hover ~ #hover7,
+.block-hover:nth-of-type(8):hover ~ #hover8,
+.block-hover:nth-of-type(9):hover ~ #hover9,
+.block-hover:nth-of-type(10):hover ~ #hover10,
+.block-hover:nth-of-type(11):hover ~ #hover11,
+.block-hover:nth-of-type(12):hover ~ #hover12 {
+    opacity: 1;
 }
 
 /* Notes for anchor target */
 .block-note {
-  display: none;
-  margin: 1em 0;
-  padding: 0.5em;
-  background: rgba(255,255,255,0.95);
-  border-radius: 4px;
-  font-size: 0.9em;
-}
-.block-note:target {
-  display: block;
-  border: 1px solid #ccc;
-}
-
+    display: none;
+    margin: 1em 0;
+    padding: 0.5em;
+    background: rgba(255,255,255,0.95);
