@@ -1,9 +1,20 @@
-
 .blogpost-container {
   margin: 1.0rem;
   justify-content: center;
   background-color: white;
   color: black;
+}
+
+@media screen and (max-width: 768px) {
+  .blogpost-container {
+    margin: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .blogpost-container {
+    margin: 0.5rem;
+  }
 }
 
 @media screen and (min-width: 900px){
@@ -14,20 +25,33 @@
 
 .blogpost-container h1 {
   font-size: 2.5rem;
-}
-
-.blogpost-container h1 {
   text-align: center;
   margin: 1rem 0;
+}
+
+@media screen and (max-width: 768px) {
+  .blogpost-container h1 {
+    font-size: 2rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .blogpost-container h1 {
+    font-size: 1.5rem;
+  }
 }
 
 .blogpost-container h3 {
   text-align: left;
   margin: 1rem 0;
+  text-transform: none;
 }
 
-.blogpost-container h3 {
-  text-transform: none;
+@media screen and (max-width: 768px) {
+  .blogpost-container h3 {
+    font-size: 1.2rem;
+  }
+}
 
 .blogpost__date {
   text-align: center;
@@ -36,12 +60,23 @@
 }
 
 .blogpost__image {
-  /*width: 24rem;*/
   width: 80%;
   height: 80%;
   margin: 0 auto;
   display: block;
   object-fit: cover;
+}
+
+@media screen and (max-width: 768px) {
+  .blogpost__image {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .blogpost__image {
+    width: 100%;
+  }
 }
 
 .blogpost__article {
@@ -56,6 +91,19 @@
     width: 80%;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .blogpost__article {
+    margin: 1rem 0.75rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .blogpost__article {
+    margin: 1rem 0.5rem;
+  }
+}
+
 .blogpost__article p {
   padding: 0.5rem 0;
 }
@@ -63,6 +111,12 @@
 .blogpost__article ul, .blogpost__article ol{
   list-style-position: inside;
   margin-left: 1rem;
+}
+
+@media screen and (max-width: 480px) {
+  .blogpost__article ul, .blogpost__article ol {
+    margin-left: 0.5rem;
+  }
 }
 
 .blogpost__article li {

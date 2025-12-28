@@ -13,8 +13,7 @@
   --radius: 0.2rem;
 }
 
-/* PlayPen Sans font
- *****************/
+/* PlayPen Sans font */
 
 @font-face {
     font-family: 'playpensans';
@@ -23,8 +22,7 @@
     font-style: normal;
 }
 
-/* Overall Styling
- *****************/
+/* Overall Styling */
 * {
   box-sizing: border-box;
   padding: 0;
@@ -33,10 +31,6 @@
 
 body {
   background-color: #2A0A0A;
-/* background-image: url('../site/background.png'); */
-/*  background-position: center; /* Center the image */
-/* background-repeat: repeat; /* Do not repeat the image */
-/*  background-size: cover; /* Resize the background image to cover the entire container */
   color: white;
   font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
 }
@@ -55,7 +49,6 @@ color: #BF360C;
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
-/*  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif; */
   line-height: 1.4;
 }
 
@@ -69,35 +62,27 @@ li {
 .card-overlay {
   border-radius: var(--radius);
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.35); /* Black background with 0.65 opacity */
+  background-color: rgba(0, 0, 0, 0.35);
   box-shadow: 0 0 88px 0 rgba(0, 0, 0, 0.52);
   color: #f1f1f1;
-  /*width: 100%;*/
   padding: 0.5rem 1rem;
 }
 
-
-/* Navigation Bar
- ****************/
+/* Navigation Bar */
 header {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   margin: 0;
   padding: 0.5rem 0.4rem;
-/*  background: url(../site/header.png) !important; */
-/*  background-repeat: no-repeat; */
-/*  background-size: auto; */
-  background-color: rgba(22,5,5,0.8); /* RedBlack background with 0.4 opacity */
-/*  background: linear-gradient(to bottom, rgba(25,25,25,1), rgba(25,25,25,0.1)); */
+  background-color: rgba(22,5,5,0.8);
   font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
-/*  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif; -webkit-transition: all 0.35s; -moz-transition: all 0.35s; transition: all 0.35s; */
   font-weight: normal;
   font-style: normal;
   box-shadow: 0 0 88px 0 rgba(0, 0, 0, 0.52);
   color: #191919;
 }
-
 
 @media screen and (min-width: 1081px) {
   header {
@@ -107,24 +92,23 @@ header {
   }
 }
 
-/* header h1 {
-  text-align: center;
-  text-transform: uppercase;
-  font-size: 1rem;
-  padding-bottom: 0.6rem;
-} */
-
 header h1 {
   text-align: center;
   text-transform: uppercase;
   font-size: 1rem;
-  margin: 0;             /* remove default margin */
-  padding: 0.6rem 0;     /* smaller padding so it aligns with nav */
+  margin: 0;
+  padding: 0.6rem 0;
 }
 
 header h1 a {
   text-decoration: none;
   color: white;
+}
+
+@media screen and (max-width: 480px) {
+  header h1 {
+    font-size: 0.85rem;
+  }
 }
 
 @media screen and (min-width: 1081px) {
@@ -144,6 +128,7 @@ nav ul {
   flex-direction: row;
   justify-content: space-around;
   list-style: none;
+  flex-wrap: wrap;
 }
 
 @media screen and (min-width: 1081px) {
@@ -164,8 +149,20 @@ nav ul {
   font-weight: 700;
 }
 
+@media screen and (max-width: 480px) {
+  .nav__link, .nav__link:visited {
+    font-size: 0.65rem;
+  }
+}
+
 .nav__item + .nav__item {
   margin-left: 0.5rem;
+}
+
+@media screen and (max-width: 480px) {
+  .nav__item + .nav__item {
+    margin-left: 0.3rem;
+  }
 }
 
 @media screen and (min-width: 1081px) {
@@ -178,8 +175,7 @@ nav ul {
     }
 }
 
-/* Cards
- *******/
+/* Cards */
 .recipe-container {
   margin: 2.0rem;
   display: grid;
@@ -203,7 +199,7 @@ nav ul {
   cursor: pointer;
   position: relative;
   border-radius: var(--radius);
-  padding-bottom: 30%; /* Maak ruimte onder de afbeelding voor de body */
+  padding-bottom: 30%;
 }
 
 .card a {
@@ -223,9 +219,9 @@ nav ul {
   padding: 0.5rem 0.5rem;
   position: absolute;
   top: 20rem;
-  height: 50%; /* Zorg voor voldoende hoogte */
-  background: #fff;/*#ff9933; rgba(0, 0, 0, 0.8) Black background with 0.4 opacity */
-  color: black; /* Black text */
+  height: 50%;
+  background: #fff;
+  color: black;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -247,8 +243,8 @@ nav ul {
   padding: 0.5rem 0.5rem;
   position: absolute;
   top: 85%;
-  background: #0A1A2A; /* Dahlia background with 0.4 opacity */
-  color: white; /* Grey text */
+  background: #0A1A2A;
+  color: white;
 }
 
 .card__body__in__page h2 {
@@ -301,18 +297,13 @@ nav ul {
   color: white;
 }
 
-
-/* Footer
- ********/
+/* Footer */
 footer {
   font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
   text-align: center;
   margin: 2rem 0;
   padding: 1rem 0;
   background-color: #2A0A0A;
-/*  background: url(../site/footer.png) !important; */
-/*  background-repeat: no-repeat; */
-/*  background-size: auto; */
 }
 
 footer a {
@@ -325,9 +316,7 @@ footer a:hover {
   color: white;
 }
 
-
-/* Error Page Styling
- ********************/
+/* Error Page Styling */
 .errorpage-title {
   text-align: center;
   margin-top: 2rem;
@@ -340,22 +329,19 @@ footer a:hover {
   margin-bottom: 1em;
 }
 
-/* Code Styling
- ********************/
+/* Code Styling */
 
 pre {
   display: flex;
   flex-wrap: wrap;
 }
 
-/* For all <code> */
 code {
   font-family: monospace;
   font-size: inherit;
   margin: 0.1rem 0;
 }
 
-/* Code in text */
 p > code,
 li > code,
 dd > code,
@@ -393,8 +379,8 @@ pre code {
 /* Banner styling */
 .news-banner {
     position: relative;
-    max-width: 1081px; /* same as your content width */
-    margin: 0 auto;    /* centre */
+    max-width: 1081px;
+    margin: 0 auto;
     overflow: hidden;
     white-space: nowrap;
     padding: 0.5rem 1rem;
@@ -406,20 +392,18 @@ pre code {
     align-items: center;
 }
 
-/* Wrapper for scrolling items */
 .news-items-wrapper {
     display: inline-flex;
     animation: scroll-items 42s linear infinite;
-    animation-timing-function: ease-in-out; /* smooth easing */
+    animation-timing-function: ease-in-out;
 }
 
 .news-banner:hover .news-items-wrapper {
-    animation-play-state: paused; /* pause on hover */
+    animation-play-state: paused;
 }
 
-/* Each news item */
 .news-item {
-    margin-right: 2rem; /* spacing */
+    margin-right: 2rem;
     display: flex;
     align-items: center;
 }
@@ -433,18 +417,15 @@ pre code {
     color: #fff;
 }
 
-/* Keyframes for horizontal scrolling */
 @keyframes scroll-items {
     0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); } /* scroll half the content (duplicate needed) */
+    100% { transform: translateX(-50%); }
 }
 
-/* Optional: smaller font for dates */
 .news-item small {
     margin-left: 0.25rem;
     color: var(--clr-gray200);
 }
-
 
 /* Search Page Styles */
 .search-page {
@@ -537,7 +518,7 @@ pre code {
     color: white;
 }
 
-/* Pagination Styles - complete set */
+/* Pagination Styles */
 .search-pagination {
     margin-top: 2rem;
     padding: 1rem 0;
