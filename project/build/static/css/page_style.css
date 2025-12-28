@@ -377,3 +377,14 @@ input[type=submit]:hover {
   }
 }
 
+/* Jenga Tower */
+
+.full-bleed-img {
+    display: block;      /* Removes inline spacing */
+    max-width: 100%;     /* Constrains to container width */
+    height: auto;        /* Maintains aspect ratio */
+    margin: 0;           /* Removes outer space */
+    padding: 0;          /* Removes inner space */
+    width: 100%;         /* Forces image to fill available width */
+}
+
