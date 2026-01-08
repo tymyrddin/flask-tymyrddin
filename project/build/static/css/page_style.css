@@ -562,3 +562,112 @@ input[type=submit]:hover {
     padding: 0.5em;
     background: rgba(255,255,255,0.95);
 }
+
+/* Page container adjustments for small screens */
+@media screen and (max-width: 480px) {
+  .page-container {
+    margin: 2rem 1rem 0; /* shrink top and horizontal margin */
+    padding: 0; /* remove extra padding if any */
+  }
+
+  .page__article, .page__article_white, .page__article_white2 {
+    margin: 1rem 0.5rem; /* reduce side margins */
+    padding: 0.75rem;     /* tighten padding */
+  }
+
+  .page__article p {
+    padding: 0.5rem 0.5rem; /* ensure text fits screen */
+  }
+
+  /* Flex containers collapse correctly */
+  .flex-container {
+    flex-direction: column;
+    gap: 1rem; /* optional spacing between items */
+  }
+
+  /* Service columns stack nicely */
+  .service-column {
+    width: 100%;
+    float: none;
+    margin: 0 auto;
+  }
+
+  /* Portfolio grid adjustments */
+  .portfolio-grid {
+    grid-template-columns: 1fr; /* single column on phone */
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .portfolio-grid-item .portfolio-tooltip {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+  }
+
+  /* Jenga tower map scaling */
+  .jenga-tower-map {
+    margin: 1em auto;
+    max-width: 100%;
+  }
+
+  .hover-note {
+    font-size: 1em;
+    padding: 0.3em 0.6em;
+  }
+}
+
+/* PHONE-SIZE RESPONSIVENESS FOR PORTFOLIO GRID */
+@media screen and (max-width: 480px) {
+  .portfolio-grid {
+    grid-template-columns: 1fr; /* stack everything vertically */
+    gap: 1rem;                  /* smaller gap for tight screens */
+    margin: 1rem 0;             /* reduce page margin */
+    padding: 0 0.5rem;          /* prevent content hitting edges */
+  }
+
+  .portfolio-grid-item {
+    width: 100%;                /* force full width */
+    margin: 0 auto;             /* centre items */
+  }
+
+  .portfolio-grid-item h2,
+  .portfolio-grid-item p {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;       /* reduce side margin for small screens */
+  }
+
+  .portfolio-grid-item img {
+    width: 100%;                /* images scale down properly */
+    height: auto;
+  }
+
+  .portfolio-grid-item .portfolio-tooltip {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+  }
+
+  .page-post-card__link {
+    max-width: 95%;             /* fit smaller screens */
+    margin: 1rem auto;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Portfolio grid items: margins for desktop/tablet only */
+.portfolio-grid-item h2,
+.portfolio-grid-item p {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+/* Remove horizontal margins on phones (max-width 480px) */
+@media screen and (max-width: 480px) {
+  .portfolio-grid-item h2,
+  .portfolio-grid-item p {
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
