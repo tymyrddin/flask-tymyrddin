@@ -671,3 +671,42 @@ input[type=submit]:hover {
     margin-bottom: 0.5rem;
   }
 }
+
+/* ULTIMATE OVERRIDES - Add at the very end */
+
+/* Target every possible container for background and spacing */
+.jenga-tower-page,
+.jenga-tower-page .blogpost-container,
+.jenga-tower-page .card-overlay,
+.jenga-tower-page .page__article_white {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background-color: #2A0A0A !important;
+}
+
+/* Preserve the map container positioning */
+.jenga-tower-page .jenga-tower-map {
+    position: relative !important;
+    max-width: 1280px !important;
+    margin: 0 auto !important;  /* This centers the image */
+    background-color: transparent !important;
+}
+
+/* Ensure the image itself has no extra space */
+.jenga-tower-page .full-bleed-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+    vertical-align: bottom;
+}
+
+/* Make the link a block with no line spacing */
+.jenga-tower-page .tower-link {
+    display: block;
+    line-height: 0;
+    font-size: 0;
+}
+
