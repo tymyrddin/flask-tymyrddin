@@ -713,7 +713,7 @@ input[type=submit]:hover {
 /* Small square image grid */
 .small-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 200px));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 160px));
   gap: 1rem;
   margin: 1.5rem 0;
   padding: 0;
@@ -778,7 +778,7 @@ input[type=submit]:hover {
 /* Responsive adjustments for small grid */
 @media screen and (max-width: 480px) {
   .small-grid {
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 0.75rem;
     margin: 1rem 0;
   }
@@ -791,21 +791,21 @@ input[type=submit]:hover {
 
 @media screen and (min-width: 481px) and (max-width: 768px) {
   .small-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 180px));
+    grid-template-columns: repeat(auto-fit, minmax(110px, 150px));
     gap: 1rem;
   }
 }
 
 @media screen and (min-width: 769px) and (max-width: 1080px) {
   .small-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 200px));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 160px));
     gap: 1.25rem;
   }
 }
 
 @media screen and (min-width: 1081px) {
   .small-grid {
-    grid-template-columns: repeat(auto-fit, 200px);
+    grid-template-columns: repeat(auto-fit, 160px);
     gap: 1.5rem;
   }
 }
