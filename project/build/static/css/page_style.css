@@ -503,64 +503,114 @@ input[type=submit]:hover {
     height: auto;
 }
 
-.block-hover {
-    position: absolute;
+/* Truth drift engine */
+
+.drift-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    justify-content: center;
+    margin: 3em auto 1em;
+    max-width: 1280px;
+    padding: 0 1em;
+    border: none;
+}
+
+.drift-step {
+    background: none;
+    border: 1px solid rgba(255,153,51,0.3);
+    border-radius: 3px;
+    color: rgba(255,255,255,0.5);
     cursor: pointer;
+    font-size: 0.8em;
+    letter-spacing: 0.06em;
+    padding: 0.4em 0.9em;
+    text-transform: uppercase;
+    transition: color 0.15s, border-color 0.15s;
 }
 
-.hover-note {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.6);
-    color: white;
-    font-size: 1.5em;
+.drift-step:hover {
+    color: #ff9933;
+    border-color: #ff9933;
+}
+
+.drift-step.active {
+    border-color: #ff9933;
+    color: #ff9933;
     font-weight: bold;
-    padding: 0.5em 1em;
-    border-radius: 6px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-    text-align: center;
-    max-width: 90%;
-    z-index: 2;
 }
 
-@media (max-width: 768px) {
-  .hover-note {
-    font-size: 1.2em;
-    padding: 0.4em 0.8em;
-  }
+.drift-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1280px;
+    margin: 1.5em auto 2em;
+    padding: 0 1em;
 }
 
-@media (max-width: 480px) {
-  .hover-note {
-    font-size: 1em;
-    padding: 0.3em 0.6em;
-  }
+.drift-nav-btn {
+    background: none;
+    border: 1px solid rgba(255,153,51,0.4);
+    border-radius: 3px;
+    color: #ff9933;
+    cursor: pointer;
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+    padding: 0.5em 1.2em;
+    text-transform: uppercase;
+    transition: background 0.15s;
 }
 
-.block-hover:nth-of-type(1):hover ~ #hover1,
-.block-hover:nth-of-type(2):hover ~ #hover2,
-.block-hover:nth-of-type(3):hover ~ #hover3,
-.block-hover:nth-of-type(4):hover ~ #hover4,
-.block-hover:nth-of-type(5):hover ~ #hover5,
-.block-hover:nth-of-type(6):hover ~ #hover6,
-.block-hover:nth-of-type(7):hover ~ #hover7,
-.block-hover:nth-of-type(8):hover ~ #hover8,
-.block-hover:nth-of-type(9):hover ~ #hover9,
-.block-hover:nth-of-type(10):hover ~ #hover10,
-.block-hover:nth-of-type(11):hover ~ #hover11,
-.block-hover:nth-of-type(12):hover ~ #hover12 {
-    opacity: 1;
+.drift-nav-btn:hover:not(:disabled) {
+    background: rgba(255,153,51,0.1);
 }
 
-.block-note {
-    display: none;
-    margin: 1em 0;
-    padding: 0.5em;
-    background: rgba(255,255,255,0.95);
+.drift-nav-btn:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+.drift-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-auto-rows: 12em;
+    gap: 1em;
+    max-width: 1280px;
+    margin: 0 auto 2em;
+    padding: 0 1em;
+}
+
+.drift-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,153,51,0.25);
+    border-radius: 4px;
+    padding: 1em 1.2em;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.drift-card-name {
+    font-size: 0.8em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ff9933;
+    margin: 0 0 0.5em;
+}
+
+.drift-card-text {
+    font-size: 0.95em;
+    color: rgba(255,255,255,0.85);
+    margin: 0;
+    line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+    .drift-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Page container adjustments for small screens */
