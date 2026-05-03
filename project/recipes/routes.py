@@ -14,7 +14,7 @@ CONCEPTS = [
         "operational_reality": "Patches are applied promptly, where 'promptly' is defined in a governance appendix as 'within eighteen months, barring documented exceptions.'",
         "failure_mode": "The patch was available in March. The Change Advisory Board met in November. The attackers were not on the Committee.",
         "org_incentive": "The schedule satisfies the auditor, who checks whether a schedule exists, not whether it is followed. This has suited everyone.",
-        "impact": "The CEO announced the company took security extremely seriously and had commissioned an urgent review. The review was conducted by the same consultancy that had certified the patch management process four months earlier. They found areas for improvement.",
+        "impact": "The CEO announced taking security extremely seriously and commissioned an urgent review. It was conducted by the same consultancy that certified the process four months earlier. They found areas for improvement.",
     },
     {
         "name": "Logs arrive on time",
@@ -46,7 +46,7 @@ CONCEPTS = [
         "operational_reality": "Backup jobs complete and send confirmation emails to a list that includes three departed employees and one who routes these to a folder called 'Automated - Do Not Read.'",
         "failure_mode": "The ransomware encrypted the primary data at 2am. The backup job ran at 3am, as scheduled, and produced a meticulous encrypted copy, retained for thirty days, with offsite replication.",
         "org_incentive": "Backup existence is a line item in client questionnaires. Whether backups are tested appears in the optional section, which is optional.",
-        "impact": "The ransom was paid. A lessons-learned exercise identified fourteen improvements to backup procedures. These were added to the security roadmap for the following financial year, where they joined eleven improvements from the previous incident.",
+        "impact": "The ransom was paid. A post-mortem identified fourteen improvements to backup procedures. These were added to the security roadmap for the following financial year, where they joined eleven improvements from the previous incident.",
     },
     {
         "name": "Staff know the plan",
@@ -102,7 +102,7 @@ CONCEPTS = [
         "operational_reality": "The emergency change procedure allows CAB to be bypassed when waiting would cause unacceptable risk. Senior managers called at 11pm tend to find most risk unacceptable.",
         "failure_mode": "The change was raised as emergency at 11:43pm, approved at 11:44pm, and caused a nine-hour outage. The post-incident review classified it as a process compliance success. The form had been filed correctly.",
         "org_incentive": "A correctly filed emergency change form means the process was followed, regardless of outcome. The process protects the organisation. The organisation is not the same as the systems it operates.",
-        "impact": "The outage cost €400,000 and affected 23,000 customers. The change manager received a commendation for ensuring the emergency change form was filed within the required timeframe. The approving manager was asked to complete additional training.",
+        "impact": "The outage cost €400,000 and affected 23,000 customers. The change manager received a commendation for filing the emergency in time. The approving manager was asked to complete additional training.",
     },
 ]
 
