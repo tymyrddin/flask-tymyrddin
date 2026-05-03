@@ -71,33 +71,32 @@ li {
 /* Navigation Bar */
 header {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   margin: 0;
-  padding: 0.5rem 0.4rem;
+  padding: 0.5rem 1rem;
   background-color: rgba(22,5,5,0.8);
   font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
   font-weight: normal;
   font-style: normal;
   box-shadow: 0 0 88px 0 rgba(0, 0, 0, 0.52);
-  color: #191919;
 }
 
 @media screen and (min-width: 1081px) {
   header {
     padding: 1rem 3rem;
-    flex-direction: row;
-    text-align: center;
+    flex-wrap: nowrap;
   }
 }
 
 header h1 {
-  text-align: center;
   text-transform: uppercase;
   font-size: 1rem;
   margin: 0;
-  padding: 0.6rem 0;
+  padding: 0.4rem 0;
+  flex-shrink: 0;
 }
 
 header h1 a {
@@ -105,74 +104,80 @@ header h1 a {
   color: white;
 }
 
-@media screen and (max-width: 480px) {
-  header h1 {
-    font-size: 0.85rem;
+/* Hamburger button */
+.nav-toggle {
+  display: block;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  line-height: 1;
+}
+
+@media screen and (min-width: 1081px) {
+  .nav-toggle {
+    display: none;
   }
 }
 
-@media screen and (min-width: 1081px) {
-    header h1 {
-      font-size: 0.9rem;
-      text-align: none;
-      padding-bottom: 0;
-    }
+/* Nav: hidden on mobile by default, full-width drop-down when open */
+#site-nav {
+  display: none;
+  width: 100%;
 }
 
-nav {
-  margin: auto 0;
+header.nav-open #site-nav {
+  display: block;
 }
 
-nav ul {
+#site-nav ul {
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  flex-direction: column;
   list-style: none;
-  flex-wrap: wrap;
+  padding: 0.5rem 0;
+  gap: 0.6rem;
 }
 
+/* Desktop nav */
 @media screen and (min-width: 1081px) {
-  nav ul {
-    justify-content: space-between;
+  #site-nav {
+    display: block;
+    width: auto;
+  }
+
+  #site-nav ul {
+    flex-direction: row;
+    gap: 0;
+    padding: 0;
   }
 }
 
 .nav__item {
-    list-style: none;
+  list-style: none;
 }
 
 .nav__link, .nav__link:visited {
   text-decoration: none;
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   color: white;
   text-transform: uppercase;
   font-weight: 700;
 }
 
-@media screen and (max-width: 480px) {
-  .nav__link, .nav__link:visited {
-    font-size: 0.65rem;
-  }
-}
-
 .nav__item + .nav__item {
-  margin-left: 0.5rem;
-}
-
-@media screen and (max-width: 480px) {
-  .nav__item + .nav__item {
-    margin-left: 0.3rem;
-  }
+  margin-left: 0;
 }
 
 @media screen and (min-width: 1081px) {
-    .nav__link, .nav__link:visited {
-        font-size: 0.9rem;
-    }
+  .nav__link, .nav__link:visited {
+    font-size: 0.9rem;
+  }
 
-    .nav__item + .nav__item {
-        margin-left: 2.0rem;
-    }
+  .nav__item + .nav__item {
+    margin-left: 2rem;
+  }
 }
 
 /* Cards */

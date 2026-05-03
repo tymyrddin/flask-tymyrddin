@@ -25,9 +25,10 @@
     </head>
 
     <body>
-        <header>
+        <header id="site-header">
             <h1><a href="/">Ty Myrddin Home</a></h1>
-            <nav>
+            <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">&#9776;</button>
+            <nav id="site-nav">
                 <ul>
                     <li class="nav__item"><a href="{{ url_for('recipes.services_recipes') }}" class="nav__link">Services</a></li>
                     <li class="nav__item"><a href="{{ url_for('recipes.about') }}" class="nav__link">About</a></li>
@@ -72,5 +73,15 @@
             {% endif %}
             {% endblock %}
         </footer>
+        <script>
+        (function() {
+            var btn = document.querySelector('.nav-toggle');
+            var header = document.getElementById('site-header');
+            btn.addEventListener('click', function() {
+                var open = header.classList.toggle('nav-open');
+                btn.setAttribute('aria-expanded', open);
+            });
+        })();
+        </script>
     </body>
 </html>
