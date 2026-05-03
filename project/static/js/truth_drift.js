@@ -5,6 +5,7 @@ const LENSES = [
     { key: 'operational_reality', label: 'The Operational Reality'       },
     { key: 'failure_mode',        label: 'How It Fails'                  },
     { key: 'org_incentive',       label: 'Why It Persists'               },
+    { key: 'impact',              label: 'The Impact'                    },
 ];
 
 let current = 0;

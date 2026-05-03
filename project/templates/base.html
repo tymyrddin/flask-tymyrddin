@@ -73,15 +73,6 @@
             {% endif %}
             {% endblock %}
         </footer>
-        <script>
-        (function() {
-            var btn = document.querySelector('.nav-toggle');
-            var header = document.getElementById('site-header');
-            btn.addEventListener('click', function() {
-                var open = header.classList.toggle('nav-open');
-                btn.setAttribute('aria-expanded', open);
-            });
-        })();
-        </script>
+        <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
     </body>
 </html>

@@ -63,7 +63,7 @@ Run development server to serve the Flask application:
 
 Navigate to 'http://localhost:3000' to view the website!
 
-## Build the Static Files
+## Build the static files
 
 In the top-level directory, run the build script:
 

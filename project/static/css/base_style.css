@@ -129,9 +129,6 @@ header h1 a {
   width: 100%;
 }
 
-header.nav-open #site-nav {
-  display: block;
-}
 
 #site-nav ul {
   display: flex;
