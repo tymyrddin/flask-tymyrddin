@@ -114,6 +114,7 @@ header h1 a {
   cursor: pointer;
   padding: 0.2rem 0.4rem;
   line-height: 1;
+  margin-left: auto;
 }
 
 @media screen and (min-width: 1081px) {
@@ -145,6 +146,7 @@ header.nav-open #site-nav {
   #site-nav {
     display: block;
     width: auto;
+    margin-left: auto;
   }
 
   #site-nav ul {

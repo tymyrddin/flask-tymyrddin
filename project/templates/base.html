@@ -26,10 +26,10 @@
 
     <body>
         <header id="site-header">
-            <h1><a href="/">Ty Myrddin Home</a></h1>
             <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">&#9776;</button>
             <nav id="site-nav">
                 <ul>
+                    <li class="nav__item"><a href="{{ url_for('recipes.recipes') }}" class="nav__link">Home</a></li>
                     <li class="nav__item"><a href="{{ url_for('recipes.services_recipes') }}" class="nav__link">Services</a></li>
                     <li class="nav__item"><a href="{{ url_for('recipes.about') }}" class="nav__link">About</a></li>
                     <li class="nav__item"><a href="{{ url_for('recipes.portfolio_recipes') }}" class="nav__link">Projects</a></li>
