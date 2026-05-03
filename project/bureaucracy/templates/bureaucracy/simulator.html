@@ -4,6 +4,8 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bureaucracy_style.css') }}">
 {% endblock %}
 
+{% block footer %}{% endblock %}
+
 {% block content %}
 <script type="application/json" id="phrase-bank-data">{{ phrase_bank | tojson }}</script>
 
