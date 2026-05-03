@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Ty Myrddin Main</title>
+
+        <!-- Favicons -->
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
+        <link rel="manifest" href="/static/favicons/site.webmanifest">
+        <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#333333">
+        <link rel="shortcut icon" href="/static/favicons/favicon.ico" type="image/x-icon">
+        <meta name="msapplication-TileColor" content="#333333">
+        <meta name="theme-color" content="#000000">
+
+        <!-- Local CSS file for styling the application-->
+        <link rel="stylesheet" href="/static/css/base_style.css">
+
+        <!-- Additional Styling -->
+        
+<link rel="stylesheet" href="/static/css/bureaucracy_style.css">
+
+    </head>
+
+    <body>
+        <header>
+            <h1><a href="/">Ty Myrddin Home</a></h1>
+            <nav>
+                <ul>
+                    <li class="nav__item"><a href="/services/" class="nav__link">Services</a></li>
+                    <li class="nav__item"><a href="/about/" class="nav__link">About</a></li>
+                    <li class="nav__item"><a href="/portfolio/" class="nav__link">Projects</a></li>
+                    <li class="nav__item"><a href="/search/" class="nav__link">Discovery</a></li>
+                    <li class="nav__item"><a href="/bureaucracy/" class="nav__link">The Process</a></li>
+                    <li class="nav__item"><a href="https://broomstick.tymyrddin.dev" class="nav__link">Broomstick</a></li>
+                    <li class="nav__item"><a href="/contact/" class="nav__link">Contact</a></li>
+                    <li class="nav__item"><a href="/documents/" class="nav__link">Legalities</a></li>
+                </ul>
+            </nav>
+
+        </header>
+
+        <main class="content">
+            <!-- child template -->
+            
+<script type="application/json" id="phrase-bank-data">{"close_reasons": ["Accepted risk: concern acknowledged, remediation deferred to next governance cycle.", "Out of scope: concern falls outside current programme boundaries.", "Duplicate: concern merged with existing registered item.", "Resolved via policy: compensating control documented and approved.", "Not reproducible: insufficient evidence to substantiate concern as submitted.", "Ownership unresolved: concern archived pending governance clarification.", "Informational only: no remediation action required at this time."], "hybrid": {"classify": ["concern spans IT/OT boundary; ownership determination pending", "system type ambiguity requires cross-domain assessment", "classified as hybrid risk requiring dual governance track", "IT security controls not applicable to OT environment; OT controls not applicable to IT interface", "reclassified as integration boundary concern, routed to both domains"], "close": ["closed as organisationally unresolvable at present stage of IT/OT integration", "deferred to IT/OT convergence strategy, publication date TBD", "formally accepted as residual risk of hybrid architecture", "closed: both domains have documented the concern; neither owns the resolution", "archived pending establishment of cross-domain governance body"], "review": ["OT safety constraints prevent IT-standard remediation timeline", "IT risk acceptance process does not map to OT change control requirements", "cannot be resolved without cross-domain governance framework, currently in draft", "hybrid environment lacks unified risk register; concern noted in both", "remediation requires coordination that exceeds current programme scope"], "route": ["ownership contested between IT security and OT engineering", "referred to IT/OT convergence working group for determination", "transferred to hybrid systems team, currently being established", "neither IT nor OT domain accepts ownership; escalated to programme governance", "joint review requested; scheduling pending due to maintenance window conflict"]}, "it": {"classify": ["classified as informational finding pending severity review", "assigned to risk acceptance working group", "categorised as out-of-scope for current assessment cycle", "reclassified as operational concern rather than security incident", "severity downgraded following preliminary assessment"], "close": ["closed as accepted risk per enterprise risk framework", "resolved via policy exception approval", "closed: compensating control documented and approved", "marked as tolerated risk, reviewed annually", "closed as out of scope for current programme"], "intake": ["concern logged and assigned to appropriate queue", "ticket created and pending triage", "issue recorded for review in next sprint cycle", "submission acknowledged; SLA clock started", "concern captured in risk register for quarterly review"], "review": ["concern does not meet threshold for immediate action", "compensating controls deemed sufficient pending full remediation", "risk formally accepted by business owner", "finding noted in security backlog for future sprint", "issue deferred to next compliance cycle"], "route": ["ownership transferred to application team for remediation", "escalated to CAB for next available change window", "forwarded to vendor support for root cause analysis", "referred to risk management team for formal acceptance", "assigned to security architecture for design review"]}, "ot": {"change_control": ["remediation subject to formal Management of Change procedure", "requires multi-disciplinary engineering approval cycle", "deployment contingent on operational readiness certification", "change deferred pending governance alignment across plant stakeholders", "requires full revalidation prior to production integration"], "downtime": ["remediation requires scheduled production interruption", "cannot be applied outside defined maintenance window", "continuous operation constraint prevents immediate intervention", "change execution contingent on shutdown approval cycle", "availability requirements supersede remediation urgency"], "incident": ["deviation from expected process control behaviour detected", "operational state transition outside defined safety envelope", "equipment response inconsistent with control logic expectations", "loss of process visibility due to telemetry disruption", "control system anomaly under investigation"], "legacy": ["remediation constrained by legacy control system dependencies", "modification requires full system recertification", "legacy process integration prevents isolated patching", "change propagation risk across industrial control chain", "decommissioning required before secure remediation feasible"], "monitoring": ["visibility constrained by process telemetry limitations", "monitoring dependent on historian data fidelity", "alarm fatigue affecting signal reliability", "sensor calibration drift impacting detection accuracy", "observability limited by control system architecture"], "process_dependency": ["introduces variability into closed-loop control behaviour", "requires validation against physical process constraints", "may alter deterministic control timing assumptions", "requires recalibration of dependent instrumentation systems", "introduces uncertainty into process feedback loop"], "risk": ["risk of deviation from safe operating parameters", "risk of uncontrolled process behaviour", "risk of cascading operational disruption", "risk of failure in safety interlock response", "risk of sustained loss of process control integrity"], "safety_constraint": ["requires safety impact assessment before any change", "not eligible for standard remediation due to safety envelope constraints", "operational hazard classification prevents immediate action", "requires reassessment under process safety governance", "mitigation deferred to maintain safe operating state"], "safety_instrumentation": ["modification requires validation of safety instrumented functions", "interlock integrity must be preserved during remediation", "changes subject to emergency shutdown system certification", "fail-safe behaviour must remain guaranteed under all conditions", "safety layer bypass strictly prohibited without formal waiver"], "vendor_lock": ["remediation subject to OEM certification lifecycle", "requires alignment with vendor-supported operational envelope", "change restricted by proprietary system governance", "patching contingent on supplier validation cycle", "resolution dependent on external engineering authority"]}}</script>
+
+<div class="bureaucracy-container">
+
+    <div class="stage-progress" id="stage-progress">
+        <div class="stage-dot" id="progress-submit">
+            <div class="dot-circle">1</div>
+            <div class="dot-label">Intake</div>
+        </div>
+        <div class="stage-connector"></div>
+        <div class="stage-dot" id="progress-classify">
+            <div class="dot-circle">2</div>
+            <div class="dot-label">Classify</div>
+        </div>
+        <div class="stage-connector"></div>
+        <div class="stage-dot" id="progress-route">
+            <div class="dot-circle">3</div>
+            <div class="dot-label">Route</div>
+        </div>
+        <div class="stage-connector"></div>
+        <div class="stage-dot" id="progress-review">
+            <div class="dot-circle">4</div>
+            <div class="dot-label">Review</div>
+        </div>
+        <div class="stage-connector"></div>
+        <div class="stage-dot" id="progress-close">
+            <div class="dot-circle">5</div>
+            <div class="dot-label">Close</div>
+        </div>
+    </div>
+
+    <div class="stage-panel stage-active" id="stage-submit">
+        <div class="stage-header">
+            <h2>Security Concern Intake</h2>
+            <p class="stage-subtext">Submit your concern for processing</p>
+        </div>
+        <div class="stage-body">
+            <div class="field-group">
+                <label for="concern-description">Describe the security concern</label>
+                <textarea id="concern-description" rows="4"
+                    placeholder="Describe the concern in as much detail as available"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="field-group">
+                    <label for="severity">Severity</label>
+                    <select id="severity">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="system-type">System type</label>
+                    <select id="system-type">
+                        <option value="it">IT</option>
+                        <option value="ot">OT / ICS</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="urgency">Urgency</label>
+                    <select id="urgency">
+                        <option value="routine">Routine</option>
+                        <option value="elevated">Elevated</option>
+                        <option value="immediate">Immediate</option>
+                    </select>
+                </div>
+            </div>
+            <p class="form-hint">Ctrl+Enter to submit</p>
+            <button type="button" id="btn-submit" class="proc-btn proc-btn-primary">Submit Concern</button>
+        </div>
+    </div>
+
+    <div class="stage-panel" id="stage-classify">
+        <div class="stage-header">
+            <h2>Concern Classification</h2>
+            <p class="stage-subtext">Ref. SEC-PROC-4.2: Taxonomy Assignment</p>
+        </div>
+        <div class="stage-body"></div>
+    </div>
+
+    <div class="stage-panel" id="stage-route">
+        <div class="stage-header">
+            <h2>Ownership and Routing</h2>
+            <p class="stage-subtext">Ref. SEC-PROC-7.1: Responsibility Matrix</p>
+        </div>
+        <div class="stage-body"></div>
+    </div>
+
+    <div class="stage-panel" id="stage-review">
+        <div class="stage-header">
+            <h2>Preliminary Assessment</h2>
+            <p class="stage-subtext">Ref. SEC-PROC-9.3: Risk Determination</p>
+        </div>
+        <div class="stage-body"></div>
+    </div>
+
+    <div class="stage-panel" id="stage-close">
+        <div class="stage-header">
+            <h2>Resolution and Closure</h2>
+            <p class="stage-subtext">Ref. SEC-PROC-12.0: Case Management</p>
+        </div>
+        <div class="stage-body"></div>
+    </div>
+
+    <div class="audit-trail" id="audit-trail">
+        <h3>Processing History</h3>
+        <ul id="audit-list"></ul>
+    </div>
+
+</div>
+
+<script src="/static/js/bureaucracy.js"></script>
+
+        </main>
+
+        <footer>
+
+            
+            <div class="news-banner">
+
+                <div class="news-items-wrapper">
+                    
+                    <span class="news-item">
+                        <a href="https://broomstick.tymyrddin.dev/posts/kafkaesque-nis2/" target="_blank" rel="noopener noreferrer">NIS2 compliance: The Kafkaesque burden on Europe’s companies</a>
+                        <small>(2025-11-26)</small>
+                    </span>
+                    
+                    <span class="news-item">
+                        <a href="https://broomstick.tymyrddin.dev/posts/architecture-review/" target="_blank" rel="noopener noreferrer">Architecture reviews that approve instead of challenge</a>
+                        <small>(2026-04-02)</small>
+                    </span>
+                    
+                    <span class="news-item">
+                        <a href="https://broomstick.tymyrddin.dev/posts/red-lanterns/" target="_blank" rel="noopener noreferrer">Patrician&#39;s strategic intervention to building a purple-team simulator</a>
+                        <small>(2026-01-13)</small>
+                    </span>
+                    
+
+                    
+                    <span class="news-item">
+                        <a href="https://broomstick.tymyrddin.dev/posts/kafkaesque-nis2/" target="_blank" rel="noopener noreferrer">NIS2 compliance: The Kafkaesque burden on Europe’s companies</a>
+                        <small>(2025-11-26)</small>
+                    </span>
+                    
+                    <span class="news-item">
+                        <a href="https://broomstick.tymyrddin.dev/posts/architecture-review/" target="_blank" rel="noopener noreferrer">Architecture reviews that approve instead of challenge</a>
+                        <small>(2026-04-02)</small>
+                    </span>
+                    
+                    <span class="news-item">
+                        <a href="https://broomstick.tymyrddin.dev/posts/red-lanterns/" target="_blank" rel="noopener noreferrer">Patrician&#39;s strategic intervention to building a purple-team simulator</a>
+                        <small>(2026-01-13)</small>
+                    </span>
+                    
+                </div>
+            </div>
+            
+
+        </footer>
+    </body>
+</html>
