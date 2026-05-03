@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bureaucracy_style.css') }}">
+{% endblock %}
+
+{% block content %}
+<script type="application/json" id="phrase-bank-data">{{ phrase_bank | tojson }}</script>
+
+<div class="bureaucracy-container">
+
+    <div class="stage-progress" id="stage-progress">
+        <div class="stage-dot" id="progress-submit">
+            <div class="dot-circle">1</div>
+            <div class="dot-label">Intake</div>
+        </div>
+        <div class="stage-connector"></div>
+        <div class="stage-dot" id="progress-classify">
+            <div class="dot-circle">2</div>
+            <div class="dot-label">Classify</div>
+        </div>
+        <div class="stage-connector"></div>
+        <div class="stage-dot" id="progress-route">
+            <div class="dot-circle">3</div>
+            <div class="dot-label">Route</div>
+        </div>
+        <div class="stage-connector"></div>
+        <div class="stage-dot" id="progress-review">
+            <div class="dot-circle">4</div>
+            <div class="dot-label">Review</div>
+        </div>
+        <div class="stage-connector"></div>
+        <div class="stage-dot" id="progress-close">
+            <div class="dot-circle">5</div>
+            <div class="dot-label">Close</div>
+        </div>
+    </div>
+
+    <div class="stage-panel stage-active" id="stage-submit">
+        <div class="stage-header">
+            <h2>Security Concern Intake</h2>
+            <p class="stage-subtext">Submit your concern for processing</p>
+        </div>
+        <div class="stage-body">
+            <div class="field-group">
+                <label for="concern-description">Describe the security concern</label>
+                <textarea id="concern-description" rows="4"
+                    placeholder="Describe the concern in as much detail as available"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="field-group">
+                    <label for="severity">Severity</label>
+                    <select id="severity">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="system-type">System type</label>
+                    <select id="system-type">
+                        <option value="it">IT</option>
+                        <option value="ot">OT / ICS</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="urgency">Urgency</label>
+                    <select id="urgency">
+                        <option value="routine">Routine</option>
+                        <option value="elevated">Elevated</option>
+                        <option value="immediate">Immediate</option>
+                    </select>
+                </div>
+            </div>
+            <p class="form-hint">Ctrl+Enter to submit</p>
+            <button type="button" id="btn-submit" class="proc-btn proc-btn-primary">Submit Concern</button>
+        </div>
+    </div>
+
+    <div class="stage-panel" id="stage-classify">
+        <div class="stage-header">
+            <h2>Concern Classification</h2>
+            <p class="stage-subtext">Ref. SEC-PROC-4.2: Taxonomy Assignment</p>
+        </div>
+        <div class="stage-body"></div>
+    </div>
+
+    <div class="stage-panel" id="stage-route">
+        <div class="stage-header">
+            <h2>Ownership and Routing</h2>
+            <p class="stage-subtext">Ref. SEC-PROC-7.1: Responsibility Matrix</p>
+        </div>
+        <div class="stage-body"></div>
+    </div>
+
+    <div class="stage-panel" id="stage-review">
+        <div class="stage-header">
+            <h2>Preliminary Assessment</h2>
+            <p class="stage-subtext">Ref. SEC-PROC-9.3: Risk Determination</p>
+        </div>
+        <div class="stage-body"></div>
+    </div>
+
+    <div class="stage-panel" id="stage-close">
+        <div class="stage-header">
+            <h2>Resolution and Closure</h2>
+            <p class="stage-subtext">Ref. SEC-PROC-12.0: Case Management</p>
+        </div>
+        <div class="stage-body"></div>
+    </div>
+
+    <div class="audit-trail" id="audit-trail">
+        <h3>Processing History</h3>
+        <ul id="audit-list"></ul>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/bureaucracy.js') }}"></script>
+{% endblock %}
