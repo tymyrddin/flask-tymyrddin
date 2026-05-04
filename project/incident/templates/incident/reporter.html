@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/incident_style.css') }}">
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block content %}
+<script type="application/json" id="translation-rules">{{ rules | tojson }}</script>
+
+<div class="incident-container">
+
+    <!-- Input form -->
+    <div id="incident-form-section">
+        <div class="incident-panel">
+            <div class="incident-header">
+                <h2>Incident Translation Service</h2>
+                <p class="incident-subtext">Enter your plain-language description of what happened. Formal translation will be applied for governance and audit purposes.</p>
+            </div>
+            <div class="incident-body">
+                <div class="field-group">
+                    <label for="incident-input">Describe what happened</label>
+                    <textarea id="incident-input" rows="6"
+                        placeholder="Describe the incident in plain language. Include what was found, how, and what you did about it."></textarea>
+                    <p class="form-hint">Your description will be translated into audit-compliant terminology. The original text will be retained in the operational record only.</p>
+                </div>
+                <button class="proc-btn proc-btn-primary" id="translate-btn">TRANSLATE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Translation output -->
+    <div id="translation-output" style="display:none;">
+
+        <div class="translation-output-panel">
+            <div class="translation-output-header">
+                <h2>Translation Record</h2>
+                <p>The following translation has been applied to the submitted description. All terminology conforms to the Incident Response Framework and is suitable for inclusion in governance documentation.</p>
+            </div>
+            <table class="translation-table">
+                <thead>
+                    <tr>
+                        <th class="col-submitted">As submitted</th>
+                        <th class="col-official">Official language</th>
+                        <th class="col-subtext">Underlying qualifier</th>
+                    </tr>
+                </thead>
+                <tbody id="translation-tbody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Operational record -->
+        <div class="pir-operational-record">
+            <div class="pir-or-header">
+                <p class="pir-or-label">Operational Record</p>
+            </div>
+            <div class="pir-or-body">
+                <p class="pir-or-description" id="pir-or-input"></p>
+                <p class="pir-or-note">The above represents the raw operational input as submitted. This content was not retained in the governance record.</p>
+            </div>
+        </div>
+
+        <button class="proc-btn proc-btn-secondary" id="translate-again-btn">Translate Another Incident</button>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/incident.js') }}"></script>
+{% endblock %}

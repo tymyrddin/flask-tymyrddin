@@ -41,12 +41,14 @@ def register_blueprints(app):
     from project.recipes import recipes_blueprint
     from project.blog import blog_blueprint
     from project.bureaucracy import bureaucracy_blueprint
+    from project.incident import incident_blueprint
 
     # Since the application instance is now created, register each Blueprint
     # with the Flask application instance (app)
     app.register_blueprint(recipes_blueprint)
     app.register_blueprint(blog_blueprint)
     app.register_blueprint(bureaucracy_blueprint)
+    app.register_blueprint(incident_blueprint)
 
 def register_routes(app):
     @app.route("/search/")

@@ -1,0 +1,2782 @@
+from . import incident_blueprint
+from flask import render_template
+
+
+TRANSLATION_RULES = [
+    {
+        "keywords": ["oh fuck", "oh shit", "oh no", "oh god", "holy shit", "panicking", "oh dear",
+                     "this is bad", "this is not good", "the building is on fire", "pls send help",
+                     "red alert", "all hands", "we have a situation", "we're in trouble", "mayday",
+                     "seriously bad", "code red", "everything is on fire", "help us"],
+        "official": "A matter of operational significance was identified.",
+        "subtext": "confirmed incident"
+    },
+    {
+        "keywords": ["personal access token", "pat ", " pat,", "api token", "access token", "pat with",
+                     "GH token", "github token", "gitlab token", "bearer token", "oauth token",
+                     "deploy key", "secret token", "service token", "the pat ", "PAT was", "my pat",
+                     "our pat", "application token", "fine-grained pat"],
+        "official": "A privileged access credential was identified as the likely initial access vector.",
+        "subtext": "preliminary findings indicate, attribution not confirmed"
+    },
+    {
+        "keywords": ["full repo", "full access", "all repos", "all repositories", "excessive permission", "broad permission",
+                     "admin on everything", "root on the box", "global admin", "wildcard permissions",
+                     "owner of the repo", "contributor on all", "can write everywhere", "too many permissions",
+                     "overprivileged", "permission sprawl", "super admin", "elevated rights", "unrestricted access"],
+        "official": "Access scope was assessed as inconsistent with the principle of least privilege.",
+        "subtext": "access control configuration assessed as inconsistent with policy"
+    },
+    {
+        "keywords": ["ci/cd", "cicd", "npm install", "build step", "supply chain", "build pipeline",
+                     "jenkins", "github actions", "gitlab runner", "circleci", "deploy script",
+                     "release pipeline", "build server", "automated deployment", "ci system",
+                     "from the pipeline", "in the pipeline", "devops pipeline", "workflow ran"],
+        "official": "The automated build pipeline was identified as a contributing factor in the propagation of the incident.",
+        "subtext": "investigation ongoing pending additional artefacts"
+    },
+    {
+        "keywords": [".env file", "env file", "environment variable", "environment secret", "secrets to a remote",
+                     "dotenv", "config file with secrets", "credentials in env", "secret leaked",
+                     "exposed in code", "committed .env", ".bashrc", ".zshrc", "env vars",
+                     "env variable", "the .env", "env secrets", "leaked env"],
+        "official": "Sensitive configuration data was assessed as potentially accessible to the threat actor.",
+        "subtext": "potential exposure cannot be ruled out"
+    },
+    {
+        "keywords": ["piped", "piping secrets", "remote server", "to a remote",
+                     "exfiltrated", "sent to", "uploaded to", "POSTed to", "cURL to",
+                     "wget to", "transferring data out", "data leaving the network", "sending to an external IP",
+                     "sending offsite", "beaconing data out"],
+        "official": "Data was identified as having been transmitted to external infrastructure.",
+        "subtext": "no evidence of data exfiltration, meaning: evidence is what we happened to collect"
+    },
+    {
+        "keywords": ["crypto mining", "cryptocurrency", "monero", "mining monero", "spin up", "compute instance",
+                     "mining rig", "cryptojacking", "xmrig", "coinhive", "high cpu usage unknown",
+                     "cpu 100% from unknown process", "someone mining", "crypto miner", "unexpected ec2 instances",
+                     "mining operation", "stratum", "pool mining"],
+        "official": "Anomalous resource consumption was identified within the affected environment.",
+        "subtext": "lateral movement not observed beyond scope of investigation"
+    },
+    {
+        "keywords": ["cloud bill", "billing alert", "cost alert", "\\bcloud cost\\b", "spend alert", "bill alert",
+                     "aws bill", "azure spend", "gcp bill", "unexpected charges", "$10k spike",
+                     "cost explosion", "budget alarm", "we got a bill for", "cloud cost spike"],
+        "official": "The matter was identified via automated cost monitoring.",
+        "subtext": "detected by monitoring controls"
+    },
+    {
+        "keywords": ["machine was pwned", "developer's machine", "endpoint", "workstation.*compromised", "compromised.*workstation", "workstation.*infected", "laptop", "machine compromised", "pwned",
+                     "dev box", "someone's machine", "compromised laptop", "infected pc", "owned machine",
+                     "backdoored endpoint", "personal device compromised", "my machine acting weird",
+                     "developer laptop infected", "endpoint owned"],
+        "official": "A potential endpoint compromise has been identified as a contributing factor. The scope of the endpoint compromise has not been fully established.",
+        "subtext": "based on available evidence, evidence is what we happened to collect"
+    },
+    {
+        "keywords": ["unknown plugin", "unauthorized plugin", "not deployed by us", "wp-cache", "rogue plugin", "unexpected software",
+                     "random plugin", "we didn't install", "mystery plugin", "suspicious extension",
+                     "unrecognised app", "what is this cron job", "unfamiliar binary",
+                     "rogue application", "unauthorized software"],
+        "official": "An anomalous software component was identified within the affected environment.",
+        "subtext": "anomalous activity, investigation ongoing"
+    },
+    {
+        "keywords": ["file upload", "upload vuln", "file manager", "wp-file-manager", "authenticated file upload",
+                     "CVE-2020-25213", "unrestricted upload", "upload bypass", "plugin exploit",
+                     "theme exploit", "zero-day upload", "malicious upload", "file upload flaw",
+                     "arbitrary file upload"],
+        "official": "Initial access was achieved via exploitation of a known vulnerability in a third-party component.",
+        "subtext": "identified retrospectively during forensic analysis"
+    },
+    {
+        "keywords": ["web shell", "webshell", "backdoor", ".php inside", "php shell", "shell gave them",
+                     "shell.php", "cmd.php", "p0wny shell", "r57", "c99", "shell uploaded",
+                     "they left a shell", "access maintained via", "persistent backdoor",
+                     "backdoor script", "web access shell"],
+        "official": "A persistent access mechanism was identified and removed from the affected environment.",
+        "subtext": "investigation ongoing, full scope of access not yet determined"
+    },
+    {
+        "keywords": ["undetected.*for weeks", "for weeks.*undetected", "undetected.*for months", "for months.*undetected",
+                     "went on.*for weeks", "went on.*for months", "weeks before", "months before",
+                     "quietly mining", "had been quietly", "present.*for.*weeks", "present.*for.*months",
+                     "active.*for.*weeks", "active.*for.*months",
+                     "it's been there for months", "they've been in since", "active since Jan",
+                     "probably since the upgrade", "going on for", "has been happening for ages",
+                     "how long? who knows?", "since at least", "dwelling for"],
+        "official": "The matter had been present for an extended period prior to identification. The duration of the activity cannot be fully confirmed from available records.",
+        "subtext": "no indication of…, meaning: we did not look during this period"
+    },
+    {
+        "keywords": ["c2 domain", "c2 server", "command and control", "c2 infrastructure", "found their c2",
+                     "C&C", "cnc", "beaconing", "callbacks to", "phoning home to",
+                     "the beacon", "C2 IP", "command server", "c2 traffic"],
+        "official": "External command infrastructure was identified via log analysis.",
+        "subtext": "attribution not confirmed"
+    },
+    {
+        "keywords": ["staging wasn't behind", "not behind the waf", "staging.*waf", "waf not cover", "why did waf not",
+                     "waf missed it", "not in waf scope", "dev env not behind waf", "pre-prod no waf",
+                     "no modsec", "cloudfront bypass", "bypassed waf", "waf gap"],
+        "official": "The affected environment was outside the scope of preventive web application firewall coverage.",
+        "subtext": "within scope of current tooling, meaning: everything outside is invisible"
+    },
+    {
+        "keywords": ["rdp", "port 3389", "remote desktop", "3389",
+                     "rdp open", "3389/tcp", "tsgrill", "remote access port open", "rdp to the world",
+                     "exposed RDP", "open rdp"],
+        "official": "A remote access service was identified as externally exposed.",
+        "subtext": "network access controls assessed as inconsistent with policy"
+    },
+    {
+        "keywords": ["0.0.0.0", "exposed to the internet", "open to internet", "publicly accessible", "exposed to 0",
+                     "open to 0.0.0.0", "listening on all interfaces", "public IP binding", "any:any",
+                     "0/0", "world accessible", "internet-facing", "open to the world"],
+        "official": "Network access control configuration was assessed as inconsistent with current policy.",
+        "subtext": "network access controls assessed as inconsistent with policy"
+    },
+    {
+        "keywords": ["gonna fix", "fix it later", "planned to fix", "going to fix", "needed access from home", "was gonna",
+                     "was planning to", "on the todo list", "we had a ticket for", "was scheduled but",
+                     "kept postponing", "backlog item", "to be done next sprint", "didn't get around to",
+                     "still on the list"],
+        "official": "A remediation action had been identified but not yet implemented at the time of the incident.",
+        "subtext": "at time of writing, meaning: this may change immediately"
+    },
+    {
+        "keywords": ["ransomware gang", "well-known ransomware", "known gang", "ransomware group", "threat actor", "well-known gang",
+                     "REvil", "LockBit", "BlackCat", "ALPHV", "Clop", "ransomware as a service",
+                     "RAAS", "gang's public post", "dark web leak", "named threat group"],
+        "official": "Activity was assessed as consistent with known threat actor techniques and tooling.",
+        "subtext": "attribution not confirmed"
+    },
+    {
+        "keywords": ["brute force", "brute-forced", "brute forced", "password spraying", "brute-forced local",
+                     "bruteforce", "credential stuffing", "combolist", "dictionary attack", "sprayed passwords",
+                     "bruteforce login", "credential attack"],
+        "official": "Initial access was achieved via a credential-based attack.",
+        "subtext": "preliminary findings indicate, root cause under investigation"
+    },
+    {
+        "keywords": ["encrypted half", "files encrypted", "encrypted the", "drive encrypted", "encrypted.*share",
+                     "files renamed with .lock", ".encrypted extension", "can't open files",
+                     "everything is encrypted", "ransom note on desktop", "encrypted directories",
+                     "encrypted file system"],
+        "official": "Data availability impact was confirmed within the affected environment.",
+        "subtext": "contained within affected environment, environment was defined by the investigation scope"
+    },
+    {
+        "keywords": ["btc", "bitcoin", "ransom demand", "demanded", "ransom note", "note demanded",
+                     "pay $X", "demanding payment", "monero address", "wallet address", "readme.txt",
+                     "HOW_TO_DECRYPT.txt", "extortion message"],
+        "official": "An extortion demand was received. Details are retained in the classified annex.",
+        "subtext": "communication and reporting obligations assessed"
+    },
+    {
+        "keywords": ["lost.*hours", "hours of data", "12 hours", "data loss", "\\blost\\b.*\\bdata\\b",
+                     "data gone", "lost files", "deleted records", "irrecoverable", "last backup was",
+                     "gap in logs", "missing data", "data disappeared"],
+        "official": "Limited data loss was confirmed. Recovery was completed within acceptable parameters.",
+        "subtext": "business disruption within acceptable thresholds"
+    },
+    {
+        "keywords": ["restored from", "offline backup", "restore from backup", "backup restore",
+                     "restored from snapshot", "rebuilt from scratch", "recovered data", "pulled backup",
+                     "rolled back to", "backup recovery"],
+        "official": "Services were restored to normal operation via a verified offline backup.",
+        "subtext": "stability confirmed over observation period"
+    },
+    {
+        "keywords": ["no lateral movement", "lateral movement not", "not spread", "isolating the whole subnet",
+                     "didn't pivot", "stayed in one box", "no sign they moved", "contained to",
+                     "blast radius limited", "no evidence of spread"],
+        "official": "Lateral movement was not observed beyond the scope of the current investigation.",
+        "subtext": "within scope of current tooling, meaning: everything outside is invisible"
+    },
+    {
+        "keywords": ["isolating", "isolated the", "quarantined", "isolated subnet", "isolat.*subnet",
+                     "cut off network", "airgapped", "unplugged", "blocked VLAN", "null-routed",
+                     "network isolation", "segmentation applied"],
+        "official": "The affected network segment was isolated as a precaution pending further investigation.",
+        "subtext": "containment measures implemented"
+    },
+    {
+        "keywords": ["group policy exception", "gpo exception", "password complexity", "complexity bypassed", "policy exception",
+                     "waiver granted", "exempted from", "deviation approved", "temp bypass",
+                     "control override", "exception applied", "policy waived"],
+        "official": "A security control exception had been applied without formal review. This is noted as an area for governance improvement.",
+        "subtext": "based on available evidence, evidence is what we happened to collect"
+    },
+    {
+        "keywords": ["monitoring.*absent", "monitoring was.*absent", "monitoring for.*was", "no monitoring", "monitoring not", "not monitored",
+                     "no alerts set up", "nobody watching", "blind spot", "unmonitored", "lacking visibility",
+                     "we had no idea", "no telemetry", "coverage gap"],
+        "official": "Detection capability in the affected area has been identified as an area for improvement.",
+        "subtext": "no indication of…, meaning: we did not look"
+    },
+    {
+        "keywords": ["phish", "fake docusign", "fake link", "credential harvesting", "credential phishing",
+                     "smishing", "vishing", "spear phish", "malicious email", "clicked the link",
+                     "entered creds", "spoofed login", "credential phish", "social engineering"],
+        "official": "A social engineering event was identified involving a fraudulent communication designed to harvest credentials.",
+        "subtext": "confirmed incident, reported by end user"
+    },
+    {
+        "keywords": ["defender", "flagged by", "security tool flagged", "\\bsiem\\b", "automated alert",
+                     "alert from", "detection rule fired", "XDR alert", "SOAR playbook triggered",
+                     "splunk alert", "sentinel incident", "detected by tool"],
+        "official": "The matter was surfaced by automated detection tooling.",
+        "subtext": "detected by monitoring controls"
+    },
+    {
+        "keywords": ["by then", "already logged in", "already inside", "before we detected", "before we saw",
+                     "dwell time", "they'd been in for", "first compromise was days ago", "breach older than",
+                     "entry timestamp shows", "we missed them by"],
+        "official": "Initial access preceded detection. The detection interval is noted as an area for improvement.",
+        "subtext": "at time of writing, this may change immediately"
+    },
+    {
+        "keywords": ["nigerian ip", "foreign ip", "unexpected location", "unusual location", "overseas ip", "from a nigerian",
+                     "eastern europe", "eastern european", "ip in eastern", "unusual country", "unexpected country",
+                     "login from Russia", "China IP", "impossible travel", "never seen this IP before", "foreign sign-in"],
+        "official": "Access from an unexpected geographic location was identified.",
+        "subtext": "investigation did not identify clear external actor, attribution not confirmed"
+    },
+    {
+        "keywords": ["inbox rule", "email rule", "mark as read", "move to clutter", "email forwarding rule", "forwarding rule",
+                     "autoforward", "smtp forwarding", "rule to hide", "deleted items rule", "archive rule",
+                     "sweep rule", "mail rule created"],
+        "official": "A persistence mechanism was identified within the email environment. Access was maintained while appearing inactive to standard monitoring.",
+        "subtext": "lateral movement not observed, within scope of current tooling"
+    },
+    {
+        "keywords": ["forwarded.*invoice", "invoice.*forwarded", "external gmail", "invoices to", "forwarded.*invoices",
+                     "emailed to external", "sent to personal", "data sent via email", "mailbox exfiltration",
+                     "auto-forward to external", "exfil via email"],
+        "official": "Potential data exfiltration via email forwarding was identified. Exposure cannot be ruled out.",
+        "subtext": "potential exposure cannot be ruled out"
+    },
+    {
+        "keywords": ["user complained", "end user reported", "user reported", "complained about missing", "reported missing",
+                     "operator complained", "operator noticed", "operator reported",
+                     "helpdesk ticket", "user noticed", "staff alerted us", "colleague reported",
+                     "someone flagged", "reported missing data"],
+        "official": "The matter was surfaced via end-user notification. Automated detection controls had not identified the activity.",
+        "subtext": "identified retrospectively, detection capability gap noted"
+    },
+    {
+        "keywords": ["revoked all tokens", "forced password reset", "reset.*password", "revoked.*session",
+                     "kicked sessions", "invalidated tokens", "changed password", "reset mfa",
+                     "revoked access", "forced logout", "session killed"],
+        "official": "Affected credentials were reset and all active session tokens were revoked.",
+        "subtext": "remediation actions completed"
+    },
+    {
+        "keywords": ["audit log", "unified audit log", "uac log", "audit trail", "lifesaver",
+                     "logs helped", "we had logs", "SIEM data", "event logs", "forensics from logs",
+                     "we traced it via", "audit records"],
+        "official": "Investigation was supported by available audit log data.",
+        "subtext": "based on available evidence, evidence is what we happened to collect"
+    },
+    {
+        "keywords": ["mcas", "log mode", "log only", "logging mode", "observation mode", "only in log",
+                     "monitor mode", "audit mode", "detect only", "alert disabled", "no blocking",
+                     "simulation mode"],
+        "official": "The detection control was operating in observation mode. Enforcement capability was not active at the time of the event.",
+        "subtext": "within scope of current tooling, controls were visible but not enforced"
+    },
+    {
+        "keywords": ["impossible travel", "travel alert", "geo alert", "geographic alert",
+                     "geo impossible", "travel rule fired", "risky sign-in", "atypical travel"],
+        "official": "The anomalous geographic access pattern was not actioned at the time of the event. Detection policy was not operating in enforcement mode.",
+        "subtext": "no indication of…, control existed but was not enforced"
+    },
+    {
+        "keywords": ["revoked the pat", "revoked.*credentials", "rotated.*secrets", "rotated all", "rotated credentials", "rotate secrets",
+                     "cycled keys", "regenerated tokens", "new API key", "reissued",
+                     "changed all secrets", "keys rotated"],
+        "official": "Affected credentials were revoked and rotated as a precaution.",
+        "subtext": "credentials rotated as precaution"
+    },
+    {
+        "keywords": ["force-pushed", "force pushed", "removed the commit", "commit.*removed",
+                     "blew away commit", "reverted history", "git reset", "deleted branch",
+                     "purged from repo", "force push clean"],
+        "official": "The affected artefact was removed from the source code repository.",
+        "subtext": "known indicators of compromise addressed"
+    },
+    {
+        "keywords": ["nuked", "wiped the", "rebuilt", "nuke staging", "torn down",
+                     "burned it down", "destroyed and recreated", "fresh install", "redeployed from scratch",
+                     "throw away and build new", "environment destroyed"],
+        "official": "The affected environment was decommissioned and rebuilt from a verified clean baseline.",
+        "subtext": "remediation actions completed"
+    },
+    {
+        "keywords": ["scanning for similar", "looking for similar", "checked.*similar", "similar rules across",
+                     "searching all tenants", "hunting for IOCs", "sweeping the environment",
+                     "cross-checking", "wider audit", "searching across environment"],
+        "official": "The investigation scope was extended to identify similar activity across the broader environment.",
+        "subtext": "investigation ongoing pending additional artefacts"
+    },
+    {
+        "keywords": ["best guess", "we think", "i think it was", "probably.*attacker", "probably.*from", "probably.*breach",
+                     "probably.*intrusion", "we believe", "most likely", "our assumption",
+                     "signs point to", "we suspect", "likely caused by", "hypothesised", "working theory"],
+        "official": "Preliminary findings indicate a likely vector. Definitive attribution has not been established.",
+        "subtext": "as per current understanding, meaning: understanding is provisional but operationally final"
+    },
+    {
+        "keywords": ["db credential", "database credential", "database password", "db password", "rotated.*db", "db.*rotated", "rotated all db",
+                     "changed postgres password", "rotated mysql creds", "new db user", "updated connection string"],
+        "official": "Database access credentials were rotated as a precaution following the incident.",
+        "subtext": "credentials rotated as precaution"
+    },
+    {
+        "keywords": ["staging.*prod secret", "staging doesn't share", "share prod secret", "doesn't share prod",
+                     "segregated keys", "prod and non-prod separated", "kept secrets apart",
+                     "no more sharing credentials", "fixed secret scope", "secret boundary"],
+        "official": "The secrets management boundary between staging and production environments has been strengthened.",
+        "subtext": "configuration hardening implemented"
+    },
+    {
+        "keywords": ["checked prod", "prod.*clean", "clean)", "no footprint", "no similar footprint",
+                     "production unaffected", "prod looks okay", "did not find elsewhere",
+                     "contained to nonprod", "other systems clean"],
+        "official": "No similar indicators of compromise were identified in the broader production environment at time of investigation.",
+        "subtext": "within scope of current tooling, meaning: scope was defined by available evidence"
+    },
+    {
+        "keywords": ["also, why", "why did", "how did", "of course", "because staging",
+                     "how was this allowed", "why wasn't", "should have caught", "gap: ",
+                     "missing control", "control gap"],
+        "official": "A contributing control gap has been identified and is noted for remediation.",
+        "subtext": "within scope of current tooling, meaning: everything outside is invisible"
+    },
+    {
+        "keywords": ["inventory scan", "asset scan", "scanned.*network", "scanned.*systems", "network.*scan", "audited the pipeline",
+                     "asset discovery", "sweeped IPs", "system census", "count of affected hosts"],
+        "official": "An inventory review was conducted to assess the scope of the incident.",
+        "subtext": "correlation analysis performed across available logs"
+    },
+    {
+        "keywords": ["token expiry", "scope limit", "enforcing token", "least privilege", "scoped token",
+                     "short-lived token", "reduced scope", "now using fine-grained", "locked down PAT"],
+        "official": "Access credential scoping and expiry controls have been strengthened following the incident.",
+        "subtext": "remediation actions completed"
+    },
+
+    # Authentication and access control
+    {
+        "keywords": ["no mfa", "mfa not enabled", "mfa wasn't", "without mfa", "not using mfa", "mfa not enforced", "no multi-factor", "2fa not", "no 2fa",
+                     "mfa missing", "lack of mfa", "mfa bypassed"],
+        "official": "Multi-factor authentication controls were not enforced on the affected account at the time of the event.",
+        "subtext": "known gap, deferred pending user convenience assessment"
+    },
+    {
+        "keywords": ["shared account", "shared credentials", "shared password", "generic account", "shared login",
+                     "common account", "group account", "shared user"],
+        "official": "The affected credential was associated with a shared access account. Individual attribution of the activity was not possible.",
+        "subtext": "audit trail terminates at account level, individual accountability not recoverable"
+    },
+    {
+        "keywords": ["default password", "default credentials", "factory default", "never changed the password", "never changed password", "out of the box",
+                     "default admin", "vendor password", "original credentials"],
+        "official": "The affected system was found to be operating with vendor-supplied default credentials at the time of the incident.",
+        "subtext": "known misconfiguration, timeline of exposure not established"
+    },
+    {
+        "keywords": ["domain admin", "domain administrator", "da account", "enterprise admin", "da privileges",
+                     "DA access", "domain controller admin"],
+        "official": "The affected credential was assessed as holding elevated privileges within the domain environment. The scope of potential access has not been fully established.",
+        "subtext": "blast radius: everything, scope defined by what we happened to check"
+    },
+    {
+        "keywords": ["service account", "svc account", "svc_", "service accounts",
+                     "svc_acct", "service principal"],
+        "official": "A non-interactive service account was identified as a contributing factor. The account's access scope was assessed as inconsistent with the principle of least privilege.",
+        "subtext": "permissions not reviewed since initial configuration, date of initial configuration not established"
+    },
+    {
+        "keywords": ["password reuse", "reused password", "same password everywhere", "reused the same", "reusing passwords",
+                     "credential reuse", "same passwd", "shared pass",
+                     "credentials.*reused", "credentials were reused", "reused.*across.*systems",
+                     "reused.*across.*multiple", "same credentials.*multiple"],
+        "official": "Credential reuse across multiple systems was identified as a contributing factor in the propagation of the incident.",
+        "subtext": "one credential, multiple systems, scope of reuse not fully enumerated"
+    },
+
+    # Credential exposure in code
+    {
+        "keywords": ["hardcoded", "hard-coded", "hardcoded password", "hardcoded key", "hardcoded secret", "credentials in the code",
+                     "embedded credential", "in-code secret"],
+        "official": "A credential was identified as embedded within the application source code. Exposure duration has not been fully established.",
+        "subtext": "potentially exposed for the lifetime of the repository, repository age not confirmed"
+    },
+    {
+        "keywords": ["committed to git", "accidentally committed", "pushed to git", "pushed.*credential", "committed.*key", "key.*committed",
+                     "pushed secret", "git push secret", "committed secret"],
+        "official": "A sensitive credential was inadvertently included in a version control commit. The commit history has been reviewed.",
+        "subtext": "commit history reviewed, forks and clones not assessed"
+    },
+    {
+        "keywords": ["public github", "public repo", "public repository", "found on github", "exposed on github", "leaked on github",
+                     "github public", "open source repo leaked"],
+        "official": "The affected artefact was identified as publicly accessible via a version control hosting platform.",
+        "subtext": "indexed by search engines, exposure duration assessed as the full period of public availability"
+    },
+    {
+        "keywords": ["api key in", "key in the code", "token in the code", "secret in the repo", "api key was in",
+                     "embedded token", "leaked api key"],
+        "official": "An access token was identified within the application codebase. The token has been revoked and rotated.",
+        "subtext": "revoked following identification, prior access using the token cannot be ruled out"
+    },
+
+    # Cloud misconfiguration
+    {
+        "keywords": ["s3 bucket", "public bucket", "bucket was public", "open bucket", "exposed bucket",
+                     "public s3", "open storage", "cloud storage public"],
+        "official": "A cloud storage resource was assessed as having been externally accessible without access controls. The configuration has been remediated.",
+        "subtext": "data accessed during exposure period cannot be confirmed or denied, access logs retained for review period only"
+    },
+    {
+        "keywords": ["iam role", "overprivileged role", "admin role assigned", "wildcard permission", "star permission", "iam misconfiguration",
+                     "iam policy wildcard", "overly permissive iam"],
+        "official": "The affected cloud identity was assessed as holding access permissions inconsistent with operational requirements.",
+        "subtext": "least privilege not applied, scope of access during the exposure period has not been fully established"
+    },
+    {
+        "keywords": ["cloudtrail", "logging disabled", "logs were not enabled", "logging wasn't enabled", "audit logging not", "cloud logging",
+                     "no cloudtrail", "logging turned off", "audit log missing"],
+        "official": "Audit logging was not active in the affected environment during the relevant period. The extent of activity during this period cannot be fully established.",
+        "subtext": "no indication of…, meaning: logging was not configured, so we did not look and could not"
+    },
+    {
+        "keywords": ["ssrf", "metadata service", "instance metadata", "169.254.169.254",
+                     "imds", "cloud metadata attack"],
+        "official": "Server-side request forgery was identified as the likely access vector, enabling access to instance metadata credentials.",
+        "subtext": "preliminary findings indicate, full scope of credential use not established"
+    },
+
+    # Unpatched / vulnerable systems
+    {
+        "keywords": ["unpatched", "patch not applied", "missing patch", "not patched", "patch wasn't applied", "hadn't been patched",
+                     "no patch", "vulnerability unpatched"],
+        "official": "The affected system was operating without a relevant security update at the time of the incident. A remediation action has been applied.",
+        "subtext": "patch available prior to incident, reason for non-application under review"
+    },
+    {
+        "keywords": ["end of life", "end-of-life", "out of support", "no longer supported", "unsupported software", "unsupported version",
+                     "EOL system", "obsolete version"],
+        "official": "The affected component was operating beyond its vendor-supported lifecycle at the time of the incident.",
+        "subtext": "known risk, deferred pending migration planning, migration planning timeline not established"
+    },
+    {
+        "keywords": ["cve-", "known cve", "public exploit", "exploit was available", "exploit available", "publicly known",
+                     "exploit exists", "known vuln"],
+        "official": "Exploitation of a publicly documented vulnerability was identified as the likely initial access vector.",
+        "subtext": "public disclosure preceded exploitation, patch window assessment ongoing"
+    },
+    {
+        "keywords": ["log4j", "log4shell"],
+        "official": "Initial access was achieved via exploitation of a widely-publicised vulnerability in a widely-deployed third-party component.",
+        "subtext": "vulnerability publicly disclosed, organisation's remediation timeline being confirmed against patch records"
+    },
+    {
+        "keywords": ["outdated plugin", "outdated software", "outdated version", "old version", "running an old",
+                     "legacy version", "old release"],
+        "official": "The affected component was assessed as operating with a version that does not reflect the current security baseline.",
+        "subtext": "version control gap identified, patch management coverage assessed"
+    },
+
+    # Malware and tooling
+    {
+        "keywords": ["malware found", "malware detected", "malicious file", "infected machine", "infected system", "malware was",
+                     "trojan found", "virus detected"],
+        "official": "Malicious software was identified within the affected environment. Forensic analysis of the affected system has been initiated.",
+        "subtext": "identified on affected system, full scope of malware activity not yet established"
+    },
+    {
+        "keywords": ["keylogger", "key logger", "keystroke logging", "credential harvester",
+                     "keystroke capture"],
+        "official": "A credential-harvesting capability was identified within the affected environment. The scope of credential exposure has not been fully established.",
+        "subtext": "credentials harvested, systems accessed using those credentials not yet confirmed"
+    },
+    {
+        "keywords": ["mimikatz", "credential dump", "lsass dump", "dumped credentials", "pass the hash", "pass-the-hash",
+                     "pth", "overpass the hash"],
+        "official": "Credential extraction tooling was identified as having been deployed within the affected environment.",
+        "subtext": "credentials extracted, systems accessible using those credentials not fully enumerated"
+    },
+    {
+        "keywords": ["cobalt strike", "cs beacon", "c2 beacon", "sliver", "metasploit",
+                     "cs implant", "beacon payload"],
+        "official": "Commercial offensive security tooling was identified within the affected environment, consistent with post-exploitation activity.",
+        "subtext": "operator of the implant not confirmed, attribution not established"
+    },
+    {
+        "keywords": ["encoded powershell", "encoded command", "obfuscated script", "base64 powershell", "obfuscated powershell",
+                     "powershell -enc", "encoded cmd"],
+        "official": "Obfuscated command execution was identified as a technique used during the incident.",
+        "subtext": "within scope of available logging, commands executed outside logging scope not recoverable"
+    },
+    {
+        "keywords": ["wiper", "destructive malware", "data destroyed", "wiped the data", "data wiped",
+                     "disk wiper", "destructive attack"],
+        "official": "Destructive malware activity was identified within the affected environment. The scope of data destruction is under assessment.",
+        "subtext": "recovery feasibility assessed, backup integrity confirmed prior to restore attempt"
+    },
+
+    # Social engineering
+    {
+        "keywords": ["ceo fraud", "\\bbec\\b", "business email compromise", "executive impersonation", "fake invoice payment", "invoice fraud",
+                     "ceo scam", "executive fraud"],
+        "official": "A business email compromise event was identified. The event involved fraudulent impersonation of an authorised individual.",
+        "subtext": "funds transferred prior to detection, recovery outcome not confirmed"
+    },
+    {
+        "keywords": ["vishing", "voice phishing", "caller pretended", "called and asked", "phone call asking",
+                     "phone social engineering"],
+        "official": "A social engineering event was identified involving a fraudulent telephone communication.",
+        "subtext": "end user complied, technical controls did not prevent the interaction"
+    },
+    {
+        "keywords": ["insider threat", "rogue employee", "malicious insider", "disgruntled employee", "disgruntled staff", "fired employee", "former employee",
+                     "malicious staff"],
+        "official": "An insider threat scenario has been identified as consistent with the available evidence. Investigation is ongoing.",
+        "subtext": "investigation ongoing, HR and legal engaged, attribution not confirmed"
+    },
+    {
+        "keywords": ["usb drive", "dropped usb", "plugged in a usb", "rogue usb", "unknown usb", "found a usb",
+                     "usb drop attack", "bad usb", "removable media", "portable media", "removable storage"],
+        "official": "An unmanaged removable storage device was identified as a contributing factor in the incident.",
+        "subtext": "endpoint controls for removable media assessed, policy compliance under review"
+    },
+
+    # Development and deployment
+    {
+        "keywords": ["debug mode", "debug enabled", "debug flag on", "development mode", "dev mode left on",
+                     "debug still on", "production debug"],
+        "official": "The affected system was assessed as operating with development-mode configuration active in the production environment.",
+        "subtext": "change management controls assessed, promotion process review recommended"
+    },
+    {
+        "keywords": ["npm package", "pip package", "malicious package", "dependency confusion", "typosquatting", "supply chain attack",
+                     "poisoned package", "dependency hijack"],
+        "official": "A software supply chain component was identified as a contributing factor in the incident. The integrity of the affected package is under assessment.",
+        "subtext": "dependencies not pinned, full dependency tree scope not assessed"
+    },
+    {
+        "keywords": ["sql injection", "sqli", "injection attack", "database injection", "unsanitised input",
+                     "sql inj", "blind sqli"],
+        "official": "The initial access vector was assessed as consistent with a SQL injection attack against the affected application.",
+        "subtext": "input validation controls assessed, code review scope defined by identified attack surface"
+    },
+    {
+        "keywords": ["xss", "cross-site scripting", "script injection", "stored xss", "reflected xss",
+                     "dom xss"],
+        "official": "A cross-site scripting vulnerability was identified as a contributing factor. The scope of data potentially exposed is under assessment.",
+        "subtext": "output encoding controls assessed, user session exposure scope not fully established"
+    },
+    {
+        "keywords": ["directory traversal", "path traversal", "lfi", "local file inclusion", "file traversal",
+                     "dot dot slash"],
+        "official": "File access controls were assessed as insufficient to prevent unauthorised access to system files via the affected application.",
+        "subtext": "web application security controls assessed, file access scope during exploitation not fully established"
+    },
+
+    # Escalation and notification
+    {
+        "keywords": ["told management", "told the boss", "escalated to management", "informed management", "management were told", "told ciso",
+                     "escalated to leadership", "informed execs"],
+        "official": "The matter was escalated to senior stakeholders in accordance with the established notification framework.",
+        "subtext": "escalation timeline noted, response actions initiated following escalation"
+    },
+    {
+        "keywords": ["called legal", "lawyers involved", "legal notified", "instructed legal", "legal were informed", "legal team",
+                     "legal counsel engaged"],
+        "official": "Legal counsel was engaged as part of the incident response process.",
+        "subtext": "legal involvement noted, legal professional privilege may apply to communications arising from this matter"
+    },
+    {
+        "keywords": ["\\bico\\b", "regulator notified", "regulatory notification", "report to the regulator", "supervisory authority", "notified the ico",
+                     "dp authority informed"],
+        "official": "Regulatory notification obligations were assessed and actioned in accordance with applicable requirements.",
+        "subtext": "72-hour notification window, timeline of identification relative to notification has been assessed"
+    },
+    {
+        "keywords": ["cyber insurance", "insurance claim", "insurer notified", "notified the insurer", "insurance policy",
+                     "insurance company contacted"],
+        "official": "The organisation's cyber insurance coverage was engaged. The insurer was notified in accordance with policy obligations.",
+        "subtext": "coverage scope under assessment, policy conditions reviewed"
+    },
+    {
+        "keywords": ["customers notified", "users notified", "breach notification", "told our customers", "informed customers", "notify affected users",
+                     "data subjects informed"],
+        "official": "Notification to affected data subjects was assessed and actioned in accordance with applicable obligations.",
+        "subtext": "notification scope defined by available data, completeness of affected individuals list not confirmed"
+    },
+    {
+        "keywords": ["keep this quiet", "don't tell anyone", "off the record", "just between us", "confidential for now", "don't say anything yet",
+                     "hush hush", "keep it contained"],
+        "official": "Information governance obligations in relation to this matter are under active assessment.",
+        "subtext": "disclosure obligations assessed, legal counsel engaged, timeline of disclosure under review"
+    },
+
+    # Timing and detection gaps
+    {
+        "keywords": ["after hours", "overnight attack", "over the weekend", "over the holiday", "during the holiday", "while everyone was away",
+                     "outside business hours", "on a friday"],
+        "official": "The activity was identified as having occurred outside of standard operational monitoring hours.",
+        "subtext": "detection capability assessed as reduced outside business hours, 24/7 SOC coverage not confirmed"
+    },
+    {
+        "keywords": ["logs were deleted", "cleared the logs", "log tampering", "wiped the logs", "logs had been cleared", "logs deleted",
+                     "log wiping", "anti-forensics"],
+        "official": "Evidence of log tampering was identified. The integrity of available log data cannot be fully confirmed.",
+        "subtext": "timeline reconstruction based on remaining artefacts only, evidentiary gap noted"
+    },
+    {
+        "keywords": ["they've gone", "they're gone", "attacker is gone", "no longer active", "kicked them out", "they left",
+                     "evicted them", "no more activity"],
+        "official": "The threat actor is assessed as no longer active within the environment based on available evidence.",
+        "subtext": "based on available evidence, evidence is what we happened to collect, persistence not fully ruled out"
+    },
+    {
+        "keywords": ["in hindsight", "looking back", "with hindsight", "retrospectively obvious"],
+        "official": "A retrospective assessment has identified areas where preventive controls could have been applied.",
+        "subtext": "controls were known and available, application was not prioritised prior to the incident"
+    },
+    {
+        "keywords": ["someone forgot", "nobody checked", "forgot to check", "overlooked it", "was missed",
+                     "slipped through"],
+        "official": "A process gap was identified in the implementation of established security controls.",
+        "subtext": "control existed in policy, not applied in practice, root cause under review"
+    },
+    {
+        "keywords": ["vendor's fault", "supplier's fault", "blame the vendor", "third party's fault", "wasn't our mistake",
+                     "it was the supplier"],
+        "official": "Contributing factors associated with a third-party supplier have been identified. Vendor accountability is under assessment.",
+        "subtext": "contractual obligations reviewed, SLA compliance under assessment, remediation timeline under negotiation"
+    },
+    {
+        "keywords": ["pen test found", "penetration test found", "pentest identified", "red team found", "red team discovered",
+                     "pentest discovered"],
+        "official": "The matter was identified during a scheduled security assessment. The finding has been escalated through the vulnerability management process.",
+        "subtext": "identified during assessment, timeline of prior exposure in production not established"
+    },
+    {
+        "keywords": ["bug bounty", "responsible disclosure", "researcher reported", "security researcher found",
+                     "external researcher reported"],
+        "official": "The matter was disclosed through the organisation's vulnerability disclosure programme. Coordinated remediation has been completed.",
+        "subtext": "external identification, internal detection controls did not surface this finding independently"
+    },
+
+    # Privilege and lateral movement
+    {
+        "keywords": ["privilege escalation", "escalated privileges", "gained admin access", "became domain admin", "elevated their privileges",
+                     "root escalation", "priv esc"],
+        "official": "Privilege escalation activity was identified within the affected environment. The affected account's access scope was elevated beyond its intended permissions.",
+        "subtext": "escalation path identified, preventive controls for this path assessed"
+    },
+    {
+        "keywords": ["moved laterally", "pivoted to", "accessed other systems", "spread to other", "jumped to", "lateral movement",
+                     "using.*for lateral", "used.*for lateral",
+                     "pivoting"],
+        "official": "Lateral movement activity was observed within the affected environment. The scope of systems accessed has been assessed.",
+        "subtext": "within scope of available logging, movement outside logged systems not recoverable"
+    },
+    {
+        "keywords": ["domain controller", "active directory compromise", "ad was", "ad access", "ad was compromised",
+                     "dc compromise"],
+        "official": "Access to domain control infrastructure was identified. The scope of domain-level access has not been fully established.",
+        "subtext": "domain-level access implies potential access to all domain-joined resources, full scope not confirmed"
+    },
+
+    # Data and regulatory
+    {
+        "keywords": ["data was taken", "data stolen", "data was exfiltrated", "copied the data", "downloaded everything", "stole the data",
+                     "data theft"],
+        "official": "Data exfiltration cannot be ruled out based on available evidence. The scope of data potentially accessed is under assessment.",
+        "subtext": "DLP controls assessed, full scope of exfiltration not recoverable from available logs"
+    },
+    {
+        "keywords": ["dark web", "found on the dark web", "data dump online", "found our data online", "breach database",
+                     "darknet listing"],
+        "official": "Information consistent with the affected organisation's data was identified in an external threat intelligence source.",
+        "subtext": "external identification, internal controls did not surface this finding independently, exposure timeline not established"
+    },
+    {
+        "keywords": ["gdpr", "data protection act", "personal data involved", "pii exposed", "personal information",
+                     "personal data breach"],
+        "official": "The incident involved data assessed as potentially constituting personal data under applicable data protection legislation. Regulatory obligations are under assessment.",
+        "subtext": "data protection impact assessed, notification obligations reviewed against available evidence"
+    },
+    {
+        "keywords": ["credit card data", "cardholder data", "card data", "pci dss", "payment card",
+                     "pci breach"],
+        "official": "Payment card data was identified as potentially within scope of the incident. Applicable compliance obligations are under assessment.",
+        "subtext": "PCI DSS obligations assessed, card scheme notification requirements under review"
+    },
+
+    # Human response
+    {
+        "keywords": ["everyone panicked", "we panicked", "started panicking", "freaking out", "complete panic",
+                     "mass panic"],
+        "official": "The initial response phase involved the prioritisation of containment over structured incident management processes.",
+        "subtext": "process adherence during initial phase assessed as below framework requirements"
+    },
+    {
+        "keywords": ["key person was away", "on annual leave", "on holiday when it happened", "was off sick", "called in sick",
+                     "subject matter expert unavailable"],
+        "official": "The availability of subject matter expertise during the initial response phase was assessed as suboptimal.",
+        "subtext": "single point of expertise identified, succession planning for incident response roles under review"
+    },
+    {
+        "keywords": ["no incident response plan", "no ir plan", "no runbook", "didn't have a plan", "no playbook",
+                     "lack of ir plan"],
+        "official": "The organisation's documented incident response procedures were assessed as requiring development in this area.",
+        "subtext": "playbook coverage gap identified, development of additional procedures recommended"
+    },
+    {
+        "keywords": ["first incident", "never had an incident before", "first time we've had", "hadn't dealt with this before",
+                     "maiden incident"],
+        "official": "This incident represented the organisation's first recorded event of this classification. Response procedures were applied as documented.",
+        "subtext": "tabletop exercise coverage for this scenario assessed, training needs identified"
+    },
+    {
+        "keywords": ["took a screenshot", "screenshot as evidence", "screenshot of the error", "screenshotted it",
+                     "screen grab"],
+        "official": "Initial evidence collection included contemporaneous documentation of the affected system state.",
+        "subtext": "evidence preservation methodology noted, forensic integrity of screenshot-based evidence assessed"
+    },
+    {
+        "keywords": ["vpn credentials", "vpn access was used", "via the vpn", "through the vpn", "vpn was the entry",
+                     "vpn connection"],
+        "official": "The initial access vector was identified as the organisation's remote access infrastructure.",
+        "subtext": "remote access controls assessed, multi-factor enforcement on VPN access reviewed"
+    },
+    {
+        "keywords": ["working from home", "remote worker", "home network", "personal device", "personal laptop",
+                     "wfh device"],
+        "official": "The incident involved activity originating from a remote working endpoint. The security posture of the affected endpoint has not been fully established.",
+        "subtext": "endpoint visibility limited for remote devices, assessment constrained to available telemetry"
+    },
+    {
+        "keywords": ["tailgating", "piggybacking", "followed someone in", "physical access to the building", "got into the building",
+                     "physical breach"],
+        "official": "Physical access controls were assessed as having been circumvented. The matter has been referred to the facilities security team.",
+        "subtext": "physical access event, CCTV retention period and coverage assessed"
+    },
+
+    # OT / ICS environments
+    {
+        "keywords": ["historian", "process historian", "ot network", "ot environment", "ot systems", "industrial control", "operational technology",
+                     "\\bics\\b", "\\bscada\\b", "\\bplc\\b", "\\bdcs\\b"],
+        "official": "The affected environment included operational technology components. The scope of impact on process control systems has been assessed.",
+        "subtext": "OT visibility limited, assessment constrained by available telemetry and vendor access requirements"
+    },
+    {
+        "keywords": ["\\bscada\\b", "plc access", "control system", "dcs ", "distributed control", "engineering workstation",
+                     "ics workstation"],
+        "official": "Industrial control system components were identified within the scope of the incident. Operational continuity was assessed throughout the response.",
+        "subtext": "ICS-specific monitoring coverage assessed, vendor engagement required for full scope determination"
+    },
+    {
+        "keywords": ["manual mode", "operators switched", "switched to manual", "manual operation", "operators took manual",
+                     "manual fallback"],
+        "official": "Operational continuity was maintained via manual procedures during the period of system unavailability.",
+        "subtext": "manual mode confirmed viable, duration of sustainable manual operation not assessed"
+    },
+    {
+        "keywords": ["sensor readings", "process values", "historian stopped", "stopped updating", "values stopped",
+                     "sensor data lost"],
+        "official": "Automated process data collection was interrupted during the incident period. Operational decisions during this period relied on alternative data sources.",
+        "subtext": "data integrity during interruption period not confirmed, operational decisions made on available information"
+    },
+
+    # Network segmentation failures
+    {
+        "keywords": ["segmentation project", "segmentation programme", "network segmentation", "segmentation failed", "flat network", "should have been segmented",
+                     "segmentation gap"],
+        "official": "Network segmentation controls were assessed as having been insufficient to contain the incident within the originally defined boundary.",
+        "subtext": "segmentation reviewed post-incident, scope of pre-incident boundary had not been validated"
+    },
+    {
+        "keywords": ["temporary allow rule", "allow rule", "firewall rule left", "temp rule", "rule was left", "nobody removed", "temporary rule",
+                     "temp firewall rule"],
+        "official": "A firewall access rule of limited intended duration was identified as still active at the time of the incident. The rule had not been subject to periodic review.",
+        "subtext": "change management controls assessed, temporary rule review process identified as area for improvement"
+    },
+    {
+        "keywords": ["smb traffic", "smb across", "unrestricted smb", "port 445", "smb both ways", "smb.*both",
+                     "smb open"],
+        "official": "Unrestricted file-sharing protocol traffic was identified between network segments assessed as operationally separate.",
+        "subtext": "lateral movement path enabled by protocol configuration, segmentation design review recommended"
+    },
+    {
+        "keywords": ["excluded from.*monitoring", "excluded from behavioural", "monitoring.*excluded", "not included in monitoring", "outside monitoring scope",
+                     "monitoring gap"],
+        "official": "The affected environment was not within the scope of the organisation's behavioural monitoring controls at the time of the incident.",
+        "subtext": "monitoring coverage gap identified, onboarding timeline to be assessed"
+    },
+    {
+        "keywords": ["onboarding complexity", "too complex to onboard", "complex to monitor", "monitoring.*complexity",
+                     "integration difficulty"],
+        "official": "The integration of the affected environment into existing monitoring infrastructure had been deferred pending resolution of configuration complexity.",
+        "subtext": "complexity noted as rationale for deferral, risk acceptance not formally documented"
+    },
+
+    # Orphaned accounts and ownership gaps
+    {
+        "keywords": ["contractor.*left", "vendor account.*left", "account.*left.*months", "left.*months ago", "left.*year ago",
+                     "ex-employee account"],
+        "official": "The affected credential was associated with an individual whose organisational relationship had concluded prior to the incident. Account lifecycle controls are under review.",
+        "subtext": "offboarding process assessed, account deprovisioning ownership gap identified"
+    },
+    {
+        "keywords": ["account was still active", "account still active", "account had not been disabled", "account not disabled", "still had access", "access was not revoked",
+                     "account not deprovisioned"],
+        "official": "An access credential remained active beyond the period of its intended operational requirement.",
+        "subtext": "account lifecycle controls assessed, duration of unnecessary access not fully established"
+    },
+    {
+        "keywords": ["assumed.*had already done", "assumed.*already done it", "assumed.*still needed", "each assumed", "both assumed",
+                     "nobody's responsibility", "x says.*requested", "says.*requested it",
+                     "ownership ambiguity"],
+        "official": "Ownership of a process control action was not clearly assigned. Both parties operated under the assumption that the other had completed the required action.",
+        "subtext": "accountability gap identified, RACI for offboarding process under review"
+    },
+    {
+        "keywords": ["required approval from", "needed sign-off from", "approval from facilities", "approval from it", "needed.*to approve", "waiting for approval",
+                     "pending signoff"],
+        "official": "The required remediation action was subject to an approval dependency that was not resolved prior to the incident.",
+        "subtext": "approval chain assessed, escalation path for unresolved approvals not documented"
+    },
+    {
+        "keywords": ["ongoing maintenance", "still needed access", "may still need", "might still need", "in case they need",
+                     "just in case access"],
+        "official": "Access was maintained on the basis of a potential future operational requirement that had not been formally confirmed.",
+        "subtext": "access justification assessed as undocumented, review of standing access provisioning recommended"
+    },
+
+    # Single points of failure
+    {
+        "keywords": ["only one person", "only person who", "only he knew", "only she knew", "single person who", "one engineer who",
+                     "sole knowledge"],
+        "official": "A knowledge dependency on a single individual was identified as a contributing factor in the incident response.",
+        "subtext": "single point of knowledge identified, knowledge transfer and documentation status assessed"
+    },
+    {
+        "keywords": ["retired in", "retired and", "he retired", "she retired", "they retired", "since he left", "since she left",
+                     "departed employee knowledge"],
+        "official": "Key operational knowledge associated with the affected component had not been formally transferred prior to the relevant individual's departure.",
+        "subtext": "knowledge retention controls assessed, institutional knowledge loss identified as contributing factor"
+    },
+    {
+        "keywords": ["breaks a", "would break", "rotating.*breaks", "patching.*breaks", "updating.*breaks", "changing.*breaks",
+                     "conflict with operational"],
+        "official": "Remediation of the identified control gap was constrained by a dependency conflict with an existing operational requirement.",
+        "subtext": "known risk accepted in place of operational disruption, risk acceptance not formally documented"
+    },
+
+    # Outdated IR plans and response failures
+    {
+        "keywords": ["response plan.*old", "ir plan.*outdated", "\\bplan\\b.*no longer", "response plan references", "plan.*wrong interface",
+                     "screenshots.*wrong", "screenshots no longer",
+                     "outdated playbook"],
+        "official": "The documented incident response procedures were assessed as not fully reflecting the current operational environment at the time of the incident.",
+        "subtext": "plan maintenance review identified as area for improvement, last review date to be confirmed"
+    },
+    {
+        "keywords": ["wrong system", "isolated the wrong", "wrong server", "accidentally isolated", "instead of the",
+                     "isolation error"],
+        "official": "A containment action was applied to an unintended system during the response period. The impact of this action has been assessed.",
+        "subtext": "containment action reviewed, consequences of misidentification assessed against overall response timeline"
+    },
+
+    # Ransomware execution
+    {
+        "keywords": ["ransomware started", "ransomware began", "started encrypting", "began encrypting", "hit by ransomware",
+                     "ransomware deployed", "ransomware is encrypting", "pushed ransomware", "deployed ransomware",
+                     "ransomware into", "ransomware notes", "ransom notes", "ransom note.*appearing", "ransomware.*appearing",
+                     "ransomware activity", "ransomware in.*environment", "ransomware.*hosting",
+                     "ransomware event"],
+        "official": "A ransomware event was confirmed within the affected environment. Containment and recovery procedures were initiated.",
+        "subtext": "encryption scope assessed at time of detection, pre-encryption data access not determined"
+    },
+
+    # Backup and DR failures
+    {
+        "keywords": ["backup.*encrypted", "encrypted.*backup", "backups were encrypted", "backup replicated",
+                     "synchronised.*encrypted", "synchronized.*encrypted", "replicated.*encrypted",
+                     "backup impacted"],
+        "official": "Backup integrity was assessed following the incident. The replication configuration is under review.",
+        "subtext": "recovery point confirmed, recovery point was within the incident window"
+    },
+    {
+        "keywords": ["exactly as designed", "working as designed", "functioning as designed", "worked as intended",
+                     "performing as expected", "behaved as designed",
+                     "design specification met"],
+        "official": "The automated system performed in accordance with its documented design specifications during the incident period.",
+        "subtext": "designed behaviour confirmed, design review not in scope of this report"
+    },
+    {
+        "keywords": ["dashboard.*green", "metrics improved", "health metrics", "appeared to improve", "looked like it was working",
+                     "interpreted.*containment",
+                     "misleading dashboard"],
+        "official": "Monitoring indicators presented a positive operational status during a period of the incident response. This assessment was subsequently revised.",
+        "subtext": "positive indicator attributed to monitoring suppression, dashboard health and operational health assessed as divergent"
+    },
+
+    # Patch management cycle
+    {
+        "keywords": ["patch was deferred", "patch deferred", "patching deferred", "vulnerability deferred", "deferred the patch", "deferred in", "deferred pending",
+                     "patch postponed"],
+        "official": "The identified remediation action was subject to a deferral process within the change management framework.",
+        "subtext": "deferral documented, risk profile during deferral period not formally reassessed"
+    },
+    {
+        "keywords": ["risk accepted", "risk-accepted", "risk acceptance", "accepted the risk", "risk was accepted", "risk register",
+                     "risk sign-off"],
+        "official": "A formal risk acceptance was recorded in relation to the unmitigated vulnerability. The risk acceptance was reviewed in the context of this incident.",
+        "subtext": "risk accepted, review period for acceptance not established, incident occurred during acceptance period"
+    },
+    {
+        "keywords": ["maintenance window cancelled", "maintenance window was cancelled", "window was cancelled", "patching window cancelled", "cancelled the maintenance",
+                     "cancelled change"],
+        "official": "The scheduled remediation window was cancelled prior to implementation. A revised implementation schedule was established.",
+        "subtext": "cancellation rationale reviewed, impact of cancellation on residual risk not reassessed at time of decision"
+    },
+    {
+        "keywords": ["quarterly reporting", "affect.*reporting", "affect.*quarter", "business critical period", "end of quarter", "financial reporting", "operational reporting",
+                     "blackout period"],
+        "official": "The remediation schedule was aligned with operational availability constraints. Business continuity considerations were assessed as a contributing factor in scheduling.",
+        "subtext": "operational availability prioritised over remediation, risk exposure during deferral not formally documented"
+    },
+    {
+        "keywords": ["evaluated.*deferred", "reviewed.*deferred", "evaluated.*reviewed.*scheduled", "multi-stage.*review", "several.*stage.*review", "went.*through.*several.*review",
+                     "review chain delay"],
+        "official": "The identified vulnerability was subject to a multi-stage internal review process prior to remediation scheduling.",
+        "subtext": "review process timeline assessed, risk profile not formally reassessed at each stage of the review cycle"
+    },
+
+    # Process compliance as the whole point
+    {
+        "keywords": ["everyone followed", "everyone involved followed", "process was followed", "followed the process", "followed process correctly",
+                     "process correctly followed", "all procedures were followed",
+                     "compliant process"],
+        "official": "All individuals involved operated in accordance with established procedures. No individual process deviations were identified.",
+        "subtext": "process compliance confirmed, process adequacy not in scope of this review"
+    },
+
+    # HMI and operator detection
+    {
+        "keywords": ["hmi", "hmi screen", "control screen", "scada screen", "laggy", "sinister", "behaving strangely",
+                     "strange operator display"],
+        "official": "An operational anomaly was identified via end-user observation of system behaviour. The observation was escalated through the appropriate channels.",
+        "subtext": "end-user detection, automated detection controls did not identify this activity independently"
+    },
+
+    # PAM and credential rotation constraints
+    {
+        "keywords": ["pam rotation", "excluded from.*rotation", "rotation.*excluded", "pam.*excluded", "not subject to rotation", "excluded from pam",
+                     "rotation bypass"],
+        "official": "The affected credential had not been subject to the standard privileged access management rotation schedule. An operational constraint was identified as the basis for this exception.",
+        "subtext": "rotation exception noted, exception review process assessed, risk during non-rotation period not established"
+    },
+    {
+        "keywords": ["coordinated downtime", "requires.*downtime", "downtime.*vendors", "downtime.*plants", "downtime.*required to change", "downtime to rotate",
+                     "joint downtime"],
+        "official": "The remediation action required coordinated downtime across multiple systems and stakeholders. This coordination requirement was identified as a contributing factor in the deferral.",
+        "subtext": "coordination complexity documented as deferral rationale, risk during deferral not formally accepted"
+    },
+    {
+        "keywords": ["no source code", "nobody has source", "lost the source", "source code.*available", "source code not available", "source code for",
+                     "missing source"],
+        "official": "The affected application was identified as lacking available source code. This constraint was assessed as a factor in the inability to apply standard remediation procedures.",
+        "subtext": "legacy application dependency confirmed, vendor support status and application lifecycle assessed"
+    },
+    {
+        "keywords": ["password was last changed", "last changed in 20", "last rotated in", "not changed since", "changed in 201", "changed in 202", "password.*years ago",
+                     "aged password"],
+        "official": "The affected credential had not been subject to rotation for an extended period prior to the incident.",
+        "subtext": "credential age confirmed, duration of exposure during non-rotation period not fully established"
+    },
+
+    # Logging infrastructure failures
+    {
+        "keywords": ["logging agent", "log agent", "stopped forwarding", "silently stopped", "events not forwarded", "agent stopped", "log forwarding stopped", "not forwarding",
+                     "log shipper down"],
+        "official": "The log collection infrastructure experienced an interruption that resulted in a gap in the availability of security event data. The interruption was not surfaced by monitoring controls.",
+        "subtext": "log collection gap identified, gap duration coincides with incident timeline, monitoring of monitoring controls assessed"
+    },
+    {
+        "keywords": ["marked successful", "project.*marked complete", "marked as complete", "signed off as", "declared successful", "project closed", "project.*signed off",
+                     "project signoff"],
+        "official": "The associated project was assessed as complete in accordance with the documented success criteria. Security monitoring restoration was not included within the defined acceptance criteria.",
+        "subtext": "success criteria reviewed, security outcomes not included in project acceptance testing"
+    },
+    {
+        "keywords": ["disks filled", "disk full", "ran out of disk", "storage full", "disk space", "filled the disk", "disk.*capacity",
+                     "out of disk space"],
+        "official": "A storage capacity constraint was identified as a contributing factor in the interruption of log retention. The affected log data was not recoverable.",
+        "subtext": "storage capacity monitoring assessed, alert threshold and response process reviewed"
+    },
+
+    # Change Advisory Board as active obstacle
+    {
+        "keywords": ["change advisory board", "\\bcab\\b", "cab approval", "cab process", "cab meeting", "change board", "change management board", "change control board",
+                     "change committee"],
+        "official": "Emergency change procedures were initiated. Adherence to the change management framework was maintained throughout the incident response.",
+        "subtext": "change management process applied during active incident, impact of process adherence on response timeline noted as area for review"
+    },
+    {
+        "keywords": ["formally documented before", "document before implementation", "documentation before", "approve before implementing", "approval before implementation", "untracked.*risk",
+                     "pre-approval doc"],
+        "official": "Pre-implementation documentation requirements were applied in accordance with the established change management framework.",
+        "subtext": "documentation requirement applied during active incident, emergency change authorisation process reviewed"
+    },
+    {
+        "keywords": ["delayed.*isolation", "isolation.*delayed", "containment.*delayed", "delay.*containment", "delayed by.*minutes", "delayed.*ninety", "delayed.*forty", "delayed.*sixty",
+                     "isolation lag"],
+        "official": "Network isolation was implemented following a period required for change authorisation. The impact of this interval on the incident scope has been assessed.",
+        "subtext": "interval between decision and implementation noted, emergency change authorisation process reviewed"
+    },
+
+    # DR testing not done
+    {
+        "keywords": ["dr test", "disaster recovery test", "recovery test", "dr.*postponed", "dr.*cancelled", "dr exercise", "dr.*not.*done", "dr.*not.*completed",
+                     "dr test skipped"],
+        "official": "The scheduled disaster recovery exercise had been deferred prior to the incident. Recovery capability had not been validated at the time of the incident.",
+        "subtext": "DR test deferred, recovery capability not validated prior to incident, validation occurred during the incident"
+    },
+    {
+        "keywords": ["resource constraints", "due to resource", "lack of resources", "resourcing", "staff availability", "no capacity", "insufficient resource",
+                     "resource shortage"],
+        "official": "The activity was deferred due to resource availability constraints. A revised schedule was established at the time of deferral.",
+        "subtext": "resource constraint documented as deferral rationale, risk assessment of deferral not recorded"
+    },
+
+    # Legal editing impact language
+    {
+        "keywords": ["legal requested the wording", "legal.*replace.*with", "lawyers.*wording", "legal.*language", "legal.*requested.*wording", "replace.*wording", "change.*wording",
+                     "legal edit"],
+        "official": "Legal counsel reviewed the incident communication and provided guidance on appropriate terminology for external and internal distribution.",
+        "subtext": "legal review of communications noted, original assessment retained in operational record, prior communications not recalled"
+    },
+    {
+        "keywords": ["upgraded from", "estimate was upgraded", "revised.*from.*to", "updated.*from.*to", "changed.*from.*to", "escalated from",
+                     "impact reassessed"],
+        "official": "The impact assessment was revised as additional information became available during the incident response.",
+        "subtext": "impact assessment timeline noted, initial estimate reviewed against final confirmed scope"
+    },
+    {
+        "keywords": ["contained operational", "operational disruption", "limited disruption", "disruption was contained", "minimal impact", "minor operational",
+                     "impact limited"],
+        "official": "The operational impact was assessed within the parameters of the current investigation scope.",
+        "subtext": "scope of assessment defined by available information, assessment subject to revision as further information becomes available"
+    },
+
+    # Production stopped
+    {
+        "keywords": ["production stopped", "stopped entirely", "full outage", "complete outage", "total outage", "stopped completely", "went down entirely",
+                     "production down"],
+        "official": "A full production outage was confirmed during the incident period. Recovery activities were prioritised accordingly.",
+        "subtext": "outage duration and scope confirmed, contributing factors assessed in this review"
+    },
+
+    # Circular approval
+    {
+        "keywords": ["awaiting approval", "pending.*approval", "blocked.*approval", "approval outstanding", "still awaiting", "blocked pending",
+                     "approval stuck"],
+        "official": "The action is pending formal authorisation through the established approval framework.",
+        "subtext": "at time of writing, meaning: this may change immediately"
+    },
+    {
+        "keywords": ["reached the backup", "accessed backup", "attacker reached.*backup", "threat actor reached.*backup", "accessed.*backup management", "backup management environment", "reached backup management",
+                     "backup compromise"],
+        "official": "The threat actor was identified as having accessed backup management infrastructure during the response interval.",
+        "subtext": "access occurred during change authorisation window, interval between decision and implementation noted"
+    },
+
+    # Technically-true-but-alarming framing
+    {
+        "keywords": ["no evidence.*control failed", "no evidence.*failure", "technically true", "no security control failed", "controls functioned correctly", "controls performed as designed",
+                     "control worked"],
+        "official": "A review of available monitoring data did not identify evidence of security control failure.",
+        "subtext": "evidence is what we happened to collect, absence of evidence assessed in context of available visibility"
+    },
+
+    # MFA active but circumvented via session token
+    {
+        "keywords": ["mfa.*functioning", "mfa was enabled.*correctly", "authenticated successfully.*token", "session token.*compromis", "vendor.*session token", "token.*after compromising",
+                     "mfa bypass token"],
+        "official": "Multi-factor authentication controls were active and performed as designed. Access was achieved via a pre-authenticated session credential.",
+        "subtext": "control performed as designed, design assumptions reviewed in context of attack vector"
+    },
+
+    # Legitimate-looking access
+    {
+        "keywords": ["logs show legitimate", "appeared legitimate", "looked legitimate", "legitimate access", "showed legitimate", "logged as legitimate",
+                     "normal looking activity"],
+        "official": "Available log data did not indicate anomalous access patterns at the time of the event. The activity was consistent with expected operational behaviour as recorded.",
+        "subtext": "log analysis constrained by available detection rules, attacker activity within logged baseline"
+    },
+
+    # Detection tools operational but not detecting
+    {
+        "keywords": ["edr.*healthy", "edr.*remained", "agent.*remained healthy", "tools were running", "endpoint.*remained healthy", "security agent.*healthy",
+                     "agent healthy"],
+        "official": "Endpoint detection tooling was confirmed as operational throughout the incident period. The activity was not surfaced by available detection controls.",
+        "subtext": "tooling operational, activity not within detection rule coverage, coverage gap assessed"
+    },
+
+    # Detections auto-closed / alert suppression
+    {
+        "keywords": ["auto-closed", "auto closed", "automatically closed", "auto-resolved", "automatically resolved", "suppressed.*alert", "alert.*suppressed",
+                     "alert auto-dismissed"],
+        "official": "Associated detection events were disposed of automatically in accordance with configured alert management rules.",
+        "subtext": "alert disposition rules reviewed, suppression criteria assessed against incident indicators"
+    },
+    {
+        "keywords": ["known administrative behaviour", "known admin behaviour", "expected baseline", "within.*baseline", "matched.*baseline", "consistent with baseline", "categorised as.*expected", "categorised as.*normal",
+                     "baseline match"],
+        "official": "The associated activity was categorised as consistent with known administrative behaviour at the time of detection.",
+        "subtext": "categorisation based on source account classification, classification reviewed against incident findings"
+    },
+
+    # Wrong severity
+    {
+        "keywords": ["severity.*medium", "medium.*severity", "assigned.*medium", "medium priority alert", "low.*severity", "severity.*low", "severity.*informational",
+                     "severity underrated"],
+        "official": "The associated detection event was assigned a severity classification based on available contextual information at the time of triage.",
+        "subtext": "severity classification reviewed post-incident, contextual information available at triage time assessed"
+    },
+
+    # Systems classified non-critical pending review that was never done
+    {
+        "keywords": ["classified as non-critical", "non-critical.*pending", "pending.*criticality", "criticality.*pending", "criticality review", "pending.*classification review",
+                     "criticality unknown"],
+        "official": "The affected system was classified as non-critical at the time of the incident, pending completion of the asset criticality assessment process.",
+        "subtext": "classification based on incomplete assessment, criticality review completion status noted"
+    },
+    {
+        "keywords": ["behind schedule", "months behind schedule", "eighteen months behind", "twelve months behind", "years behind schedule", "overdue.*review", "review.*overdue",
+                     "review never done"],
+        "official": "The relevant assessment process had not been completed at the time of the incident. Completion was subject to ongoing scheduling constraints.",
+        "subtext": "completion timeline not established, risk of operating without completed assessment not formally reviewed"
+    },
+
+    # Attribution to other causes
+    {
+        "keywords": ["assumed.*caused by", "assumed it was the", "thought it was the", "attributed to.*upgrade", "put it down to", "assumed.*was the.*upgrade",
+                     "misattribution"],
+        "official": "The anomalous activity was initially attributed to a separate operational event. This attribution was subsequently revised.",
+        "subtext": "initial attribution reviewed, interval before correct attribution assessed as contributing factor in response timeline"
+    },
+
+    # Ghost assets / marked decommissioned but still running
+    {
+        "keywords": ["marked.*decommissioned", "listed as decommissioned", "recorded as decommissioned", "not actually decommissioned",
+                     "still.*decommissioned", "decommissioned.*still active", "decommissioned.*still online", "classified.*decommissioned.*still", "decommissioned but still",
+                     "ghost asset"],
+        "official": "Systems recorded as decommissioned in the asset register were identified as active at the time of the incident. The accuracy of the asset inventory is under review.",
+        "subtext": "asset register accuracy assessed, systems outside documented scope not visible to standard monitoring controls"
+    },
+
+    # KPI gaming by reclassification
+    {
+        "keywords": ["improved.*kpi", "improve.*metric", "kpi.*unsupported", "kpi.*asset", "improve.*score", "better.*metric", "reduce.*count", "improved a kpi",
+                     "metric manipulation"],
+        "official": "The asset classification was updated in a manner consistent with applicable governance metrics. The operational security posture of the affected systems was not changed.",
+        "subtext": "classification change noted, operational security posture unchanged by classification update, metric integrity assessed"
+    },
+
+    # Unknown infrastructure discovered
+    {
+        "keywords": ["no one knew.*existed", "nobody knew.*existed", "didn't know.*still active", "didn't know.*still running", "unknown.*trust", "unknown.*domain",
+                     "found.*didn't know about", "no one knew.*still trusted", "nobody knew.*still trusted", "didn't know.*were still trusted",
+                     "undiscovered system"],
+        "official": "Infrastructure was identified that was not reflected in current documentation. The operational history and security configuration of this infrastructure is under review.",
+        "subtext": "undocumented infrastructure identified, full scope of legacy trust relationships not yet established"
+    },
+    {
+        "keywords": ["overlapping.*diagram", "multiple.*network diagram", "three.*diagram", "network diagram.*inconsistent", "diagram.*not current", "conflicting.*diagram",
+                     "inconsistent diagram"],
+        "official": "Network documentation was identified as inconsistent across available sources. The accuracy of available network diagrams as a basis for incident response was assessed.",
+        "subtext": "documentation accuracy limited response effectiveness, current network state not fully reflected in available artefacts"
+    },
+
+    # Backup authenticating against production / trust boundary failure
+    {
+        "keywords": ["backup.*authenticating.*production", "backup environment.*production", "authenticating against production", "backup.*trusts production", "backup.*connected to production",
+                     "backup trust mismatch"],
+        "official": "A trust relationship between the backup environment and the production environment was identified as inconsistent with the intended network boundary.",
+        "subtext": "backup environment access to production assessed, lateral movement path via backup infrastructure noted"
+    },
+
+    # Safety interlocks bypassed
+    {
+        "keywords": ["safety interlock", "bypassing.*interlock", "interlock.*bypass", "overriding safety", "bypassed.*safety", "override.*safety",
+                     "safety bypass"],
+        "official": "Safety system controls were overridden during the incident period in response to conflicting process data. The scope of safety system impact is under assessment.",
+        "subtext": "safety override decisions made under operational pressure, physical consequence of override assessed"
+    },
+
+    # Discoveries during recovery
+    {
+        "keywords": ["during recovery.*discovered", "during recovery we found", "discovered during recovery", "found during recovery", "recovery revealed", "recovery we discovered",
+                     "found while restoring"],
+        "official": "Additional findings were identified during the recovery process. These findings are being assessed as part of the broader post-incident review.",
+        "subtext": "recovery phase findings noted, full scope of pre-incident exposure not yet established"
+    },
+
+    # Person who approved this left and is now a consultant
+    {
+        "keywords": ["left the company.*consult", "now works.*consult", "works in consultancy", "works as.*consultant", "left.*now.*consultant", "former.*consultant",
+                     "ex-staff consultant"],
+        "official": "The individual associated with the relevant authorisation decision is no longer employed by the organisation.",
+        "subtext": "accountability reviewed, individual no longer within scope of internal governance processes"
+    },
+
+    # Mutual blame / says they requested it
+    {
+        "keywords": ["says.*requested it", "says it was.*who", "claims.*requested", "insists.*requested", "says.*asked for it",
+                     "blame shifting"],
+        "official": "Attribution of the originating request for the affected configuration has not been established from available records.",
+        "subtext": "records insufficient to establish accountability, verbal accounts assessed as conflicting"
+    },
+
+    # Incident coordination call
+    {
+        "keywords": ["bridge call", "war room", "incident bridge", "p1 call", "p1 bridge", "priority 1 call", "incident call", "major incident call",
+                     "crisis call"],
+        "official": "A multi-stakeholder incident coordination call was established. Attendance was managed in accordance with the notification framework.",
+        "subtext": "call attendance reviewed, relevant technical expertise availability during initial response assessed"
+    },
+    {
+        "keywords": ["twenty.*people on the call", "people on the call", "too many people on", "people joined the call", "wrong people on",
+                     "overcrowded call"],
+        "official": "Incident response call participation included personnel beyond those with a direct technical role in the response.",
+        "subtext": "call composition assessed, signal-to-noise ratio during initial coordination period noted"
+    },
+
+    # Stale on-call rota
+    {
+        "keywords": ["on-call rota", "on call rota", "oncall rota", "rota.*outdated", "rota.*wrong", "still listed.*rota", "rota.*moved", "rota.*left",
+                     "wrong escalation"],
+        "official": "The on-call escalation list referenced personnel details that were not current at the time of the incident.",
+        "subtext": "on-call rota maintenance reviewed, response delay attributable to inaccurate escalation records noted"
+    },
+
+    # Uncoordinated changes during incident
+    {
+        "keywords": ["just to rule out", "rule things out", "independently.*changes", "making changes.*independently", "changes.*independently", "changes without.*coordination", "started making changes",
+                     "parallel changes"],
+        "official": "Remediation actions were implemented by multiple parties without coordinated change management oversight during the incident response period.",
+        "subtext": "change coordination failure noted, impact of independent actions on incident scope assessed"
+    },
+
+    # Security controls disabled during incident for performance reasons
+    {
+        "keywords": ["disabled.*protection", "turned off.*protection", "disabled.*endpoint protection", "endpoint protection.*disabled",
+                     "might be causing latency", "causing latency", "disabled.*for performance", "turned off.*security",
+                     "perf disable"],
+        "official": "A security control was deactivated during the incident period based on a preliminary assessment of its impact on system performance.",
+        "subtext": "deactivation occurred during active incident, change authorisation for security control removal reviewed"
+    },
+
+    # Undocumented network path / unofficial bridge
+    {
+        "keywords": ["unofficial bridge", "acting as.*bridge", "acting as an unofficial", "unofficial.*route", "informal.*connection",
+                     "undocumented.*bridge", "undocumented.*route",
+                     "shadow network path"],
+        "official": "An undocumented network path was identified as having been in operational use. The configuration was not reflected in current network documentation.",
+        "subtext": "undocumented dependency identified, operational reliance on undocumented configuration assessed"
+    },
+
+    # Multiple incidents on one call / scope not recognised
+    {
+        "keywords": ["became.*separate incident", "technically.*separate", "multiple.*incidents", "three.*separate incident", "two.*separate incident", "actually.*two incident", "actually.*three incident",
+                     "merged incidents"],
+        "official": "The incident was subsequently assessed as encompassing multiple distinct events. Scope was initially managed under a single incident reference.",
+        "subtext": "incident scope reviewed, initial classification assessed against expanded findings"
+    },
+    {
+        "keywords": ["nobody noticed", "no one noticed", "went unnoticed", "not noticed", "didn't notice",
+                     "unnoticed"],
+        "official": "The identified activity was not recognised at the time of occurrence. Detection was identified retrospectively.",
+        "subtext": "detection timeline reviewed, interval between occurrence and recognition assessed"
+    },
+
+    # Analyst finding ignored during call
+    {
+        "keywords": ["was interrupted", "he was interrupted", "she was interrupted", "interrupted by a discussion", "tried to mention", "attempted to mention", "interrupted while",
+                     "talked over"],
+        "official": "An observation of potentially significant activity was raised during the incident coordination call. The observation was not actioned at the time it was raised.",
+        "subtext": "time between observation and action reviewed, coordination call dynamics identified as contributing factor"
+    },
+
+    # Evidence destroyed during response
+    {
+        "keywords": ["only useful evidence", "removed.*evidence", "only.*evidence.*removed", "removed the only", "evidence.*lost", "evidence was removed", "destroyed.*evidence",
+                     "evidence deletion"],
+        "official": "Evidence relevant to the investigation was identified as having been rendered unavailable during the incident response period.",
+        "subtext": "evidence preservation reviewed, impact on investigation completeness noted"
+    },
+
+    # Accidental defensive success
+    {
+        "keywords": ["accidentally.*prevented", "accidentally.*stopped", "accidentally.*blocked", "only successful defensive", "accidental.*worked", "unintentionally.*prevented", "accidentally disconnected.*prevented",
+                     "happy accident", "accidental resilience", "accidentally.*resilient", "expired.*prevented.*update", "certificate.*expired.*prevented"],
+        "official": "A defensive outcome was achieved during the incident response period. The relevant action was subsequently identified as having limited the scope of the incident.",
+        "subtext": "outcome identified retrospectively, action was not taken with the intended defensive purpose at the time"
+    },
+
+    # Optimistic assumption revised
+    {
+        "keywords": ["turned out to be optimistic", "assumption.*optimistic", "proved optimistic", "optimistic.*assumption", "things could not.*get worse", "could not.*get worse",
+                     "overly optimistic"],
+        "official": "A preliminary operational assessment was subsequently revised in light of additional information.",
+        "subtext": "assessment timeline reviewed, basis for initial assessment noted"
+    },
+
+    # PIR boilerplate and circular governance
+    {
+        "keywords": ["communication could be improved", "communication.*improve", "improve.*communication", "better communication.*recommended", "recommended.*communication",
+                     "comms improvement"],
+        "official": "The post-incident review identified communication effectiveness as an area for improvement.",
+        "subtext": "recommendation noted, implementation ownership not assigned at time of report"
+    },
+    {
+        "keywords": ["formal.*committee", "coordination committee", "outage committee", "incident committee", "working group.*established", "task force.*recommended", "committee.*recommended",
+                     "steering committee"],
+        "official": "A formal coordination body was recommended as a governance improvement following the post-incident review.",
+        "subtext": "recommendation noted, implementation timeline not established"
+    },
+    {
+        "keywords": ["nobody could agree who owned", "couldn't agree.*owned", "no owner.*identified", "ownership.*not.*established", "nobody owns", "nobody agreed.*own", "no one.*own it",
+                     "ownership dispute"],
+        "official": "Ownership of the recommended action was not established at the time of the post-incident review.",
+        "subtext": "accountability gap identified, escalation path for unowned recommendations not documented"
+    },
+    {
+        "keywords": ["first meeting.*postponed", "meeting was postponed", "first.*meeting.*cancelled", "kickoff.*postponed", "committee.*hasn't met",
+                     "postponed indefinitely"],
+        "official": "Convening of the recommended governance body was deferred pending resolution of ownership and scheduling constraints.",
+        "subtext": "deferral rationale consistent with the conditions identified as contributing to the original incident"
+    },
+
+    # Domain-joined OT / convenience-driven domain enrolment
+    {
+        "keywords": ["joined to the domain", "domain-joined ot", "not supposed to be on the corporate domain", "joined the domain over the years",
+                     "tired of.*separate passwords", "separate passwords.*file sharing", "\\bot systems.*joined.*domain\\b", "\\bdomain.*ot systems\\b",
+                     "ot on corporate domain"],
+        "official": "Operational technology assets were identified as domain-joined contrary to their documented network classification. This configuration was not reflected in the current asset register.",
+        "subtext": "domain enrolment driven by credential convenience, configuration change undocumented, asset register accuracy reviewed"
+    },
+
+    # Deliberate non-documentation to avoid governance review
+    {
+        "keywords": ["nobody documented", "no one documented", "not documented because", "documentation would have triggered", "document.*would.*trigger",
+                     "avoid.*architecture review", "trigger.*review", "documenting.*would.*require",
+                     "undocumented to bypass"],
+        "official": "Configuration changes were implemented without formal documentation. The absence of a change record precluded governance and architectural review.",
+        "subtext": "change control circumvented, documentation gap identified as deliberate, governance review not completed"
+    },
+
+    # Detection by business impact rather than security tooling
+    {
+        "keywords": ["spreadsheets stopped", "finance noticed", "operations noticed.*impact", "users noticed first", "business noticed", "noticed because.*stopped working",
+                     "discovered.*not loading", "staff noticed.*not working", "first noticed.*impact",
+                     "business disruption alert"],
+        "official": "The incident was first identified through operational impact on business functions rather than through security monitoring capability.",
+        "subtext": "detection by business impact, security monitoring did not generate actionable alert prior to business notification"
+    },
+
+    # Management reframing incident as evidence of success
+    {
+        "keywords": ["management declared", "evidence of successful", "declared.*success", "called it.*success", "described.*as.*success", "management.*called.*integration", "evidence of.*integration",
+                     "spun as success"],
+        "official": "Executive communications characterised the incident outcome in terms inconsistent with the formal security classification.",
+        "subtext": "executive framing reviewed, incident classification confirmed independent of communications to senior stakeholders"
+    },
+
+    # False isolation: isolation as label not technical control
+    {
+        "keywords": ["isolated.*mounted as.*share", "not actually isolated", "supposed to be isolated", "said to be isolated", "labelled.*isolated.*connected", "classified.*isolated.*accessible",
+                     "isolation.*was a label", "isolated.*network share", "\\bisolated\\b.*\\bshare\\b",
+                     "paper isolation"],
+        "official": "A system designated as isolated was confirmed to be accessible via an active network path. The isolation designation reflected a classification rather than a technical boundary.",
+        "subtext": "isolation was a label, network boundary not present, technical controls did not match documented architecture"
+    },
+
+    # Unmanaged and unidentifiable asset population
+    {
+        "keywords": ["unmanaged systems", "unmanaged assets", "unmanaged devices", "nobody could identify", "no one could identify", "systems nobody could", "systems no one could",
+                     "couldn't identify.*systems", "systems.*couldn't be identified", "\\bunidentified\\b.*systems",
+                     "unknown asset"],
+        "official": "The asset inventory review identified a significant population of systems outside the scope of current management tooling. A subset could not be attributed to any known business function.",
+        "subtext": "asset register incomplete, management tooling coverage gap, unknown systems present within the environment"
+    },
+
+    # Legacy mystery asset: DO NOT TURN OFF
+    {
+        "keywords": ["do not turn off", "don't turn off", "nobody knows what it does", "no one knows what it does", "no one currently knows", "nobody currently knows",
+                     "can't turn it off", "afraid to turn off", "\\bDO NOT TURN OFF\\b", "windows xp.*still running", "windows xp.*don't know",
+                     "mystery box"],
+        "official": "A legacy asset with undetermined operational function was identified within the environment. The system has not been subject to formal decommission assessment or risk review.",
+        "subtext": "legacy asset retained pending identification of function, function not established, decommission assessment not completed"
+    },
+
+    # Building management system / HVAC / facilities impact
+    {
+        "keywords": ["building management", "\\bbms\\b", "hvac", "\\bhvac\\b", "server room cooling", "strange hvac", "cooling shut down", "air conditioning.*incident",
+                     "facilities reported", "compressor control", "building automation",
+                     "facilities incident"],
+        "official": "Building management and environmental control systems were identified within the scope of the incident. The impact on physical infrastructure supporting critical systems was assessed.",
+        "subtext": "BMS compromise assessed, physical environment impact on systems availability noted"
+    },
+
+    # Geolocation alerting disabled due to false positive fatigue
+    {
+        "keywords": ["geolocation alert", "geo.*alert.*disabled", "geolocation.*disabled", "geolocation.*turned off", "location.*alert.*disabled", "location alert.*complaints",
+                     "geo.*module.*disabled", "country.*alert.*disabled",
+                     "geo alert off"],
+        "official": "A detective control was identified as having been deactivated following operational feedback. The control was not restored prior to the incident.",
+        "subtext": "control deactivated in response to false positive volume, reactivation not scheduled, gap not formally risk-accepted"
+    },
+
+    # MFA misconfiguration: extended device trust window
+    {
+        "keywords": ["mfa.*trust.*device", "trust.*authenticated.*within", "mfa.*ninety days", "mfa.*90 days", "device.*trusted.*authenticated", "trust any device.*authenticated",
+                     "mfa.*trusted.*previously", "previously authenticated.*bypass", "mfa.*remembered.*device",
+                     "mfa trusted device"],
+        "official": "The multi-factor authentication configuration included a device trust policy that permitted authentication without secondary verification for devices with a prior successful authentication record.",
+        "subtext": "MFA bypass via trusted device policy, trust window duration identified as contributing factor, policy not reviewed since initial configuration"
+    },
+
+    # Credentials and sensitive configuration in internal wiki
+    {
+        "keywords": ["temporary workarounds", "local admin.*wiki", "passwords.*wiki", "wiki.*passwords", "wiki.*credentials", "credentials.*wiki", "internal wiki.*contain",
+                     "wiki page.*contain", "actual network.*official.*useless", "accurate documentation.*company", "most accurate documentation",
+                     "wiki with creds"],
+        "official": "Sensitive configuration data and credential material was identified as having been stored in an internal knowledge base accessible within the corporate environment.",
+        "subtext": "credential exposure via internal documentation, access controls on knowledge base assessed, data classified as operational convenience rather than formal record"
+    },
+
+    # Alert downgraded due to pentest noise / rules never tuned
+    {
+        "keywords": ["similar alerts.*penetration test", "alerts.*flooded.*pentest", "pentest.*flooded.*queue", "nobody.*tuned.*rules", "rules.*not tuned", "tuned.*rules.*afterwards",
+                     "alert.*downgraded.*vendor", "downgraded.*because.*previous", "pentest.*noise", "alert.*queue.*flooded",
+                     "pentest noise"],
+        "official": "Detection events were assessed and downgraded based on contextual similarity to activity observed during an authorised testing exercise. Alert tuning following the exercise had not been completed.",
+        "subtext": "alert triage affected by prior test activity, post-exercise tuning not completed, downgrade decision not reviewed"
+    },
+
+    # Attacker using the organisation's own admin tooling
+    {
+        "keywords": ["script.*copied.*from.*wiki", "using.*our.*own.*script", "script.*written by.*infrastructure", "copied.*admin.*script", "attacker.*used.*existing.*script",
+                     "used.*script.*never removed", "living off the land", "organisation.*own.*tools", "our own.*tools.*against us", "script.*originally.*written by",
+                     "lotl"],
+        "official": "The threat actor was identified as having utilised tooling present within the environment. The tooling had been developed for internal administrative purposes and remained accessible within the environment.",
+        "subtext": "internal tooling repurposed by threat actor, removal not completed following original use case, access controls on tooling not reviewed"
+    },
+
+    # Physical infrastructure impact on forensic collection
+    {
+        "keywords": ["overheating.*forensic", "forensic.*overheating", "shut down.*imaging", "powered off.*imaging", "imaging.*interrupted", "evidence evaporation",
+                     "host.*shut down.*investigat", "investigators.*overheating", "forensic.*cooling", "collection.*interrupted.*heat",
+                     "imaging failed heat"],
+        "official": "Forensic collection activity was interrupted by physical infrastructure conditions within the affected environment. The completeness of evidence gathered during this period was assessed.",
+        "subtext": "evidence collection interrupted, completeness of forensic record affected by environmental conditions during response"
+    },
+
+    # Compromised component reconnected as unrelated to security issue
+    {
+        "keywords": ["reconnected.*compromised", "reconnecting.*compromised", "restored.*because.*unrelated", "reattached.*compromised", "security issue.*unrelated",
+                     "seemed unrelated.*reconnected", "re-enabled.*security issue", "restored.*because.*separate", "reconnected.*security.*separate",
+                     "unrelated reconnection"],
+        "official": "A component identified as within the incident scope was reconnected to the environment during the response period. The reconnection was assessed as having restored attacker access.",
+        "subtext": "attacker access re-established via operational reconnection, incident scope and containment status reviewed"
+    },
+
+    # Conflicting incident timelines from different teams
+    {
+        "keywords": ["three.*timelines", "two.*timelines", "separate timelines", "timelines.*disagreed", "timelines.*conflicting", "all disagreed.*when", "timeline.*legal.*security",
+                     "legal.*version.*began", "incident started.*disagreed", "when.*incident.*started.*disagree", "timeline.*infrastructure.*security",
+                     "timeline mismatch"],
+        "official": "Multiple incident timelines were produced by separate responding teams. The timelines were inconsistent on the question of incident commencement and scope.",
+        "subtext": "timeline discrepancy noted, authoritative incident record not established, legal and operational definitions of incident start date did not align"
+    },
+
+    # PACS / clinical imaging / patient-facing systems
+    {
+        "keywords": ["\\bpacs\\b", "imaging archive", "radiology system", "ct scan.*blank", "ct scan.*not load", "medical imaging", "radiology.*not load", "imaging.*not load",
+                     "clinical imaging", "picture archiving", "scan.*not open", "modality.*reconnect",
+                     "diagnostic imaging down"],
+        "official": "Clinical imaging infrastructure was identified as affected. The availability of diagnostic imaging capability was assessed throughout the response period.",
+        "subtext": "clinical system availability assessed, patient care pathway impact noted, imaging system recovery prioritised"
+    },
+
+    # Temporary exception never reverted
+    {
+        "keywords": ["exception.*never removed", "exception.*never reverted", "temporary.*exception.*still", "temporary change.*never removed", "covid.*exception", "pandemic.*exception",
+                     "exception.*added.*covid", "exception.*added.*pandemic", "never removed because.*workflow", "temporary.*still in place",
+                     "permanent temporary"],
+        "official": "A temporary configuration exception was identified as having remained in place beyond its intended operational window. The exception had not been subject to formal review or removal.",
+        "subtext": "temporary control relaxation persisted, formal review process for exception expiry not completed, reversion not triggered"
+    },
+
+    # Backup excluded from restore testing for resource reasons
+    {
+        "keywords": ["excluded.*restore test", "restore test.*excluded", "excluded from.*restore", "never.*restore.*test", "not tested.*restore", "backup.*never tested",
+                     "restore.*never performed", "restore test.*consume", "excluded.*testing.*storage", "no restore.*performed",
+                     "restore untested"],
+        "official": "The backup configuration for affected systems was assessed. Restore capability had not been validated for a subset of critical systems due to resource constraints identified during test planning.",
+        "subtext": "backup untested, resource constraint used to justify test exclusion, recovery time and recovery point not validated for affected systems"
+    },
+
+    # Communications suppression: do not use the phrase cyber attack
+    {
+        "keywords": ["don't call it a cyber", "not call it.*cyber", "avoid.*cyber attack", "cyber attack.*pending confirmation", "don't use.*cyber", "advised.*not.*say",
+                     "comms.*advised.*not", "not confirmed.*cyber attack", "pending.*confirmation.*cyber", "communications.*not.*phrase",
+                     "word ban cyber"],
+        "official": "External communications were managed centrally during the incident period. Specific terminology was withheld from public communications pending formal incident classification.",
+        "subtext": "communications strategy noted, gap between internal classification and external statement assessed"
+    },
+
+    # Media published before official statement
+    {
+        "keywords": ["newspaper.*published", "press.*published", "local.*newspaper.*photo", "media.*published.*before", "news.*published.*before", "journalist.*photograph",
+                     "photo.*published.*media", "photographed.*by.*press", "news.*broke.*before", "reported.*externally.*before",
+                     "media leak"],
+        "official": "External media published content relating to the incident prior to the release of an official organisational statement.",
+        "subtext": "communications timeline reviewed, external publication preceded internal notification completion"
+    },
+
+    # Collateral disconnection of safety-critical system during containment
+    {
+        "keywords": ["also disconnected.*safety", "containment.*disconnected.*critical", "isolation.*also removed", "disconnection.*collateral", "disconnected.*allergy",
+                     "disconnected.*warning system", "isolation.*took down", "containment.*also.*affected", "disconnecting.*also disconnected", "containment.*unintended.*consequence",
+                     "collateral damage containment"],
+        "official": "Containment measures resulted in the unavailability of an additional system not identified as within the primary incident scope. The operational impact of this collateral disconnection was assessed.",
+        "subtext": "containment scope exceeded planned boundary, dependency mapping incomplete, secondary system impact identified during response"
+    },
+
+    # Outdated contingency documentation
+    {
+        "keywords": ["downtime binder", "downtime procedure.*outdated", "contingency.*outdated", "emergency procedure.*outdated", "binder.*before.*reorganis", "binder.*before.*reorganiz",
+                     "ward names.*changed", "procedures.*before.*reorganis", "downtime.*wrong.*ward", "outdated.*contingency",
+                     "old contingency"],
+        "official": "Contingency documentation was assessed during activation. References within the documentation did not reflect the current organisational structure.",
+        "subtext": "contingency documentation not reviewed since last organisational change, activation identified inaccuracies not previously detected"
+    },
+
+    # Leadership requesting reassurance while situation deteriorates
+    {
+        "keywords": ["requested.*reassurance.*patient", "leadership.*reassurance", "reassurance.*patient safety", "assure.*board.*safe", "board.*requested.*assurance",
+                     "leadership.*asked.*confirm.*safe", "senior.*reassurance.*unaffected", "management.*reassurance.*safety", "director.*asked.*confirm",
+                     "executive reassurance"],
+        "official": "Senior leadership requested formal assurance regarding operational impact during the active incident period.",
+        "subtext": "assurance requested prior to impact assessment completion, basis for assurance statement reviewed"
+    },
+
+    # Cascading failure triggered by restart
+    {
+        "keywords": ["restart.*caused.*worse", "restarted.*overwhelmed", "restart.*cascade", "restarting.*caused.*flood", "modalities.*reconnect.*simultaneously",
+                     "reconnect.*simultaneously.*overwhelm", "restart.*triggered.*failure", "restart.*triggered.*cascade", "briefly improved.*then", "reboot.*caused.*worse",
+                     "restart made it worse"],
+        "official": "A recovery action taken in response to initial symptoms was identified as having contributed to a subsequent system failure. The recovery action preceded formal incident declaration.",
+        "subtext": "recovery action taken without full system dependency assessment, cascading failure triggered during remediation"
+    },
+
+    # Deferred system replacement due to budget or vendor delay
+    {
+        "keywords": ["scheduled for replacement.*\\d{4}", "scheduled.*replacement.*budget", "replacement.*delayed.*budget", "replacement project.*delayed",
+                     "delayed.*budget constraints", "deferred.*replacement", "replacement.*vendor.*certification", "upgrade.*delayed.*budget", "replacement.*cancelled.*budget",
+                     "\\d{4}.*scheduled.*replace",
+                     "replacement postponed"],
+        "official": "A system identified as within the incident scope had been scheduled for replacement prior to the incident. The replacement programme had been subject to deferral.",
+        "subtext": "replacement deferred, deferral rationale assessed against incident contribution, risk acceptance for continued operation not formally documented"
+    },
+
+    # Patient data cross-exposure: wrong patient data visible
+    {
+        "keywords": ["appointments.*did not belong", "appointments.*wrong patient", "patients.*see.*each other", "viewing each other", "wrong patient.*data", "another patient.*records",
+                     "patient.*saw.*someone else", "oncology.*referral.*visible", "referral.*wrong patient", "patient.*data.*someone else",
+                     "patient data mixup"],
+        "official": "A data access control failure was identified resulting in patient records being accessible to individuals other than the intended recipient. The scope of exposure is under assessment.",
+        "subtext": "access control failure confirmed, patient data visible to unintended users, regulatory notification obligations assessed"
+    },
+
+    # Deployment introduced the issue
+    {
+        "keywords": ["issue began after.*deploy", "started after.*deploy", "caused by.*update", "update.*introduced.*issue", "deployment.*introduced", "deploy.*caused",
+                     "after the.*deployment.*started", "update.*broke", "release.*introduced", "change.*introduced.*issue",
+                     "deploy induced"],
+        "official": "The identified issue was assessed as having been introduced during a planned deployment. The deployment had passed available pre-production testing.",
+        "subtext": "issue introduced via change, pre-production testing did not identify the condition, test environment coverage reviewed"
+    },
+
+    # Delayed recognition despite mounting evidence
+    {
+        "keywords": ["assumption.*despite.*evidence", "assumption survived.*minutes", "despite mounting evidence", "continued.*assumption.*evidence", "assumption.*held.*despite",
+                     "thirty.*minutes.*evidence", "evidence.*ignored.*assumption", "mounting evidence.*assumption",
+                     "ignoring signs"],
+        "official": "Initial classification of the event was maintained for a period following the availability of evidence inconsistent with that classification.",
+        "subtext": "initial assumption held beyond available evidence, reassessment triggered by volume of contrary indicators rather than single definitive finding"
+    },
+
+    # Inadequate test environment / test data not representative
+    {
+        "keywords": ["test environment.*only.*patient", "fake patient", "test.*died.*still.*useful", "test data.*not.*represent", "test.*only.*account", "simultaneous.*login.*not tested",
+                     "concurrent.*login.*not tested", "test.*didn't.*include.*simultaneous", "testing.*didn't.*cover.*concurrent", "dead.*test.*account",
+                     "unrealistic test data"],
+        "official": "Pre-production testing did not encompass the usage pattern associated with the identified failure condition. The test environment configuration was assessed as not representative of production load.",
+        "subtext": "test coverage gap confirmed, concurrent usage scenario not included, test data population not representative of live user base"
+    },
+
+    # Rollback failure: schema already modified
+    {
+        "keywords": ["rollback.*failed", "rollback.*schema", "rollback.*database", "schema.*already.*modified", "rollback.*already.*changed", "rollback.*package.*failed",
+                     "unable to rollback", "couldn't rollback", "rollback.*not.*possible", "schema.*modified.*rollback",
+                     "irreversible deploy"],
+        "official": "The planned rollback procedure could not be completed as designed. Database schema changes applied during the deployment were not reversible via the available rollback package.",
+        "subtext": "rollback dependency on pre-deployment schema state not met, schema change sequencing reviewed, forward-only migration identified as contributing factor"
+    },
+
+    # Self-inflicted outage: no malicious actor
+    {
+        "keywords": ["entirely self-inflicted", "self-inflicted", "no malicious.*intrusion", "no external.*attacker", "no evidence.*malicious", "own.*deployment.*caused",
+                     "caused by.*ourselves", "we caused.*ourselves", "internally caused", "own.*change.*caused",
+                     "we did it"],
+        "official": "The incident was assessed as having been caused by an internal change rather than external threat actor activity. No evidence of malicious intrusion was identified.",
+        "subtext": "root cause confirmed as internal, threat actor involvement ruled out, change management and testing process reviewed"
+    },
+
+    {
+        "keywords": ["bypassing.*identity verification", "bypass.*identity.*check", "skipping.*verification", "identity verification.*bypassed", "verification.*skipped.*busy",
+                     "call duration.*verification", "average handling time.*security", "\\baht\\b.*security", "handle time.*bypass", "call time.*verification.*skip",
+                     "verif bypass"],
+        "official": "Identity verification procedures were identified as having been inconsistently applied. The deviation was assessed as having developed in response to operational performance measurement pressures.",
+        "subtext": "verification bypass driven by metric pressure, management oversight did not detect systematic non-compliance, risk of bypass not formally assessed"
+    },
+
+    {
+        "keywords": ["how many.*affected.*session", "count.*individually.*session", "browser session.*count", "unique session.*count", "counted.*unique.*user", "per session.*per user",
+                     "individual.*session.*count", "affected.*counted.*how", "nobody agreed.*count", "how to count.*affected",
+                     "counting method dispute"],
+        "official": "The methodology for quantifying the number of individuals affected was subject to assessment. Multiple counting approaches were identified as producing materially different impact figures.",
+        "subtext": "regulatory notification threshold assessment deferred pending agreement on counting methodology, legal and technical definitions of affected individual not aligned"
+    },
+
+    {
+        "keywords": ["whatsapp.*patient", "\\bwhatsapp\\b.*incident", "personal.*messaging.*patient", "messaging app.*patient", "unofficial.*messaging.*patient", "signal.*patient.*data",
+                     "personal phone.*coordinate", "shadow.*messaging.*incident", "unofficial.*channel.*coordinate",
+                     "unauthorised comms"],
+        "official": "Informal communication channels were identified as having been used for incident coordination. These channels were assessed as outside the scope of approved information handling procedures.",
+        "subtext": "data handling policy breach during incident response, use of unofficial channels noted, governance review of approved incident communication tooling recommended"
+    },
+
+    {
+        "keywords": ["information governance.*whatsapp", "governance.*created.*group", "banned.*then.*used", "told.*not.*then.*created", "immediately.*used.*banned",
+                     "governance.*used.*same", "policy.*then.*violated.*own", "sent.*reminder.*then.*did",
+                     "own goal governance"],
+        "official": "The team responsible for issuing the information handling guidance was subsequently identified as having adopted the practice cited in the guidance.",
+        "subtext": "policy and practice divergence identified within the issuing team, governance review of communication controls during incident conditions recommended"
+    },
+
+    {
+        "keywords": ["four.*patient identity", "multiple.*patient identity", "separate.*patient identity", "patient identity.*systems", "\\d+.*identity system", "duplicate.*patient.*record",
+                     "duplicate.*identity.*system", "fragmented.*patient.*identity", "multiple.*identity.*system",
+                     "identity silo"],
+        "official": "Multiple patient identity management systems were identified within the environment. The systems were assessed as not fully integrated.",
+        "subtext": "identity fragmentation identified, data consistency across systems not confirmed, patient matching across systems reviewed"
+    },
+
+    {
+        "keywords": ["apis nobody recognised", "api.*nobody knew", "unrecognised.*api", "undocumented.*api", "active api.*unknown", "api.*nobody.*recognised", "api.*nobody.*recognized",
+                     "\\d+.*api.*nobody", "active.*api.*undocumented", "api.*not in.*register",
+                     "shadow api"],
+        "official": "Active application programming interfaces were identified within the environment that were not reflected in current API documentation or registry.",
+        "subtext": "undocumented API surface identified, access controls and data handling for unregistered APIs not assessed"
+    },
+
+    {
+        "keywords": ["FINAL_sync", "final.*sync.*real.*new", "nobody knew who wrote", "script.*nobody.*wrote", "nobody.*wrote.*script", "disabling.*catastrophic",
+                     "probably.*catastrophic.*remains", "can't disable.*production", "afraid to.*disable.*script", "script.*remains.*production.*unknown",
+                     "mystery script"],
+        "official": "A production script of undetermined authorship and function was identified within the environment. Operational dependency on the script has been assessed as precluding decommission.",
+        "subtext": "script provenance unknown, function undocumented, removal not possible without establishing function, function establishment not scheduled"
+    },
+
+    {
+        "keywords": ["digital efficiency", "efficiency programme", "staffing reduction.*digital", "digital.*programme.*staffing", "digital.*transformation.*reduction", "efficiency.*programme.*monitoring",
+                     "cost.*rebranded.*digital", "digital.*programme.*cut", "efficiency.*programme.*removed",
+                     "efficiency cut"],
+        "official": "A reduction in monitoring capability was identified as having originated from a prior organisational efficiency initiative. The impact of this reduction on detection capability was assessed.",
+        "subtext": "monitoring gap introduced by cost reduction, initiative framing as digital transformation noted, risk of reduced coverage not formally accepted at time of change"
+    },
+
+    {
+        "keywords": ["managed hosting", "vendor.*hosting.*environment", "hosted.*environment.*vendor", "third.party.*hosting", "supplier.*hosting", "vendor.*managed.*environment",
+                     "hosted.*by.*vendor", "managed service.*ransomware", "vendor.*environment.*compromised",
+                     "hosting provider"],
+        "official": "The incident originated within a third-party managed hosting environment. The scope of the vendor's environment and the impact on connected systems is under assessment.",
+        "subtext": "incident scope extends to third-party environment, contractual incident notification obligations assessed, vendor access to affected systems reviewed"
+    },
+
+    {
+        "keywords": ["infrastructure sequencing", "dependent on.*sequencing", "restoration.*dependent on", "timeline.*dependent on", "vendor.*timeline.*unclear", "vendor.*clarified.*timeline",
+                     "timeline.*clarified.*vendor", "restoration.*timeline.*vendor", "vendor.*couldn't confirm.*timeline", "sounded expensive",
+                     "vendor delay"],
+        "official": "Recovery timelines provided by the third-party vendor were subject to revision following initial communication. The basis for timeline estimates was not fully communicated.",
+        "subtext": "vendor timeline not established at point of initial assurance, infrastructure sequencing dependency not disclosed in initial briefing"
+    },
+
+    {
+        "keywords": ["never used paper", "never.*paper.*before", "unfamiliar.*paper.*chart", "paper chart.*unfamiliar", "didn't know.*paper", "paper.*procedure.*unfamiliar", "junior.*paper.*before",
+                     "clinician.*never.*paper", "where.*medication.*physically.*go", "paper.*go.*once written",
+                     "paper fallback gap"],
+        "official": "Activation of paper-based fallback procedures identified a dependency on staff familiarity with manual processes. A subset of clinical staff had not previously operated under downtime conditions.",
+        "subtext": "downtime procedure competency gap identified, digital-native cohort not trained on manual fallback, training last reviewed prior to current clinical cohort"
+    },
+
+    {
+        "keywords": ["allergy alert.*unavailable", "allergy.*inside.*platform", "allergy.*lived.*system", "allergy.*in.*prescribing", "safety.*data.*unavailable.*system", "allergy.*not.*available.*outage",
+                     "critical.*alert.*inside.*affected", "safety.*alert.*same.*system", "allergy.*data.*lost.*outage",
+                     "safety data unavailability"],
+        "official": "Clinical safety alert data was identified as being hosted within the affected platform. This data was unavailable for the duration of the outage.",
+        "subtext": "patient safety data co-located with affected system, no independent data source available during outage, clinical risk from unavailability assessed"
+    },
+
+    {
+        "keywords": ["whiteboard.*cleaned", "whiteboard.*wiped", "cleaned.*whiteboard", "data.*cleaned.*routine", "accidentally.*cleaned", "accidentally.*wiped.*data",
+                     "routine.*cleaning.*removed", "infection control.*removed.*data", "cleaning.*removed.*clinical", "data.*lost.*cleaning",
+                     "environmental data loss"],
+        "official": "Clinical data recorded manually during the downtime period was identified as having been rendered unavailable as a result of routine operational activity unrelated to the incident.",
+        "subtext": "manual data retention gap identified, downtime data capture process did not account for standard operational cleaning cycles"
+    },
+
+    {
+        "keywords": ["clinically essential.*argument", "argument.*clinically essential", "what.*counts.*essential", "dispute.*essential.*medication", "essential.*medication.*disagree",
+                     "clinically essential.*disagree", "prioritis.*medication.*argument", "laxative.*essential", "what qualifies.*essential", "essential.*medication.*definition",
+                     "essential definition dispute"],
+        "official": "Clinical prioritisation guidance issued during the downtime period was subject to differing interpretation across clinical teams. Escalation was required to resolve definitional inconsistencies.",
+        "subtext": "clinical triage criteria not sufficiently defined in downtime procedures, escalation consumed response capacity, guidance specificity reviewed"
+    },
+
+    {
+        "keywords": ["downtime pack", "downtime prescribing pack", "locked cabinet.*key", "key.*could not be found", "key.*missing.*contractor", "contractor.*changed.*key", "supplies.*locked.*key",
+                     "cabinet.*key.*missing", "estates.*contractor.*key", "key.*lost.*contractor",
+                     "locked supplies"],
+        "official": "Downtime contingency materials were identified as inaccessible at the point of activation due to a change in facilities management arrangements. Access was obtained via alternative means.",
+        "subtext": "contingency supply access dependent on key held by prior contractor, transition process did not include handover of contingency access, materials located after delay"
+    },
+
+    {
+        "keywords": ["porter.*medication.*request", "porter.*carrying.*request", "physical.*delivery.*worked", "manual.*delivery.*worked", "improvised.*worked.*well", "informal.*worked.*better",
+                     "workaround.*faster.*official", "unofficial.*worked.*better.*official", "porter.*system.*worked", "carrying.*envelope.*worked",
+                     "manual courier"],
+        "official": "An informal manual process was implemented during the downtime period. The process was subsequently assessed as having performed comparably to, or in excess of, available official contingency procedures.",
+        "subtext": "improvised process effectiveness noted, official contingency procedure performance benchmarked against informal alternative, lessons identified for downtime procedure review"
+    },
+
+    {
+        "keywords": ["recovery.*duplicate.*alert", "restore.*reactivated.*alert", "restoration.*alert.*storm", "returning.*system.*flooded.*alert", "reconciliation.*duplicate.*alert",
+                     "downtime.*reconciliation.*alert", "thousands.*duplicate.*alert", "alert.*storm.*recovery", "reactivated.*alert.*downtime", "reconciliation.*triggered.*alert",
+                     "post-restore alert flood"],
+        "official": "System restoration generated a high volume of automated alerts as a result of reconciliation activity following the downtime period. Alert management capacity was assessed during the recovery phase.",
+        "subtext": "alert volume during recovery not anticipated in restoration plan, reconciliation alert handling not included in downtime procedure, recovery timeline extended"
+    },
+
+    {
+        "keywords": ["harm.*without.*records", "patient harm.*without.*data", "assurance.*without.*records", "can't.*confirm.*harm.*without", "harm.*assessment.*records.*unavailable",
+                     "determine.*harm.*without.*record", "safety.*assessment.*requires.*records", "impossible.*confirm.*safe.*without", "records.*needed.*to.*confirm.*harm",
+                     "assurance.*difficult.*without.*records",
+                     "harm assessment blocked"],
+        "official": "A formal patient safety assessment could not be completed at the time of request. The records necessary to support the assessment were unavailable due to the incident.",
+        "subtext": "patient harm assessment deferred pending record recovery, assurance statement not possible without data, executive request and clinical capability not aligned"
+    },
+
+    {
+        "keywords": ["fails often enough", "fails.*often.*staff", "keeps failing.*staff", "frequent.*failure.*staff.*adapted", "staff.*pre.printed.*downtime", "downtime labels.*desk",
+                     "labels.*desk.*drawer", "kept.*workaround.*because.*fails", "known.*failure.*adapted", "another.*problem.*again",
+                     "chronic failure workaround"],
+        "official": "Recurring system instability in a component was identified as having resulted in informal compensating controls being established by operational staff.",
+        "subtext": "workaround normalised into practice, root cause not addressed, informal control not reflected in documented procedures"
+    },
+
+    {
+        "keywords": ["external.*provider.*ransomware", "ransomware.*external.*provider", "pathology provider.*ransomware", "external.*supplier.*ransomware", "provider.*itself.*affected",
+                     "third.party.*provider.*ransomware", "supplier.*itself.*ransomware", "outsourced.*provider.*ransomware", "service provider.*ransomware", "external.*lab.*ransomware",
+                     "supplier ransomware"],
+        "official": "The ransomware incident was identified as having originated within an external service provider environment. The provider's systems were the primary affected infrastructure.",
+        "subtext": "incident scope at provider, downstream impact on connected organisations assessed, contractual incident notification obligations reviewed"
+    },
+
+    {
+        "keywords": ["different.*paper.*workflow", "conflicting.*downtime.*procedure", "different.*downtime.*procedure", "inconsistent.*paper.*procedure", "each.*trust.*different.*procedure",
+                     "different.*workflow.*each.*site", "independently.*developed.*procedure", "procedure.*different.*between.*sites", "site.*different.*downtime.*procedure",
+                     "each.*hospital.*different.*workflow",
+                     "procedure divergence"],
+        "official": "Downtime procedures were identified as inconsistent across participating organisations. Procedural divergence was assessed as having contributed to coordination difficulties during the response.",
+        "subtext": "downtime procedures developed independently across organisations, cross-organisational consistency not reviewed, divergence not identified prior to activation"
+    },
+
+    {
+        "keywords": ["red sticker.*different", "colour.*different.*meaning", "color.*different.*meaning", "same.*colour.*different.*trust", "sticker.*ambiguous", "colour code.*conflict",
+                     "color code.*conflict", "labelling.*different.*site", "same.*label.*different.*meaning", "coding.*inconsistent.*between",
+                     "label inconsistency"],
+        "official": "A labelling convention was identified as having been applied inconsistently across participating organisations. The inconsistency introduced ambiguity in clinical prioritisation during the response.",
+        "subtext": "local convention not standardised across organisations, ambiguity introduced at point of activation, patient safety implications of inconsistency assessed"
+    },
+
+    {
+        "keywords": ["fallback.*same.*provider", "fallback.*same.*system", "backup.*procedure.*same.*provider", "contingency.*hosted.*same", "fallback.*hosted.*affected", "resilience.*same.*system",
+                     "alternative.*hosted.*same.*provider", "fallback.*depended.*affected", "disaster recovery.*same.*provider", "contingency.*same.*environment",
+                     "circular fallback"],
+        "official": "Documented fallback procedures were assessed as dependent on infrastructure hosted within the same environment as the primary affected system.",
+        "subtext": "circular dependency in resilience architecture identified, fallback procedures not independently hosted, resilience design reviewed"
+    },
+
+    {
+        "keywords": ["extension list.*outdated", "outdated.*extension", "phone list.*outdated", "directory.*outdated", "phone.*number.*wrong", "extension.*wrong.*department",
+                     "phone.*renamed.*department", "extension.*no longer.*valid", "directory.*before.*reorganis", "numbers.*outdated.*reorganis",
+                     "old phone list"],
+        "official": "Communication infrastructure supporting the incident response was identified as referencing an outdated organisational structure. A subset of contact details did not reflect current departmental configuration.",
+        "subtext": "communication directory not updated following reorganisation, contact detail accuracy not validated as part of incident readiness review"
+    },
+
+    {
+        "keywords": ["easier.*restore.*system.*than.*find", "harder.*reconstruct.*physical", "physical.*location.*harder.*recover", "systems.*easier.*restore.*than.*physical",
+                     "restoring.*easier.*than.*locating", "technical.*recovery.*easier.*physical", "where.*samples.*physically", "physical.*whereabouts.*unknown",
+                     "easier.*fix.*system.*than.*find.*physical", "locate.*physical.*specimens",
+                     "physical tracking gap"],
+        "official": "The physical state of specimens and materials processed during the downtime period was assessed as presenting a recovery challenge independent of system restoration.",
+        "subtext": "physical chain of custody disrupted, reconstruction of physical state not addressed in recovery plan, system restoration completed before physical reconciliation"
+    },
+
+    {
+        "keywords": ["years.*meeting.*resilience", "meetings.*about.*resilience.*no", "resilience.*meeting.*dependency", "discussed.*resilience.*still.*dependent", "meeting.*segmentation.*integration",
+                     "resilience.*planning.*didn't.*address", "talked.*resilience.*but.*depended", "years.*of.*discussion.*resilience", "resilience.*programme.*dependency.*missed",
+                     "segmentation.*meeting.*integration.*remained",
+                     "resilience talk only"],
+        "official": "Resilience planning activity had been conducted over an extended period prior to the incident. The planning activity did not identify the dependency subsequently implicated in the incident.",
+        "subtext": "resilience planning gap identified, dependency not surfaced during planning exercise, gap between planning outputs and operational configuration reviewed"
+    },
+
+    {
+        "keywords": ["rationing.*blood test", "rationing.*test.*transport", "transport.*capacity.*ration", "porter.*capacity.*limit", "physical.*transport.*limit.*clinical",
+                     "couldn't.*transport.*fast.*enough", "specimens.*transport.*capacity", "clinical.*rationed.*transport", "transport.*bottleneck.*clinical",
+                     "porters.*not.*fast.*enough.*specimen",
+                     "transport constraint"],
+        "official": "Clinical service capacity during the downtime period was constrained by physical specimen transport limitations. Prioritisation criteria were implemented in response to transport throughput constraints.",
+        "subtext": "physical logistics capacity not accounted for in downtime planning, clinical triage driven by transport rather than clinical urgency"
+    },
+
+    {
+        "keywords": ["technical instability", "experiencing instability", "vendor.*instability", "service instability", "temporary instability", "instability.*vendor", "minor.*instability.*vendor",
+                     "vendor.*announced.*instability", "provider.*experiencing.*issues", "vendor.*technical.*issues",
+                     "vendor downplay"],
+        "official": "Initial vendor communications characterised the incident using terminology that did not reflect the confirmed scope of the event. Subsequent communications revised the characterisation.",
+        "subtext": "initial vendor statement not consistent with confirmed impact, characterisation revised following investigation, communications timeline reviewed"
+    },
+
+    {
+        "keywords": ["downtime.*assumed.*printer", "procedure.*assumed.*print", "print.*server.*also.*affected", "printers.*also.*down", "downtime.*require.*printer", "procedure.*depended.*print",
+                     "printer.*hosted.*vendor", "print.*compromised.*environment", "fallback.*assumed.*printing", "procedure.*print.*unavailable",
+                     "printing dependency"],
+        "official": "Downtime procedures were identified as having assumed the availability of infrastructure subsequently confirmed as within the incident scope.",
+        "subtext": "downtime procedure dependency not assessed against vendor-hosted infrastructure, circular dependency identified at point of activation"
+    },
+
+    {
+        "keywords": ["discovering.*dependencies.*experimentally", "dependencies.*discovered.*experimentally", "found out.*when.*stopped", "discovered.*dependency.*stopped working",
+                     "learned.*dependency.*failed", "dependencies.*revealed.*by.*failure", "vendor.*tracking.*unavailable.*dependencies", "discovered.*what.*connected.*by.*what.*failed",
+                     "found.*dependencies.*by.*outage", "dependencies.*not.*documented.*discovered",
+                     "experimental discovery"],
+        "official": "The scope of system dependencies on the affected vendor environment could not be established from available documentation. Dependencies were identified progressively as downstream impact became apparent.",
+        "subtext": "dependency mapping incomplete, vendor's own management systems unavailable, dependency discovery conducted reactively during incident"
+    },
+
+    {
+        "keywords": ["cafeteria.*outage", "payment terminal.*outage", "cafeteria.*complaints", "canteen.*down", "vending.*down.*incident", "non.clinical.*outage.*complaints", "complaints.*cafeteria.*more",
+                     "catering.*down.*incident", "payment.*terminal.*disconnected", "more complaints.*cafeteria",
+                     "ancillary outage"],
+        "official": "Containment measures resulted in the unavailability of ancillary services in addition to clinical systems. Stakeholder communications regarding ancillary service impact were not included in the executive review.",
+        "subtext": "collateral impact on non-clinical services noted, volume of stakeholder communication regarding ancillary services assessed, executive reporting scope reviewed"
+    },
+
+    {
+        "keywords": ["stale.*cache.*synchronised", "cached.*state.*synchronised", "restoration.*stale.*data", "restore.*cached.*state", "partial.*restore.*conflicting.*state",
+                     "patient.*simultaneously.*discharged.*admitted", "contradictory.*state.*accepted", "database.*accepted.*conflicting", "stale.*state.*live.*system",
+                     "conflicting.*record.*after.*restore",
+                     "stale state sync"],
+        "official": "System restoration resulted in the synchronisation of cached state data into live systems. The synchronised data was identified as inconsistent with the current operational record.",
+        "subtext": "cache invalidation not completed prior to restoration, stale state promoted to live, data consistency checks not included in restoration procedure"
+    },
+
+    {
+        "keywords": ["downtime.*worked.*better.*expected", "downtime.*more.*effective.*expected", "paper.*worked.*better.*digital", "manual.*worked.*better.*system", "systems.*semi.optional",
+                     "already.*semi.optional", "management.*evidence.*resilience.*infrastructure.*evidence", "interpreted.*resilience.*interpreted.*optional",
+                     "better.*than.*expected.*management.*infrastructure", "downtime.*procedure.*effective.*concern",
+                     "unexpected success"],
+        "official": "Post-incident assessment identified that manual downtime procedures performed within acceptable operational parameters. Interpretations of this finding diverged across organisational functions.",
+        "subtext": "downtime effectiveness confirms parallel manual capability, management framing and infrastructure framing of the same outcome not reconciled in post-incident review"
+    },
+
+    # Special category data: mental health and psychotherapy records
+    {
+        "keywords": ["psychotherapy", "therapy notes", "therapy records", "mental health records", "mental health.*breach", "mental health.*platform", "psychotherapy.*platform",
+                     "session notes", "counselling records", "psychiatric records", "therapy session.*data", "mental health.*data",
+                     "special category.*health"],
+        "official": "The incident involved personal data in a special category. The nature of the data increases the potential for harm to affected individuals and the regulatory notification threshold is assessed accordingly.",
+        "subtext": "special category data under data protection legislation, sensitivity of affected data category noted, harm assessment extends beyond financial or identity impact"
+    },
+
+    # Cloud = resilient by default false assumption
+    {
+        "keywords": ["cloud.*resilient.*default", "cloud hosted.*resilient", "resilient.*because.*cloud", "cloud.*therefore.*resilient", "assumed.*resilient.*cloud",
+                     "cloud.*no.*downtime.*procedure", "cloud.*didn't.*need.*fallback", "cloud.*assumed.*available", "hosted.*cloud.*resilient.*assumption",
+                     "cloud resilience assumption"],
+        "official": "The system's cloud hosting configuration was assessed as having been treated as equivalent to resilience. Downtime procedures for the system had not been fully developed on this basis.",
+        "subtext": "cloud hosting and resilience conflated in operational planning, fallback procedures not implemented, assumption not formally risk-assessed"
+    },
+
+    # Trust collapse as distinct incident impact
+    {
+        "keywords": ["trust.*collapsed", "confidence.*collapsed", "trust in.*confidentiality", "patient.*trust.*collapsed", "confidentiality.*trust.*lost", "trust.*broken.*patient",
+                     "patients.*no longer.*trust", "confidence.*in.*system.*lost", "trust.*faster.*than.*system", "helpline.*overloaded.*trust",
+                     "trust impact"],
+        "official": "A loss of patient and stakeholder confidence in the confidentiality of the affected service was identified as a distinct impact of the incident, separate from system availability.",
+        "subtext": "trust impact not addressable through technical remediation alone, patient confidence restoration not included in recovery timeline, reputational harm assessed"
+    },
+
+    # Access controls weakened for usability
+    {
+        "keywords": ["reduce friction", "reducing friction", "friction.*clinical.*workflow", "usability.*access control", "access control.*usability", "permissive.*usability",
+                     "overly permissive.*usability", "loosened.*friction", "access.*relaxed.*workflow", "controls.*relaxed.*friction",
+                     "friction reduction security"],
+        "official": "Access control configuration was identified as having been modified to accommodate usability requirements. The modification resulted in permissions inconsistent with the principle of least privilege.",
+        "subtext": "security control relaxed for operational convenience, change not subject to formal risk assessment, relaxation persisted beyond original use case"
+    },
+
+    # Data integrity no longer trusted
+    {
+        "keywords": ["notes.*no longer.*trusted", "records.*no longer.*trusted", "data.*no longer.*trusted", "notes.*intact.*complete", "notes.*not.*trusted.*complete",
+                     "rebuilding.*context.*manually", "context.*rebuilt.*manually", "manually.*rebuild.*patient", "prior.*notes.*not.*trusted", "historical.*notes.*not.*trusted",
+                     "data integrity lost"],
+        "official": "The integrity of data held within the affected system could not be confirmed following the incident. Clinical staff were unable to rely on historical records for the purposes of care continuity.",
+        "subtext": "data integrity assurance not available post-incident, impact on care continuity assessed, records treated as potentially modified or incomplete"
+    },
+
+    # Incident coordination moved to temporarily-necessary unapproved platform
+    {
+        "keywords": ["temporarily necessary.*messaging", "messaging.*not.*approved.*patient", "unapproved.*messaging.*incident", "incident.*coordination.*unapproved", "moved.*messaging.*not.*approved",
+                     "temporarily.*necessary.*platform", "not.*formally.*approved.*coordination", "informal.*channel.*incident.*coordination", "coordination.*moved.*unapproved",
+                     "temporary messaging platform"],
+        "official": "Incident coordination activity was conducted using a communication platform not formally approved for the handling of patient or sensitive data. The platform was adopted on a temporary basis due to the unavailability of approved channels.",
+        "subtext": "unapproved platform used for incident coordination, data handling obligations during incident response reviewed, temporary adoption not formally risk-accepted"
+    },
+
+    # Technical restoration complete but impact not reversible
+    {
+        "keywords": ["technically restored.*not.*contained", "system.*restored.*trust.*not", "technically.*fixed.*impact.*not", "restored.*but.*not.*contained",
+                     "remediation.*not.*reverse", "technical.*remediation.*not.*sufficient", "system.*back.*harm.*ongoing", "contained.*technically.*not.*actually",
+                     "sense of containment", "trust.*not.*restorable"],
+        "official": "Technical remediation of the affected system was completed. The broader impact of the incident on patient trust and perceived confidentiality was assessed as not fully addressable through technical measures.",
+        "subtext": "technical recovery and reputational recovery on different timelines, containment of technical vulnerability does not constitute containment of patient impact"
+    },
+
+    # Prior correct attribution creating blind spot for new event
+    {
+        "keywords": ["attributed.*routine.*because.*previous", "assumed.*routine.*previous.*outage", "previous.*outage.*linked.*same", "previous.*failure.*same.*cause",
+                     "treated.*routine.*because.*last.*time", "history.*misled.*attribution", "previous.*incidents.*same.*cause.*assumed",
+                     "past.*outage.*blamed.*same", "misattributed.*because.*previous", "routine.*attribution.*prior.*incident"],
+        "official": "Initial classification of the event drew on patterns from previous incidents. This classification was subsequently identified as having delayed recognition of the current event's scope and cause.",
+        "subtext": "prior incident pattern applied to new event, historical attribution accuracy created false confidence in initial classification"
+    },
+
+    # Shared central infrastructure as single point of failure across a network
+    {
+        "keywords": ["central infrastructure.*multiple.*hospital", "shared.*infrastructure.*hospitals", "regional.*infrastructure.*affected", "central.*infrastructure.*supporting.*hospital",
+                     "shared.*services.*multiple.*site", "central.*services.*multiple.*trust", "regional.*services.*compromised", "network.*central.*infrastructure.*down",
+                     "shared.*infrastructure.*single.*point", "central.*provider.*multiple.*hospital"],
+        "official": "The incident affected shared central infrastructure on which multiple organisations depended. The scope of impact extended across the network in proportion to that dependency.",
+        "subtext": "centralised infrastructure created correlated failure across dependent organisations, resilience of individual sites not independent of central services"
+    },
+
+    # Fallback divergence driven by budget-cycle vendor decisions
+    {
+        "keywords": ["diverged.*vendor.*budget", "incompatible.*vendor.*prioritised", "fallback.*different.*vendor", "different.*implementations.*budget",
+                     "vendor.*prioritised.*budget.*cycle", "local.*vendor.*choice.*fallback", "each.*hospital.*different.*vendor", "budget.*cycle.*architecture.*diverge",
+                     "different.*integrations.*budget", "incompatible.*fallback.*vendor.*choices"],
+        "official": "Fallback procedures diverged across participating organisations as a result of differing vendor integration choices made during prior budget cycles. The divergence was not identified as a network-level risk prior to the incident.",
+        "subtext": "local procurement decisions created network-level incompatibility, fallback interoperability not assessed at regional level, budget-driven architecture divergence noted"
+    },
+
+    # Clinical decisions made against incomplete or unsynchronised data
+    {
+        "keywords": ["interpreted.*incomplete.*histor", "scans.*incomplete.*histor", "diagnosis.*incomplete.*record", "clinical.*decision.*incomplete.*data",
+                     "treated.*against.*incomplete", "incomplete.*patient.*histor.*used", "partial.*data.*clinical.*decision", "unsynchronised.*cache.*clinical",
+                     "clinical.*decision.*without.*full.*record", "incomplete.*data.*interpreted"],
+        "official": "Clinical activity during the incident period was conducted using data sources that had not been fully synchronised. The completeness of information available at the point of clinical decision-making was assessed.",
+        "subtext": "clinical decisions made on partial data, synchronisation gap between local cache and authoritative record not reflected in clinical workflow, patient safety implications assessed"
+    },
+
+    # Local autonomy producing incompatible definitions of a patient record
+    {
+        "keywords": ["local autonomy.*patient record", "different.*definition.*patient record", "each.*hospital.*different.*definition", "local.*autonomy.*record.*definition",
+                     "inconsistent.*patient.*record.*definition", "no.*standard.*patient.*record", "valid.*patient.*record.*different.*site",
+                     "patient.*identifier.*different.*trust", "local.*autonomy.*it.*architecture", "no.*common.*patient.*record.*standard"],
+        "official": "Operational data reconciliation identified inconsistent definitions of a valid patient record across participating organisations. The inconsistency was assessed as a consequence of decentralised IT governance.",
+        "subtext": "patient record definition not standardised across network, local autonomy in data governance created interoperability gap, reconciliation required manual intervention"
+    },
+
+    # Reporting tools within the compromised scope
+    {
+        "keywords": ["reporting.*tool.*compromised", "central.*reporting.*affected", "reporting.*infrastructure.*down", "report.*tool.*unavailable.*incident",
+                     "situation report.*impossible.*tools", "reporting.*platform.*also.*affected", "central.*reporting.*part.*of.*incident", "unified.*report.*impossible.*tools",
+                     "reporting.*capability.*lost.*incident", "reporting.*tools.*same.*infrastructure"],
+        "official": "Central reporting infrastructure was identified as within the scope of the incident. Consolidated situational reporting across the affected network could not be produced from a common data source.",
+        "subtext": "reporting capability lost during incident, each site reporting independently from local data, consolidated picture not available to incident command"
+    },
+
+    # Circular logistics cascade with no single point of resolution
+    {
+        "keywords": ["circular.*backlog", "transport.*delay.*diagnostic.*delay", "specimen.*delay.*discharge.*delay", "cascade.*no.*site.*resolve", "circular.*dependency.*logistics",
+                     "logistics.*cascade.*circular", "transport.*specimen.*backlog.*circular", "no single.*site.*resolve", "backlog.*circular.*no.*resolution",
+                     "delay.*created.*further.*delay.*circular"],
+        "official": "A cascading delay was identified affecting specimen transport, diagnostic reporting, and discharge decisions. The interdependency of these processes created a backlog that could not be resolved by any single site acting independently.",
+        "subtext": "circular operational dependency identified, resolution required cross-site coordination that was itself impaired, backlog extended beyond incident resolution"
+    },
+
+    # Coordination reverting to pre-digital informal practice
+    {
+        "keywords": ["reverted.*informal", "fell back.*informal", "coordination.*pre.digital", "functionally.*informal.*cooperation", "reverted.*phone.*handwritten",
+                     "indistinguishable.*informal", "coordination.*informal.*regional", "digital.*infrastructure.*informal.*equivalent", "operated.*as.*if.*no.*digital",
+                     "coordination.*pre.system.*era"],
+        "official": "Incident coordination activity reverted to informal communication practices during the period of infrastructure unavailability. The resulting operational mode was functionally similar to pre-digital regional cooperation.",
+        "subtext": "informal coordination mode sustained operations, dependency on digital infrastructure for coordination noted, resilience of informal fallback assessed as incidental rather than designed"
+    },
+
+    # Shadow lists maintained alongside restored systems
+    {
+        "keywords": ["shadow list", "parallel list", "shadow.*record.*system", "parallel.*record.*system", "maintained.*own.*list", "kept.*separate.*list",
+                     "staff.*own.*list.*alongside", "neither.*system.*trusted.*list", "shadow.*patient.*list", "unofficial.*list.*alongside.*system"],
+        "official": "Staff maintained informal parallel records alongside restored system data. This reflected an assessment that neither the restored digital systems nor the manually compiled records could be fully relied upon.",
+        "subtext": "dual record-keeping identified, trust in restored system not established at operational level, reconciliation between parallel records not completed"
+    },
+
+    # Decentralisation resilience theory vs. no unified truth state
+    {
+        "keywords": ["decentralis.*resilience.*theory", "resilience.*theory.*practice", "decentralis.*no.*single.*truth", "distributed.*no.*common.*record",
+                     "local.*autonomy.*no.*truth.*state", "resilience.*in.*theory.*fragmented.*in.*practice", "decentralised.*single.*truth.*not.*exist",
+                     "improved.*resilience.*theory.*no.*truth", "fragmentation.*remained", "attacker.*impact.*diminished.*fragmentation.*remained"],
+        "official": "Post-incident review identified that decentralised architecture had provided resilience against some failure modes while precluding the existence of a unified operational record at times of greatest need.",
+        "subtext": "decentralisation benefit and decentralisation cost assessed as inseparable, resilience framing reviewed against operational coherence requirement"
+    },
+
+    # Paper tokens with no consistent expiry model
+    {
+        "keywords": ["paper token.*expiry", "token.*no.*expiry", "paper.*authentication.*expiry", "token.*probably valid", "valid if no one questions", "no expiry.*paper",
+                     "tokens.*no.*consistent.*expiry", "paper.*token.*valid", "emergency.*token.*no.*expiry", "probably valid.*token"],
+        "official": "An emergency authentication mechanism was introduced during the incident period. The mechanism did not include a formally defined expiry model, resulting in an indeterminate validity state for issued tokens.",
+        "subtext": "improvised authentication control introduced without lifecycle management, validity period not defined, tokens remained in circulation beyond operational need"
+    },
+
+    # Reconciliation by confidence rather than objective basis
+    {
+        "keywords": ["most confident.*it department", "which.*system.*most recent.*inferred", "reconciliation.*confidence", "decided.*most.*confident", "inferred.*which.*hospital",
+                     "reconciliation.*by.*confidence", "determined.*which.*team.*confident", "truth.*determined.*confidence", "most recent.*inferred.*not.*verified",
+                     "reconciled.*by.*which.*trusted.*more"],
+        "official": "Data reconciliation following system restoration was conducted without access to an authoritative source of record. Determination of the canonical state was based on operational judgement rather than verified data provenance.",
+        "subtext": "no authoritative record available for reconciliation, canonical state determined by confidence rather than evidence, reconciliation accuracy not independently verified"
+    },
+
+    # Silent processing queue failure invisible to monitoring
+    {
+        "keywords": ["silently queued", "queue.*silent.*failure", "silent.*queue.*failure", "queued.*not.*executed", "queue.*failure.*not.*visible", "queue.*not.*monitored",
+                     "background.*queue.*failed.*not.*visible", "queue.*failure.*dashboard", "silently.*queued.*not.*processed", "queue.*invisible.*monitoring"],
+        "official": "A background processing queue failure was identified as having operated silently within the affected environment. The failure was not surfaced by available monitoring controls.",
+        "subtext": "queue failure not reflected in monitoring dashboards, silent failure mode identified, monitoring coverage of background processing components reviewed"
+    },
+
+    # Vendor guidance causing additional data loss
+    {
+        "keywords": ["clearing.*cache.*removed.*fallback", "vendor.*guidance.*removed.*local", "following.*vendor.*advice.*lost", "vendor.*instruction.*caused.*loss",
+                     "guidance.*clear.*cache.*also.*removed", "cache.*clear.*removed.*backup", "vendor.*remediation.*caused.*further.*loss", "following.*guidance.*lost.*local",
+                     "clear.*local.*cache.*fallback.*gone", "vendor.*fix.*removed.*local.*copy"],
+        "official": "Remediation guidance issued by the vendor resulted in the removal of locally stored fallback data. The guidance had not accounted for local cache copies serving as operational fallback during the incident.",
+        "subtext": "vendor remediation guidance not assessed against local fallback dependency, following guidance created additional loss, local fallback removed during active incident"
+    },
+
+    # Inconsistent operational thresholds independently set across sites
+    {
+        "keywords": ["inconsistent.*threshold.*site", "different.*threshold.*hospital", "each.*hospital.*decided.*threshold", "independently.*decided.*threshold",
+                     "inconsistent.*standard.*across.*site", "sites.*independently.*set.*threshold", "no.*common.*threshold.*agreed", "threshold.*differed.*by.*site",
+                     "each.*site.*own.*threshold", "safe.*threshold.*differed.*hospital"],
+        "official": "Clinical or operational thresholds applied during the incident period were set independently by each affected site. No common standard was agreed across the network prior to or during the response.",
+        "subtext": "threshold inconsistency introduced variable risk exposure across sites, network-level standard not established, local autonomy in threshold-setting assessed"
+    },
+
+    # Precautionary mass reset overwhelming identity verification
+    {
+        "keywords": ["account reset.*overwhelmed", "reset.*overwhelmed.*hotline", "precautionary.*reset.*overwhelmed", "mass reset.*overwhelmed", "reset.*verification.*overwhelmed",
+                     "identity.*verification.*hotline.*overwhelmed", "reset.*identity.*helpline.*overloaded", "bulk.*reset.*overwhelmed.*verification",
+                     "reset.*caused.*helpline.*overload", "precautionary.*reset.*hotline"],
+        "official": "A precautionary account reset was implemented across the affected user population. The volume of resets exceeded the capacity of available identity verification channels.",
+        "subtext": "remediation action created secondary operational incident, identity verification capacity not assessed prior to bulk reset, reset volume not phased"
+    },
+
+    # Service takedown disabling multiple dependent citizen-facing services
+    {
+        "keywords": ["portal.*taken.*offline.*also.*disabled", "takedown.*also.*disabled", "offline.*also.*disabled.*booking", "portal.*offline.*prescription.*booking",
+                     "taking.*offline.*disabled.*multiple", "containment.*disabled.*appointment", "portal.*outage.*booking.*prescription", "offline.*appointment.*vaccination.*prescription",
+                     "citizen.*portal.*offline.*multiple.*service", "taking.*down.*portal.*affected.*multiple"],
+        "official": "Containment of the affected platform resulted in the simultaneous unavailability of multiple citizen-facing services. The service dependencies were not fully reflected in the incident scope at time of decision.",
+        "subtext": "portal takedown scope broader than anticipated, dependent services not mapped prior to containment decision, collateral service unavailability created secondary citizen impact"
+    },
+
+    # Remediation increasing auth friction with disproportionate impact on specific users
+    {
+        "keywords": ["additional.*authentication.*elderly", "increased.*friction.*elderly", "authentication.*steps.*elderly", "login.*failure.*elderly", "auth.*friction.*disproportionate",
+                     "increased.*auth.*failure.*rate.*elderly", "additional.*steps.*increased.*failure", "friction.*disproportionate.*user.*group", "mfa.*elderly.*failure",
+                     "additional.*authentication.*assisted"],
+        "official": "Enhanced authentication controls introduced following the incident resulted in increased login failure rates. The impact was disproportionately experienced by specific user groups, including elderly users and those requiring assisted access.",
+        "subtext": "security remediation introduced accessibility barrier, impact on specific user groups not assessed prior to deployment, failure rate increase not anticipated in implementation plan"
+    },
+
+    # Regional data replication giving different answers about breach scope
+    {
+        "keywords": ["replication.*node.*different.*scope", "depends.*which.*node.*queried", "different.*answer.*by.*region", "scope.*varied.*by.*region",
+                     "replication.*inconsistency.*scope", "different.*data.*by.*node", "query.*different.*node.*different.*result", "replication.*lag.*scope.*assessment",
+                     "regional.*replication.*different.*breach.*scope", "scope.*answer.*varied.*replication"],
+        "official": "The scope of data exposure could not be definitively established due to inconsistencies across regional data replication nodes. The assessment varied depending on which node was queried.",
+        "subtext": "replication inconsistency prevented authoritative scope determination, regulatory notification based on incomplete replication state, worst-case scope used for notification purposes"
+    },
+
+    # Controlled medication access system failure
+    {
+        "keywords": ["dispensing cabinet", "medication cabinet", "automated dispensing", "drug cabinet", "controlled.*cabinet", "cabinet.*medication.*access",
+                     "medication.*dispens.*fail", "dispens.*cabinet.*fail", "cabinet.*reject.*badge", "medication.*cabinet.*access.*fail"],
+        "official": "Automated medication dispensing infrastructure was identified as unavailable. Manual controlled drug access procedures were activated.",
+        "subtext": "medication access control failure assessed, manual override procedures activated, completeness of emergency access material reviewed"
+    },
+
+    # Emergency override keys missing from sealed envelopes
+    {
+        "keywords": ["override key.*missing", "sealed envelope.*missing", "emergency key.*missing", "key.*envelope.*missing", "override.*envelope.*not there",
+                     "physical key.*missing", "emergency override.*missing", "keys.*missing.*drug", "cabinet.*key.*not found", "envelope.*signed out.*not returned"],
+        "official": "Emergency override materials were identified as incomplete at the point of activation. A subset of physical access keys could not be located.",
+        "subtext": "emergency override completeness not verified since last audit, key return process not enforced, gap identified at time of activation"
+    },
+
+    # Local customisation of vendor-managed system causing update failure
+    {
+        "keywords": ["customised.*vendor.*update", "local.*customisation.*broke", "local.*group.*mapping.*vendor", "ad.*mapping.*vendor.*fail", "customisation.*broke.*update",
+                     "operational flexibility.*broke", "local.*adaptation.*vendor.*fail", "customised.*group.*policy.*vendor", "local.*configuration.*vendor.*update.*fail",
+                     "for operational flexibility.*broke"],
+        "official": "A vendor-issued update was identified as having interacted adversely with locally customised configuration. The customisation had been applied independently of the vendor's standard implementation.",
+        "subtext": "local customisation created divergence from vendor-supported configuration, customisation rationale assessed, update compatibility not tested against local configuration"
+    },
+
+    # Emergency rollback rejected due to broken certificate trust chain
+    {
+        "keywords": ["rollback.*rejected.*certificate", "certificate.*rejected.*rollback", "no longer.*trust.*vendor.*certificate", "cabinets.*rejected.*package.*certificate",
+                     "update.*rejected.*trust", "certificate.*authority.*not.*trusted", "package.*rejected.*ca", "devices.*no longer.*trust.*ca",
+                     "trust chain.*broken", "certificate.*authority.*untrusted.*rollback"],
+        "official": "The emergency rollback package could not be applied to a subset of affected systems. Those systems had ceased to trust the issuing certificate authority.",
+        "subtext": "certificate trust chain broken during incident, rollback blocked by trust failure, certificate authority management reviewed"
+    },
+
+    # Inventory state accepting physically impossible values
+    {
+        "keywords": ["negative.*inventory", "negative.*stock", "negative.*ampoule", "negative.*units", "inventory.*impossible.*value", "system.*accepted.*negative",
+                     "database.*accepted.*negative", "minus.*inventory", "impossible.*inventory.*accepted", "stock.*negative.*accepted"],
+        "official": "Inventory data was identified as containing values inconsistent with physical possibility. The system accepted and retained these values without generating a validation alert.",
+        "subtext": "inventory validation controls did not prevent physically impossible values, data integrity check absent, operational decisions based on inaccurate inventory state"
+    },
+
+    # Radiotherapy and treatment planning system
+    {
+        "keywords": ["radiotherapy", "treatment plan.*dosage", "treatment planning system", "radiation.*treatment", "dosage plan", "treatment.*dose.*plan",
+                     "radiotherapy.*platform", "treatment.*parameter.*reconstruct", "physics.*treatment.*plan", "oncology.*treatment.*plan"],
+        "official": "Clinical treatment planning infrastructure was identified as affected. The availability of treatment dosage data was assessed as a patient safety consideration throughout the response.",
+        "subtext": "treatment plan integrity assessed, dosage accuracy verification required before treatment resumption, clinical physics review conducted"
+    },
+
+    # Same error banner for scheduled maintenance and catastrophic failure
+    {
+        "keywords": ["same.*warning.*maintenance.*failure", "same.*banner.*downtime.*failure", "warning.*same.*planned.*catastrophic", "couldn't tell.*maintenance.*outage",
+                     "same message.*maintenance.*failure", "banner.*both.*maintenance.*failure", "warning.*indistinguishable.*maintenance", "same.*error.*scheduled.*unscheduled",
+                     "same.*display.*planned.*actual", "maintenance.*message.*also.*failure.*message"],
+        "official": "System status messaging did not differentiate between scheduled maintenance windows and unplanned infrastructure failure. The initial response was delayed by ambiguity in the status indication.",
+        "subtext": "monitoring message design did not support rapid triage, planned and unplanned outage indistinguishable from status display, detection delayed by interface ambiguity"
+    },
+
+    # Storage cost-optimisation destroying recovery capability
+    {
+        "keywords": ["deduplication.*inaccessible", "deduplicated.*archive", "storage.*optimisation.*inaccessible", "cost.*optimisation.*archive.*tier", "archive.*tier.*inaccessible",
+                     "tiered.*storage.*inaccessible", "storage.*project.*inaccessible.*backup", "cost.*project.*removed.*access", "dedup.*recovery.*unavailable",
+                     "archive.*tier.*recovery.*unavailable"],
+        "official": "A storage optimisation project was identified as having rendered a subset of recovery data inaccessible. The project had not been assessed against recovery capability requirements.",
+        "subtext": "cost optimisation activity not reviewed against recovery point requirements, inaccessible archive tier not reflected in recovery testing, recovery capability reduced without formal risk acceptance"
+    },
+
+    # Patient prioritisation data fragmented across incompatible systems
+    {
+        "keywords": ["prioritisation.*three.*system", "patient.*list.*spreadsheet.*whiteboard", "prioritisation.*spreadsheet.*whiteboard", "patient.*data.*three.*system.*none.*match",
+                     "scheduling.*system.*spreadsheet.*whiteboard", "priorit.*data.*didn't.*match", "patient.*list.*multiple.*source.*none.*agree", "no.*single.*patient.*list",
+                     "prioritisation.*fragmented.*source", "patient.*priority.*multiple.*source.*disagree"],
+        "official": "Patient prioritisation data was identified as distributed across multiple systems and informal records. The data sources were inconsistent and could not be reconciled at the time of the request.",
+        "subtext": "no authoritative patient prioritisation record, informal records operationally necessary but not reconcilable, prioritisation decisions made under data uncertainty"
+    },
+
+    # Restored system distrusted; unofficial parallel records become indispensable
+    {
+        "keywords": ["distrusted.*restored.*system", "didn't.*trust.*restored", "timestamp.*discrepancy.*distrust", "staff.*distrust.*restored", "restored.*system.*not.*trusted.*staff",
+                     "parallel.*record.*indispensable", "unofficial.*record.*indispensable", "parallel.*annotation.*operationally.*essential", "staff.*own.*record.*became.*essential",
+                     "distrust.*restored.*parallel.*record"],
+        "official": "The restored system was assessed by operational staff as insufficiently reliable for clinical use. Informal parallel records created during the downtime period were retained as the primary operational reference.",
+        "subtext": "staff trust in restored system not established, parallel records operationally indispensable, reconciliation between official and informal records not completed at time of review"
+    },
+
+    # Vendor advising against corrections after reconciliation already impossible
+    {
+        "keywords": ["vendor.*advised.*avoid.*correction", "vendor.*said.*don't.*correct", "don't.*manually.*correct.*reconciliation", "avoid.*correction.*reconciliation",
+                     "vendor.*guidance.*too.*late", "reconciliation.*theoretical.*concept", "corrections.*complicate.*reconciliation", "manual.*correction.*warned.*against.*too.*late",
+                     "vendor.*advised.*after.*already.*corrected", "reconciliation.*already.*impossible"],
+        "official": "Guidance against manual local corrections was issued by the vendor following a period during which such corrections had been operationally necessary. Reconciliation of corrections made prior to the guidance was assessed as impractical.",
+        "subtext": "vendor guidance not actionable at time of issue, manual corrections already embedded in operational record, reconciliation scope exceeded available capacity"
+    },
+
+    # Safety maintained by refusal to trust the restored system
+    {
+        "keywords": ["safety.*refusing.*trust", "safe.*because.*didn't.*trust", "safety.*maintained.*distrust", "refused.*trust.*restored.*safe", "safety.*control.*was.*distrust",
+                     "widespread.*refusal.*trust.*system", "not.*trusting.*system.*prevented.*harm", "distrust.*system.*safety.*control", "safety.*depended.*on.*not.*trusting",
+                     "safety.*control.*was.*skepticism"],
+        "official": "Post-incident review identified that patient safety had been maintained in part through operational staff declining to rely on restored system data without independent verification.",
+        "subtext": "human skepticism of system data identified as effective safety control, reliance on human verification not reflected in formal safety procedures, safety culture review recommended"
+    },
+
+    # Ambulance routing and pre-hospital emergency coordination
+    {
+        "keywords": ["ambulance.*routing", "dispatch.*routing", "ambulance.*diversion", "emergency.*department.*capacity.*feed", "hospital.*capacity.*ambulance",
+                     "routing.*ambulance.*fail", "dispatch.*hospital.*capacity", "pre.hospital.*coordination", "ambulance.*destination.*update", "routing.*feed.*fail"],
+        "official": "Ambulance routing and pre-hospital coordination infrastructure was identified as affected. The ability to direct emergency patients to appropriate receiving facilities was assessed throughout the response.",
+        "subtext": "pre-hospital coordination capability degraded, manual routing implemented, patient flow impact assessed across the region"
+    },
+
+    # Middleware misclassified as non-critical because it does not directly treat patients
+    {
+        "keywords": ["non.critical.*doesn't.*treat.*patient", "non.critical.*not.*directly.*patient", "classified.*non.critical.*because.*patient", "non.critical.*middleware",
+                     "middleware.*non.critical", "doesn't.*directly.*treat.*classified.*non.critical", "non.critical.*direct.*patient.*care",
+                     "infrastructure.*non.critical.*treat.*patient", "critical.*dependency.*non.critical.*classification", "not.*direct.*patient.*care.*non.critical"],
+        "official": "Infrastructure classified as non-critical was identified as a critical dependency for patient-facing services. The classification had been based on a direct patient care criterion that did not account for indirect dependencies.",
+        "subtext": "criticality classification did not capture indirect patient care dependency, non-critical classification used to deprioritise maintenance and monitoring, classification reviewed"
+    },
+
+    # Critical alert assigned informational severity and not actioned
+    {
+        "keywords": ["alert.*assigned.*informational", "informational.*alert.*critical", "classified.*informational.*critical", "alert.*severity.*informational.*failure",
+                     "set.*informational.*never.*actioned", "downgraded.*informational.*critical", "alert.*informational.*replication.*fail",
+                     "informational.*severity.*significant.*failure", "assigned.*informational.*not.*reviewed", "alert.*correct.*informational.*ignored"],
+        "official": "An automated alert indicating a significant infrastructure failure was generated and assigned a low severity classification. The alert was not escalated or actioned.",
+        "subtext": "alert severity misconfigured, low-severity classification prevented escalation, failure went unaddressed until incident, alert triage process reviewed"
+    },
+
+    # Crews bypassing official routing — performance improved
+    {
+        "keywords": ["bypassing.*official.*routing", "bypass.*official.*routing.*better", "ignored.*routing.*instructions", "routing.*instructions.*bypassed.*performance",
+                     "crews.*own.*judgement.*routing", "official.*routing.*bypassed.*improved", "drove.*own.*judgement", "ambulance.*bypass.*routing",
+                     "routing.*instructions.*ignored.*better", "bypassing.*dispatch.*instructions"],
+        "official": "Emergency crews were identified as having deviated from official routing instructions during the incident. Operational performance in the affected period was assessed as having improved following the deviation.",
+        "subtext": "official routing instructions not operationally optimal during degraded infrastructure, crew situational awareness exceeded system accuracy, routing system limitations assessed"
+    },
+
+    # Dashboard refresh accidentally resetting diversion flags at scale
+    {
+        "keywords": ["dashboard.*reset.*diversion", "refresh.*reset.*diversion", "diversion.*flag.*reset.*dashboard", "dashboard.*cleared.*diversion", "reset.*flag.*dashboard.*ambulance",
+                     "refresh.*cleared.*status", "dashboard.*refresh.*reset.*status", "diversion.*accidentally.*cleared", "status.*reset.*by.*refresh", "flags.*reset.*dashboard.*refresh"],
+        "official": "A dashboard refresh event was identified as having reset diversion status flags across a subset of sites. The reset was not intended and produced a significant and immediate effect on patient routing.",
+        "subtext": "dashboard state management did not prevent accidental flag reset, reset propagated to routing infrastructure, impact scale not anticipated from a single interface action"
+    },
+
+    # Manual workaround continued after restoration because system not trusted
+    {
+        "keywords": ["continued.*manual.*after.*restoration", "continued.*phoning.*after.*restored", "manual.*continued.*restoration.*trust", "staff.*continued.*manual.*system.*restored",
+                     "didn't.*trust.*restored.*continued.*manual", "restoration.*staff.*continued.*workaround", "restored.*system.*not.*trusted.*continued.*manual",
+                     "crews.*continued.*calling.*after.*restored", "manual.*process.*continued.*despite.*restoration", "workaround.*continued.*restoration.*trust"],
+        "official": "Manual workaround processes were maintained by operational staff following system restoration. The continuation reflected an operational assessment that the restored system could not be fully relied upon.",
+        "subtext": "trust in restored system not established at operational level, manual processes continued beyond incident resolution, formal stand-down of workarounds not completed"
+    },
+
+    # OT replacement deferred because replacing requires recertification of connected vendors
+    {
+        "keywords": ["replacing.*recertification.*vendor", "retirement.*recertification", "decommission.*recertification", "replace.*required.*recertif", "replacement.*blocked.*recertif",
+                     "recertification.*connected.*vendor", "retiring.*requires.*recertif", "replacement.*vendor.*recertif", "decommission.*vendor.*recertif",
+                     "recertification.*delayed.*replacement"],
+        "official": "The decommission of the identified legacy system had been deferred. Replacement was contingent on the completion of vendor recertification processes for connected components.",
+        "subtext": "legacy system retained due to downstream dependency, recertification dependency not resolved prior to incident, retirement timeline not actively managed"
+    },
+
+    # Commands appearing successful on HMI but not executed by field devices
+    {
+        "keywords": ["appeared successful.*screen", "commands.*appeared.*successful.*screen", "successful on screen.*field.*not", "hmi.*showed.*success.*field.*no",
+                     "screen.*showed.*executed.*field.*did not", "commands.*accepted.*not.*executed", "appeared to work.*screen.*field.*no", "displayed.*success.*device.*did not",
+                     "interface.*said.*success.*device.*disagree", "system.*confirmed.*field.*did not"],
+        "official": "Command execution was confirmed at the control interface level. Field device execution did not correspond with the confirmation displayed.",
+        "subtext": "HMI confirmation not equivalent to field execution, control chain gap between interface and device, telemetry feedback loop integrity assessed"
+    },
+
+    # Operator disabling automation; stability improved
+    {
+        "keywords": ["disabled.*automation.*stability.*improved", "turned off.*automation.*improved", "disabled.*automated.*better", "switched off.*automation.*stable",
+                     "automation.*disabled.*performance.*improved", "bypassed.*automation.*improved", "disconnected.*automation.*stable", "manual.*override.*automation.*better",
+                     "disabled.*optimisation.*stable", "removed.*automation.*stability.*improved"],
+        "official": "Automated control systems were disabled during the incident response period. Operational stability improved following the disablement.",
+        "subtext": "automated system behaviour assessed as contributing to instability, manual operation more stable than automated operation during incident conditions, automation design reviewed"
+    },
+
+    # False exercise notification reaching departed employees; regions disagreed on reality
+    {
+        "keywords": ["exercise.*mailing list.*departed", "exercise.*notification.*former.*employee", "recipients.*departed.*employee", "mailing list.*left.*company",
+                     "regions.*different.*conclusion.*exercise", "exercise.*real.*disagree.*region", "different.*region.*different.*conclusion.*exercise",
+                     "whether.*exercise.*real.*disagree", "exercise.*notification.*stale.*list", "mailing.*list.*left.*staff"],
+        "official": "An exercise notification was distributed to a mailing list that included individuals no longer employed by the organisation. Responding organisations reached inconsistent conclusions regarding the authenticity of the exercise.",
+        "subtext": "mailing list not maintained following personnel changes, exercise authenticity verification process not standardised, responding organisations acted on inconsistent assessment"
+    },
+
+    # Continuing potentially malicious commands because halting mid-sequence was more dangerous
+    {
+        "keywords": ["halting.*more dangerous.*proceeding", "stopping.*riskier.*continuing", "mid.sequence.*riskier.*stop", "proceeding.*malicious.*halting.*dangerous",
+                     "continuing.*safer.*stopping", "completing.*command.*riskier.*cancel", "abort.*more.*dangerous.*complete", "stopping.*mid.*sequence.*risk",
+                     "riskier.*halt.*than.*continue", "safer.*proceed.*than.*stop"],
+        "official": "A decision was taken to continue executing command sequences despite uncertainty regarding their authorisation. Halting the sequence mid-execution was assessed as operationally riskier than completion.",
+        "subtext": "operational risk of partial execution exceeded risk of completing potentially malicious commands, decision documented, command sequence design reviewed for abort safety"
+    },
+
+    # Credentials retained to avoid breaking training or certification scenarios
+    {
+        "keywords": ["credentials.*breaking.*training", "credentials.*retained.*certification", "removing.*break.*training.*scenario", "privileges.*retained.*training",
+                     "access.*retained.*annual.*certif", "removing.*invalidate.*certif", "retained.*credentials.*training.*scenario", "privileged.*access.*training.*certif",
+                     "removing.*access.*break.*certif", "credentials.*needed.*for.*certif"],
+        "official": "Privileged credentials were retained on the affected system to preserve the operability of training and certification scenarios. Removal had been assessed as incompatible with existing certification requirements.",
+        "subtext": "operational security and certification dependency in conflict, privileged credential retention not assessed as security risk, certification process reviewed for credential hygiene implications"
+    },
+
+    # Acquired vendor left connected temporarily pending integration
+    {
+        "keywords": ["acquired.*temporarily.*connected", "acquisition.*still.*connected.*temporarily", "pending.*integration.*still.*connected", "temporarily.*connected.*acquisition",
+                     "acquired.*connected.*pending.*integration", "temporary.*connection.*acquisition", "acquired.*systems.*still.*connected", "never.*fully.*integrated.*still.*connected",
+                     "integration.*pending.*still.*connected", "acquired.*vendor.*temporary.*access"],
+        "official": "Systems belonging to an acquired entity remained connected to the operational environment on a temporary basis pending integration. The integration had not been completed at the time of the incident.",
+        "subtext": "acquired system connection persisted beyond intended temporary period, security assessment of acquired environment not completed, integration timeline not enforced"
+    },
+
+    # Monitoring showing telemetry availability, not correctness
+    {
+        "keywords": ["measured.*availability.*not.*correct", "monitoring.*availability.*not.*accuracy", "indicators.*measured.*availability.*not.*correctness", "status.*telemetry.*availability.*not.*content",
+                     "healthy.*telemetry.*available.*not.*correct", "measured.*whether.*received.*not.*whether.*correct", "availability.*indicator.*not.*correctness",
+                     "signal.*present.*not.*accurate", "telemetry.*present.*not.*valid", "indicators.*availability.*not.*integrity"],
+        "official": "Monitoring controls were identified as assessing telemetry availability rather than telemetry integrity. Healthy status indicators were displayed during a period in which telemetry content was compromised.",
+        "subtext": "monitoring design conflated data presence with data validity, integrity monitoring absent, false healthy status sustained throughout active compromise period"
+    },
+
+    # NTP drift causing timestamp inconsistency between systems
+    {
+        "keywords": ["ntp.*drift", "ntp.*drifted", "clock.*drift.*ntp", "timestamp.*ntp.*drift", "time.*synchronisation.*drift", "ntp.*source.*drifted",
+                     "timestamp.*synchronisation.*drift", "separate.*ntp.*drifted", "different.*ntp.*timestamp.*mismatch", "clock.*skew.*ntp"],
+        "official": "A clock synchronisation discrepancy was identified between systems operating from separate NTP sources. The discrepancy introduced timestamp inconsistency in records used for operational reconciliation.",
+        "subtext": "NTP sources not validated against common reference, timestamp inconsistency not detected prior to incident, reconciliation between systems affected by time skew"
+    },
+
+    # Automated contractual penalties triggered on corrupted assumptions
+    {
+        "keywords": ["penalty.*corrupted.*data", "settlement.*corrupted.*assumption", "automated.*penalty.*wrong.*data", "contractual.*penalty.*corrupted", "imbalance.*penalty.*wrong.*data",
+                     "settlement.*engine.*corrupted", "automated.*settlement.*bad.*data", "penalty.*calculated.*wrong.*assumption", "charges.*calculated.*corrupted", "financial.*penalty.*incorrect.*data"],
+        "official": "Automated settlement and penalty calculation systems continued operating during the incident period using data subsequently identified as compromised. Financial obligations were generated on the basis of inaccurate operational data.",
+        "subtext": "automated financial systems not suspended during incident, penalty calculations based on corrupted input, financial impact of incorrect automated calculations assessed"
+    },
+
+    # Both parties independently concluding the other side is reporting incorrectly
+    {
+        "keywords": ["both.*concluded.*other.*wrong", "each.*side.*concluded.*other.*incorrect", "both.*sides.*blamed.*other", "each.*party.*concluded.*other.*reporting.*wrong",
+                     "independently.*concluded.*other.*incorrect", "both.*sides.*independently.*concluded", "mutual.*attribution.*other.*side.*wrong",
+                     "each.*country.*concluded.*other", "both.*operators.*concluded.*other.*side", "both.*sides.*assumed.*other.*error"],
+        "official": "Each party independently assessed the data discrepancy as originating from an error on the counterpart's side. Neither party identified their own data as compromised during the initial assessment period.",
+        "subtext": "mutual attribution of error delayed joint investigation, both parties operating on compromised data, cross-party validation mechanism absent"
+    },
+
+    # Residential outage affecting critical dependent infrastructure
+    {
+        "keywords": ["pharmacies.*care home.*traffic", "critical.*infrastructure.*residential.*distribution", "care home.*disconnected.*residential", "pharmacy.*disconnected.*residential",
+                     "traffic.*system.*disconnected.*residential", "critical.*site.*residential.*outage", "shared.*distribution.*node.*critical.*infrastructure",
+                     "residential.*outage.*critical.*service", "smart meter.*disconnection.*critical.*site", "critical.*dependent.*residential.*distribution"],
+        "official": "Critical service infrastructure was identified as sharing distribution dependencies with residential systems within the incident scope. The disconnection of residential nodes produced collateral impact on critical services.",
+        "subtext": "critical service dependency on residential distribution not reflected in incident scope, collateral impact on critical infrastructure sites assessed, dependency mapping reviewed"
+    },
+
+    # Disabling one function also disabling its inverse
+    {
+        "keywords": ["disabling.*disconnect.*also.*disabled.*reconnect", "disable.*off.*also.*disable.*on", "disabling.*command.*also.*disabled.*reverse", "disabling.*function.*disabled.*inverse",
+                     "containment.*also.*disabled.*restoration", "suspend.*disconnect.*also.*suspend.*reconnect", "removing.*capability.*removed.*inverse",
+                     "disabling.*also.*disabling.*opposite", "turning off.*also turned off.*restore", "disable.*off.*disable.*reverse"],
+        "official": "The action taken to suspend the identified capability also resulted in the unavailability of the corresponding restoration function. Containment and recovery capability were implemented within the same control path.",
+        "subtext": "containment action created recovery dependency, disable and enable functions not independently controllable, control architecture reviewed for containment isolation capability"
+    },
+
+    # Pre-modernisation undocumented procedures working; management instructing staff not to use them
+    {
+        "keywords": ["undocumented.*recovery.*worked", "pre.smart.*procedure.*worked", "legacy.*procedure.*worked.*faster", "old.*procedure.*worked.*better",
+                     "pre.modernisation.*procedure.*effective", "undocumented.*local.*recovery.*faster", "management.*don't.*use.*undocumented", "instructed.*not.*use.*worked",
+                     "told.*not.*use.*undocumented.*worked", "management.*stop.*using.*undocumented.*effective"],
+        "official": "Recovery was achieved using an undocumented procedure preserved from a prior system generation. The procedure was subsequently identified as not forming part of the approved operational architecture.",
+        "subtext": "undocumented procedure outperformed approved platform, institutional knowledge not captured in official procedures, management response was to prohibit rather than document the effective approach"
+    },
+
+    # Interface maintenance banner persisting because no one can remove it
+    {
+        "keywords": ["banner.*persisted.*couldn't.*remove", "maintenance.*banner.*nobody.*knew.*remove", "banner.*no one.*knew.*remove", "maintenance.*notice.*couldn't.*clear",
+                     "banner.*template.*couldn't.*remove", "couldn't.*remove.*banner.*interface", "maintenance.*message.*stuck", "banner.*remove.*unknown",
+                     "interface.*banner.*persisted.*how.*remove", "no one.*knew.*how.*clear.*banner"],
+        "official": "A maintenance status indicator persisted within the operational interface beyond its intended display period. The process for removing the indicator was not known to available staff.",
+        "subtext": "interface state management not documented, maintenance banner indistinguishable from active maintenance status, operator confidence in system state reduced"
+    },
+
+    # Management requesting justification for bypassing automation causing harm
+    {
+        "keywords": ["justification.*bypassing.*automation", "justify.*disabling.*automation", "explain.*override.*automation", "management.*requested.*justify.*bypass",
+                     "asked.*why.*disabled.*automation", "justification.*required.*override", "management.*why.*bypassed.*automated", "explain.*turning off.*automation",
+                     "requested.*justification.*manual.*override", "justify.*bypassing.*approved.*workflow"],
+        "official": "A request for formal justification was received following the decision to override automated operational systems. The justification was provided in the context of active operational instability.",
+        "subtext": "process compliance requested during active incident, justification requirement not suspended under incident conditions, automation override governance reviewed"
+    },
+
+    # Log retention limited by procurement licensing delay
+    {
+        "keywords": ["log.*retention.*procurement", "retention.*licence.*procurement", "log.*retention.*licensing.*procurement", "storage.*licence.*procurement.*review",
+                     "retention.*limited.*licence.*review", "logs.*only.*days.*licence", "retention.*licence.*not.*approved", "log.*storage.*procurement.*delay",
+                     "evidence.*preservation.*licence.*procurement", "retention.*licensing.*under.*review"],
+        "official": "Log retention capability was identified as limited at the time evidence preservation was requested. Extended retention had not been enabled due to an outstanding procurement decision on storage licensing.",
+        "subtext": "evidence preservation dependent on procurement timeline, retention gap not risk-accepted, extended retention not provisioned prior to incident, forensic completeness affected"
+    },
+
+    # Gas pipeline / transmission OT infrastructure
+    {
+        "keywords": ["compressor station", "gas transmission", "pipeline pressure", "pressure corridor", "gas pipeline", "transmission corridor",
+                     "compressor throughput", "pipeline operator", "gas.*compressor.*control", "transmission.*pressure.*control"],
+        "official": "Gas transmission infrastructure was identified within the scope of the incident. The integrity of pipeline pressure management systems was assessed throughout the response.",
+        "subtext": "pipeline OT scope assessed, pressure management system integrity reviewed, physical safety implications of control system compromise assessed"
+    },
+
+    # Control loop instability from cascading automated corrections
+    {
+        "keywords": ["control loop.*instability", "each.*station.*correcting.*previous", "correcting.*correction.*previous", "automated.*correction.*introduced.*instability",
+                     "loop.*correction.*cascade", "compensating.*instability.*created.*instability", "station.*correcting.*other.*station", "automated.*balancing.*feedback.*loop",
+                     "correction.*triggered.*further.*correction", "cascading.*automated.*compensation"],
+        "official": "A cascading control loop instability was identified in which automated compensation actions by individual components amplified rather than resolved the underlying condition.",
+        "subtext": "automated correction logic not designed for adversarial input conditions, feedback loop amplification not anticipated, control system interaction design reviewed"
+    },
+
+    # Communications policy change affecting command execution timing
+    {
+        "keywords": ["communications.*prioritisation.*modified", "bandwidth.*optimisation.*command", "communications.*policy.*command.*timing", "prioritisation.*policy.*command.*intermittent",
+                     "bandwidth.*policy.*command.*delay", "network.*prioritisation.*affect.*command", "qos.*policy.*command.*execution", "traffic.*prioritisation.*command.*intermittent",
+                     "bandwidth.*project.*command.*execution", "communications.*policy.*affect.*control"],
+        "official": "Operational command execution was identified as intermittent. The condition was associated with a communications prioritisation policy change applied during an infrastructure optimisation project.",
+        "subtext": "network policy change affected OT command delivery, optimisation project not assessed against operational control requirements, command execution reliability reviewed"
+    },
+
+    # Regulatory obligation preventing disconnection of compromised access path
+    {
+        "keywords": ["disabling.*requires.*regulator.*notification", "disconnecting.*regulatory.*obligation", "removing.*access.*regulator.*notif", "regulator.*notification.*required.*disconnect",
+                     "continuity.*agreement.*prevent.*disconnect", "regulatory.*continuity.*obligation.*access", "can't.*disconnect.*regulatory.*agreement",
+                     "removing.*notif.*regulator.*critical.*infrastructure", "continuity.*obligation.*blocked.*isolation", "regulator.*must.*be.*notified.*disconnect"],
+        "official": "The identified access path could not be immediately isolated. Disabling the path required regulatory notification under applicable critical infrastructure continuity obligations.",
+        "subtext": "regulatory compliance requirement created delay in containment, notification obligation not pre-positioned for incident conditions, containment timeline affected by regulatory process"
+    },
+
+    # Architecture diagrams not reflecting live state after years of maintenance changes
+    {
+        "keywords": ["diagram.*intended.*not.*live", "architecture.*intended.*not.*actual", "diagram.*not.*reflect.*live", "segmentation.*intended.*not.*actual",
+                     "diagram.*years.*maintenance.*changes", "documentation.*intended.*architecture", "live.*architecture.*diverged.*documentation",
+                     "actual.*network.*not.*match.*diagram", "emergency.*maintenance.*changed.*architecture", "years.*changes.*diagram.*not.*current"],
+        "official": "Network and segmentation documentation was identified as reflecting the intended architecture rather than the current operational configuration. The live configuration had diverged through incremental changes over an extended period.",
+        "subtext": "architecture documentation not maintained through change management process, live configuration and documented configuration not reconciled, scope of divergence not known prior to incident"
+    },
+
+    # Balancing engine amplifying instability by trusting manipulated telemetry
+    {
+        "keywords": ["balancing.*amplified.*instability", "balancing.*engine.*manipulated.*telemetry", "automated.*balancing.*trusted.*wrong.*data", "balancing.*worsened.*manipulated",
+                     "control.*amplified.*instability", "balancing.*system.*trusted.*compromised.*data", "automation.*amplified.*attack", "automated.*control.*made.*worse.*bad.*data",
+                     "balancing.*engine.*bad.*input.*amplified", "compensating.*manipulated.*data.*worse"],
+        "official": "Automated balancing systems continued operating using telemetry data subsequently identified as manipulated. The automated response amplified operational instability rather than correcting it.",
+        "subtext": "automated balancing not designed to detect adversarial telemetry, control response to manipulated input not bounded, automation extended incident impact during active compromise"
+    },
+
+    # Infrastructure dependency cascade across sectors
+    {
+        "keywords": ["heating.*transport.*depend", "transport.*depend.*heating", "utility.*cascade.*transport", "infrastructure.*depend.*other.*infrastructure", "heating.*traffic.*system.*depend",
+                     "utility.*outage.*transport.*affected", "transport.*affected.*utility.*outage", "cascade.*across.*infrastructure.*sector", "sector.*depend.*another.*sector",
+                     "utility.*cascade.*multiple.*sector"],
+        "official": "The incident scope extended to infrastructure in sectors with indirect operational dependencies on the affected utility. Cascading impact was identified across transport, municipal, and healthcare environments.",
+        "subtext": "cross-sector infrastructure dependency not reflected in incident scope, cascading impact not anticipated in response planning, dependency mapping reviewed across sectors"
+    },
+
+    # Local override rejected because centralised platform considers action authorised
+    {
+        "keywords": ["local.*override.*rejected.*centralised", "override.*rejected.*centrally.*authorised", "local.*control.*rejected.*platform", "rejected.*override.*central.*authorisation",
+                     "platform.*considered.*centrally.*authorised", "local.*action.*rejected.*central.*system", "override.*rejected.*platform.*authorised", "manual.*override.*rejected.*orchestration",
+                     "local.*control.*rejected.*remote.*authorisation", "override.*blocked.*central.*authorisation"],
+        "official": "Local override commands were rejected by the centralised control platform. The platform assessed the local actions as conflicting with centrally authorised operational instructions.",
+        "subtext": "centralised authority model prevented local recovery action, override design did not account for central platform compromise, local control capability assessed"
+    },
+
+    # Disconnecting orchestration platform locking access to physical emergency resources
+    {
+        "keywords": ["disconnecting.*locked.*archive", "isolation.*locked.*printed.*procedure", "disconnecting.*locked.*physical.*access", "orchestration.*disconnected.*physical.*access",
+                     "platform.*disconnected.*access.*room", "isolating.*also.*locked.*physical", "disconnecting.*locked.*door.*procedures", "orchestration.*isolation.*locked.*resource",
+                     "taking.*offline.*locked.*physical.*emergency", "disconnect.*also.*removed.*physical.*access"],
+        "official": "Disconnection of the affected platform resulted in the loss of access to physical emergency resources managed through the same system. Emergency procedure materials were inaccessible during the initial response period.",
+        "subtext": "physical access control dependency on compromised platform not identified prior to isolation, emergency resource access not independently maintained, forced physical access required"
+    },
+
+    # Platform too integrated to isolate cleanly
+    {
+        "keywords": ["too.*integrated.*isolate", "deeply.*integrated.*isolate", "integrated.*into.*workflows.*isolate", "platform.*integrated.*couldn't.*isolate",
+                     "isolation.*failed.*integrated", "couldn't.*cleanly.*isolate.*integrated", "integration.*prevented.*isolation", "deep.*integration.*isolation.*failed",
+                     "platform.*embedded.*workflows.*isolate", "integrated.*balancing.*workflows.*isolation.*failed"],
+        "official": "Isolation of the affected platform could not be completed without disrupting dependent operational workflows. The extent of integration into operational processes exceeded the scope of available isolation options.",
+        "subtext": "integration depth not assessed against isolation requirements, clean isolation not possible without operational impact, integration governance reviewed"
+    },
+
+    # Disconnecting assets causing secondary forecasting errors
+    {
+        "keywords": ["disconnected.*platform.*assumed.*available", "disconnecting.*secondary.*forecast.*error", "platform.*still.*assumed.*disconnected", "removed.*asset.*platform.*thought.*present",
+                     "disconnection.*forecasting.*error.*secondary", "platform.*include.*disconnected.*assets", "isolation.*secondary.*forecasting.*error",
+                     "platform.*unaware.*disconnected", "removing.*assets.*platform.*assumed.*online", "isolating.*assets.*platform.*forecast.*wrong"],
+        "official": "Manual disconnection of assets during the response period introduced secondary forecasting errors. The platform continued modelling disconnected assets as available, compounding balancing inaccuracies.",
+        "subtext": "platform not designed to handle partial asset disconnection, manual isolation not reflected in platform state, secondary error introduced by response action"
+    },
+
+    # Bridging server on unsupported OS due to multi-year regulatory recertification requirement
+    {
+        "keywords": ["unsupported.*os.*recertif", "recertif.*replacement.*multi.year", "replacement.*multi.year.*regulatory.*review", "running.*unsupported.*recertif.*required",
+                     "regulatory.*recertif.*prevented.*upgrade", "multi.year.*recertif.*unsupported.*system", "replacing.*requires.*multi.year.*regulatory",
+                     "unsupported.*operating.*system.*regulatory.*recertif", "recertif.*process.*prevented.*replacement", "software.*replacement.*multi.year.*regulatory"],
+        "official": "A bridging system was identified as running unsupported software. Replacement had been deferred because the recertification process for approved replacement software required an extended regulatory review period.",
+        "subtext": "regulatory recertification timeline incompatible with software support lifecycle, unsupported system retained under regulatory constraint, risk of continued operation not formally accepted"
+    },
+
+    # Person appearing in contradictory access states simultaneously
+    {
+        "keywords": ["simultaneously.*approved.*suspended", "appeared.*approved.*suspended.*simultaneously", "simultaneously.*active.*revoked", "person.*multiple.*contradictory.*state",
+                     "simultaneously.*valid.*invalid.*access", "contractor.*approved.*suspended.*same.*time", "identity.*record.*contradictory.*states",
+                     "access.*simultaneously.*granted.*revoked", "record.*simultaneously.*multiple.*status", "simultaneously.*approved.*awaiting.*retraining"],
+        "official": "An individual was identified as existing in multiple contradictory access states simultaneously within the identity management system. Manual verification was required due to the inability to establish a definitive current status.",
+        "subtext": "identity state inconsistency identified, synchronisation between access systems not verified, manual override of electronic verification required"
+    },
+
+    # Safety maintained by older architecture's resistance to digital integration
+    {
+        "keywords": ["safety.*older.*isolated.*architecture", "safety.*resisted.*integration", "isolated.*architecture.*protected", "safety.*because.*resisted.*digital.*integration",
+                     "older.*isolated.*resisted.*proposals", "safety.*because.*not.*integrated", "protection.*because.*not.*connected", "older.*architecture.*isolation.*safety",
+                     "isolated.*design.*resisted.*integration.*safety", "safety.*because.*refused.*integrate"],
+        "official": "Post-incident review identified that safety system integrity had been maintained in part because older isolated architectures had not been subject to the integration changes applied to other systems.",
+        "subtext": "architectural isolation identified as protective factor, integration pressure resisted over extended period, safety benefit of isolation not formally recognised in transformation planning"
+    },
+
+    # Management approving digital transformation after incident demonstrating isolation was protective
+    {
+        "keywords": ["approved.*digital.*transformation.*after.*incident", "transformation.*approved.*following.*incident.*isolation", "accelerated.*digital.*after.*isolation.*protected",
+                     "investment.*digital.*integration.*after.*isolation.*safe", "expanded.*integration.*after.*isolation.*safety", "transformation.*funding.*after.*isolated.*protected",
+                     "digital.*transformation.*approved.*incident.*showed.*isolation", "accelerated.*integration.*incident.*demonstrated.*isolation", "approved.*transformation.*incident.*isolated.*safe",
+                     "transformation.*investment.*isolation.*was.*protection"],
+        "official": "Following the incident, investment in digital integration and transformation was approved. The approval occurred in the context of findings that identified architectural isolation as a contributing safety factor.",
+        "subtext": "transformation investment decision not reconciled with incident finding that isolation was protective, lessons identified from incident not reflected in subsequent strategy"
+    },
+
+    # Vendor proposing additional automation during live instability — rejected
+    {
+        "keywords": ["proposed.*automation.*during.*incident", "vendor.*proposed.*machine learning.*live", "proposed.*additional.*automation.*instability", "vendor.*anomaly.*filter.*during.*incident",
+                     "introducing.*automation.*during.*active.*incident", "more.*automation.*proposed.*instability", "vendor.*proposed.*ai.*during.*live.*incident",
+                     "additional.*unexplained.*automation.*live", "deploying.*model.*during.*active.*incident", "vendor.*enhancement.*during.*active.*instability"],
+        "official": "A proposal to deploy additional automated analysis capability was received during the active incident period. The proposal was declined on operational grounds.",
+        "subtext": "additional automation introduced during live incident assessed as increasing rather than reducing uncertainty, proposal declined, rationale documented"
+    },
+
+    # Legacy deterministic control more stable than cloud-optimised equivalent
+    {
+        "keywords": ["legacy.*deterministic.*more.*stable", "older.*deterministic.*more.*stable", "deterministic.*local.*more.*stable.*cloud", "local.*balancing.*more.*stable.*optimised",
+                     "older.*local.*control.*more.*stable", "deterministic.*control.*outperformed.*cloud", "local.*deterministic.*performed.*better.*cloud.*optimised",
+                     "legacy.*local.*more.*reliable.*cloud", "deterministic.*more.*stable.*during.*incident", "older.*isolated.*deterministic.*more.*stable"],
+        "official": "Legacy infrastructure using deterministic local control logic demonstrated greater stability during the incident period than cloud-optimised equivalents. The stability was attributed to the absence of dependency on centralised optimisation inputs.",
+        "subtext": "deterministic local control resilient to upstream data compromise, cloud-optimised control propagated compromised inputs, legacy architecture stability noted in post-incident review"
+    },
+
+    # Telemetry too unreliable for numerical precision to be meaningful
+    {
+        "keywords": ["telemetry.*unreliable.*numerical", "data.*unreliable.*precision.*meaningless", "numerical.*precision.*decorative", "precision.*unreliable.*data",
+                     "quantitative.*estimate.*unreliable.*telemetry", "numbers.*unreliable.*data", "precision.*not.*meaningful.*data.*quality", "telemetry.*quality.*precision.*irrelevant",
+                     "instrumentation.*unreliable.*quantitative", "data.*quality.*numerical.*estimate.*unreliable"],
+        "official": "The reliability of available telemetry data during the incident period was assessed as insufficient to support quantitative analysis. Operational decisions were made under conditions of significant data uncertainty.",
+        "subtext": "data integrity degraded to point where numerical outputs were unreliable, quantitative risk assessment not possible, decisions made on qualitative operational judgement"
+    },
+
+    # Air gap / network isolation assumption failure
+    {
+        "keywords": ["air gap", "air-gap", "air gapped", "air-gapped", "\\bairgap\\b",
+                     "assumed.*isolated.*network", "assumed to be isolated",
+                     "network.*isolation.*removable", "isolated.*network.*media", "isolated.*network.*contractor",
+                     "physical isolation.*bypass", "isolation.*circumvented", "isolation.*relied.*practice"],
+        "official": "Physical network isolation controls were circumvented. The operational environment was bridged to an external threat vector through removable media or contractor access.",
+        "subtext": "air gap assumption failure, isolation relied on operational practice rather than enforced technical controls"
+    },
+
+    # Sensor telemetry replay attack
+    {
+        "keywords": ["replayed.*sensor", "sensor.*replay", "replaying.*recorded",
+                     "substitute.*sensor values", "previously recorded.*sensor",
+                     "telemetry.*replay", "replay.*telemetry", "sensor data replay",
+                     "recorded.*baseline.*replayed", "replayed.*healthy", "recorded.*normal.*replayed",
+                     "previously recorded.*normal.*values", "replaying.*previously recorded",
+                     "fed back.*sensor", "fed back.*recorded", "fed back.*normal.*sensor",
+                     "feeding back.*recorded", "feeding back.*normal.*sensor",
+                     "feeding back.*sensor.*data"],
+        "official": "Sensor telemetry presented to operators did not reflect actual process conditions. Previously recorded values were replayed to mask active process manipulation.",
+        "subtext": "telemetry replay attack confirmed, operator situational awareness was systematically impaired during the manipulation period"
+    },
+
+    # PLC logic injection / unauthorised modification
+    {
+        "keywords": ["plc.*logic.*modif", "modified.*plc.*logic", "modif.*plc.*logic",
+                     "modify.*plc.*logic", "alter.*plc.*logic", "alter.*plc.*code",
+                     "\\bplc.*inject", "ladder logic.*modif", "modified.*ladder", "control logic.*tamper",
+                     "unauthorised.*plc.*logic", "modified.*plc.*code", "plc.*code.*inject",
+                     "malicious.*plc.*logic", "plc.*logic.*manipulat", "injected.*control.*logic",
+                     "control logic.*inject", "alter.*frequency.*control", "altered.*frequency.*control"],
+        "official": "Industrial controller logic was modified without authorisation. The modification altered process behaviour independently of operator commands and without visibility in monitoring outputs.",
+        "subtext": "PLC integrity compromised, forensic review of all affected controller logic required before return to normal operation"
+    },
+
+    # Zero-day exploitation
+    {
+        "keywords": ["zero-day exploit", "zero-day vulnerabilit", "zero day exploit", "zero day vulnerabilit",
+                     "exploiting.*zero.?day", "multiple zero.?day", "zero.?day.*used",
+                     "previously unknown.*vulnerabilit", "unpatched.*zero.?day"],
+        "official": "The attack exploited one or more previously undisclosed vulnerabilities for which no patch was available at the time of compromise.",
+        "subtext": "zero-day exploitation confirmed, retrospective patching insufficient, detection and compensating controls under review"
+    },
+
+    # Digitally signed malware / certificate abuse evading detection
+    {
+        "keywords": ["digitally signed.*malware", "signed.*driver.*malicious", "signed.*driver.*bypass",
+                     "malware.*signed.*certificate", "trusted certificate.*malicious",
+                     "signed.*driver.*avoid", "signed.*components.*evad", "legitimate.*certificate.*malware",
+                     "malicious.*signed", "signed.*bypass.*detection", "signed driver components",
+                     "trusted.*certificate.*classify.*legitimate", "certificate.*bypass.*security"],
+        "official": "Malicious components presented valid digital signatures. Standard signature-based detection controls were assessed as insufficient to identify the threat.",
+        "subtext": "code signing trust chain exploited, detection tooling reliant on signature validation requires supplementary behavioural monitoring"
+    },
+
+    # Cyber-physical impact: equipment damaged by cyberattack
+    {
+        "keywords": ["physical.*damage.*cyber", "cyber.*physical.*damage", "physically manifested",
+                     "physical.*damage.*malware", "equipment.*damaged.*cyber", "equipment.*destroyed.*attack",
+                     "machinery.*destroyed.*malware", "physical.*degradation.*malware",
+                     "mechanical.*failure.*malware", "cyber.?physical.*impact", "cyber.*caused.*physical",
+                     "cyberattack.*physical", "malware.*physical.*damage"],
+        "official": "The cyber incident resulted in confirmed physical damage to operational equipment. The extent of equipment loss has been included in the incident scope.",
+        "subtext": "cyber-physical impact confirmed, replacement and recalibration costs to be assessed separately from standard cyber incident response costs"
+    },
+
+    # Process historian integrity compromised
+    {
+        "keywords": ["historian.*showed.*stable", "historian showed stable", "process historian.*showed.*normal",
+                     "historian.*stable.*during.*fail", "historian.*falsif", "historical.*data.*manipulat",
+                     "perfectly stable.*operating.*fail", "archived.*data.*falsif",
+                     "technically never happened", "events.*technically.*never.*happened",
+                     "historian.*stable.*period.*fail", "trend data.*showed.*stable.*while.*fail"],
+        "official": "Process historian records did not accurately reflect operational conditions during the incident period. Archived telemetry data is not considered reliable for timeline reconstruction.",
+        "subtext": "historian integrity compromised, physical evidence and manual logs are the primary sources for forensic timeline reconstruction"
+    },
+
+    # Divergence between physical conditions and displayed telemetry
+    {
+        "keywords": ["divergence between physical", "physical.*inspection.*differed.*system",
+                     "operators.*observed.*stable.*while.*physical", "display.*normal.*equipment.*stress",
+                     "monitoring.*participating.*deception", "reality.*dashboard.*stopped",
+                     "physically.*behaving.*differently.*display", "physical.*condition.*differ.*display",
+                     "instrumentation.*normal.*physical.*fail", "physical.*readings.*differed.*scada",
+                     "scada.*values.*differed.*physical", "physical.*process.*differed.*displayed"],
+        "official": "A divergence was identified between displayed system telemetry and physical process conditions. Operator situational awareness was impaired during the incident period.",
+        "subtext": "operator visibility gap confirmed, physical inspection superseded monitoring outputs as the reliable data source"
+    },
+
+    # Incident misclassified as equipment failure rather than security event
+    {
+        "keywords": ["anomalous equipment degradation", "classified.*equipment.*degradation",
+                     "categorised.*equipment.*degradation", "equipment.*degradation.*classification",
+                     "classified.*as.*equipment.*fail", "recorded.*as.*maintenance.*issue.*security",
+                     "logged.*equipment.*variability.*security"],
+        "official": "The incident was initially classified using maintenance-sector terminology. The classification did not reflect the security nature of the event and has been noted in the audit record.",
+        "subtext": "incident classification did not reflect security event, audit trail records the event under a category that may obscure its security significance in future reporting"
+    },
+
+    # Safety instrumented system (SIS) targeting
+    {
+        "keywords": ["safety instrumented system", "\\bsis\\b", "triconex", "safety controller",
+                     "safety logic", "safety threshold", "safety system.*compromised",
+                     "safety.*instrumented", "safety.*integrity.*level",
+                     "safety.*system.*target", "targeting safety", "target.*safety.*logic"],
+        "official": "The incident involved the targeting of safety instrumented systems. Safety controller integrity was assessed independently from process control forensics.",
+        "subtext": "SIS targeting identified, safety system forensic review required before return to operational mode, safety case to be re-evaluated"
+    },
+
+    # Industrial protocol exploitation
+    {
+        "keywords": ["iec 60870", "\\bdnp3\\b", "\\bdnp\\b.*attack", "\\bmodbus\\b.*attack",
+                     "industrial.*protocol.*exploit", "control.*protocol.*exploit",
+                     "iec.*protocol.*abuse", "industrial.*protocol.*abuse",
+                     "protocol.*attack.*ot", "\\biec 104\\b", "\\biec104\\b",
+                     "iec.*switching.*command", "legitimate.*control.*protocol.*attack"],
+        "official": "Industrial communication protocols were assessed as having been exploited during the incident. Protocol-level activity formed part of the attack chain.",
+        "subtext": "industrial protocol exploitation identified, legacy protocol design does not include authentication mechanisms, traffic analysis required for full scope determination"
+    },
+
+    # Legitimate operational controls used as attack vector
+    {
+        "keywords": ["legitimate.*control.*used.*attack", "legitimate.*interface.*attack.*vector",
+                     "legitimate.*operator.*interface.*attack", "legitimate.*functionality.*attack.*vector",
+                     "attack.*via.*legitimate.*control", "legitimate.*scada.*interface.*attack",
+                     "normal.*operator.*function.*used.*attack", "legitimate.*credentials.*operational",
+                     "using.*valid.*credentials.*operated", "attacker.*used.*valid.*interface",
+                     "valid.*credentials.*issue.*command", "normal.*control.*function.*abused"],
+        "official": "The attack was conducted through legitimate operational interfaces using valid credentials. No custom tooling was required to achieve operational impact.",
+        "subtext": "attack used legitimate control paths, traditional malware-focused detection did not apply, access control and session monitoring are the primary relevant controls"
+    },
+
+    # Coordinated multi-site simultaneous attack
+    {
+        "keywords": ["multiple.*substation.*simultaneous", "simultaneous.*multiple.*site",
+                     "coordinated.*multiple.*site", "coordinated.*multiple.*substation",
+                     "simultaneous.*outage.*multiple", "multiple.*site.*simultaneously",
+                     "coordinated.*attack.*multiple.*location", "attack.*simultaneous.*multiple",
+                     "simultaneous.*attack.*across", "multiple.*location.*simultaneously",
+                     "coordinated.*simultaneous.*across"],
+        "official": "The incident involved coordinated activity across multiple sites occurring simultaneously or in close succession. The coordination indicates pre-planned execution rather than opportunistic access.",
+        "subtext": "multi-site coordination identified, scope assessment must cover all affected sites, single-site remediation insufficient"
+    },
+]
+
+
+@incident_blueprint.route('/incident/')
+def reporter():
+    return render_template('incident/reporter.html', rules=TRANSLATION_RULES)
