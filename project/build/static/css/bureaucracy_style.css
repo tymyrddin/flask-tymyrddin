@@ -37,13 +37,13 @@
     justify-content: center;
     font-size: 0.8rem;
     font-weight: 600;
-    color: #999;
+    color: #666;
     transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .dot-label {
     font-size: 0.7rem;
-    color: #999;
+    color: #666;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     white-space: nowrap;
@@ -94,7 +94,6 @@
 .stage-header {
     background: #e8e8e8;
     border-bottom: 1px solid #d0d0d0;
-    border-left: 4px solid #555;
     padding: 0.75rem 1rem;
 }
 
@@ -166,7 +165,7 @@
 
 .form-hint {
     font-size: 0.72rem;
-    color: #aaa;
+    color: #777;
     margin: 0 0 0.75rem;
 }
 
@@ -344,11 +343,11 @@
     padding-top: 1rem;
 }
 
-.audit-trail h3 {
-    font-size: 0.72rem;
+.bureaucracy-container .audit-trail h3 {
+    font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #999;
+    color: #444;
     margin: 0 0 0.75rem;
 }
 
@@ -360,7 +359,7 @@
 
 #audit-list li {
     font-size: 0.78rem;
-    color: #888;
+    color: #555;
     padding: 0.3rem 0;
     border-bottom: 1px solid #f0f0f0;
     font-family: 'Courier New', Courier, monospace;
@@ -372,7 +371,7 @@
 }
 
 .audit-timestamp {
-    color: #bbb;
+    color: #888;
 }
 
 /* Close button row */

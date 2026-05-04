@@ -2,11 +2,15 @@
 
 {% block styling %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bureaucracy_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/material.css') }}" type="text/css">
 {% endblock %}
 
 {% block footer %}{% endblock %}
 
 {% block content %}
+<div class="blogpost-container card-overlay">
 <script type="application/json" id="phrase-bank-data">{{ phrase_bank | tojson }}</script>
 
 <div class="bureaucracy-container">
@@ -41,7 +45,7 @@
     <div class="stage-panel stage-active" id="stage-submit">
         <div class="stage-header">
             <h2>Security Concern Intake</h2>
-            <p class="stage-subtext">Submit your concern for processing</p>
+            <p class="stage-subtext">Enter your concern for processing</p>
         </div>
         <div class="stage-body">
             <div class="field-group">
@@ -76,7 +80,7 @@
                     </select>
                 </div>
             </div>
-            <p class="form-hint">Ctrl+Enter to submit</p>
+            <p class="form-hint">Ctrl+Enter to file</p>
             <button type="button" id="btn-submit" class="proc-btn proc-btn-primary">Submit Concern</button>
         </div>
     </div>
@@ -118,6 +122,7 @@
         <ul id="audit-list"></ul>
     </div>
 
+</div>
 </div>
 
 <script src="{{ url_for('static', filename='js/bureaucracy.js') }}"></script>
