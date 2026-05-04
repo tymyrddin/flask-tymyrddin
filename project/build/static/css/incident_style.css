@@ -1,0 +1,317 @@
+.incident-container {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: Arial, 'Helvetica Neue', sans-serif;
+    font-size: 0.95rem;
+    color: #222;
+}
+
+/* Input panel */
+
+.incident-panel {
+    background: #fff;
+    border: 1px solid #d0d0d0;
+    margin-bottom: 1.5rem;
+}
+
+.incident-header {
+    background: #e8e8e8;
+    border-bottom: 1px solid #d0d0d0;
+    border-left: 4px solid #555;
+    padding: 0.75rem 1rem;
+}
+
+.incident-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.2rem;
+    color: #222;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.incident-subtext {
+    font-size: 0.72rem;
+    color: #777;
+    font-style: italic;
+    margin: 0;
+}
+
+.incident-body {
+    padding: 1.25rem 1rem;
+}
+
+.field-group {
+    margin-bottom: 1rem;
+}
+
+.field-group label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.field-group textarea {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #bbb;
+    background: #fafafa;
+    font-size: 0.9rem;
+    color: #222;
+    border-radius: 2px;
+    box-sizing: border-box;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.field-group textarea:focus {
+    outline: 2px solid #555;
+    outline-offset: 1px;
+    border-color: #555;
+}
+
+.form-hint {
+    font-size: 0.72rem;
+    color: #aaa;
+    margin: 0.4rem 0 0;
+}
+
+/* Buttons */
+
+.proc-btn {
+    padding: 0.55rem 1.4rem;
+    border: 1px solid #555;
+    font-size: 0.88rem;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: 2px;
+    letter-spacing: 0.02em;
+    margin-top: 0.5rem;
+}
+
+.proc-btn-primary {
+    background: #444;
+    color: #fff;
+    border-color: #333;
+}
+
+.proc-btn-primary:hover {
+    background: #333;
+}
+
+.proc-btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+    border-color: #bbb;
+}
+
+.proc-btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+/* Translation output panel */
+
+.translation-output-panel {
+    background: #fff;
+    border: 1px solid #d0d0d0;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+}
+
+.translation-output-header {
+    background: #e8e8e8;
+    border-bottom: 1px solid #d0d0d0;
+    border-left: 4px solid #555;
+    padding: 0.75rem 1rem;
+}
+
+.translation-output-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.2rem;
+    color: #222;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.translation-output-header p {
+    font-size: 0.72rem;
+    color: #777;
+    font-style: italic;
+    margin: 0;
+}
+
+/* Translation table */
+
+.translation-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.translation-table thead tr {
+    background: #f5f5f5;
+    border-bottom: 2px solid #ccc;
+}
+
+.translation-table th {
+    text-align: left;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #666;
+    padding: 0.65rem 1rem;
+    white-space: nowrap;
+}
+
+.translation-table td {
+    padding: 0.85rem 1rem;
+    vertical-align: top;
+    border-bottom: 1px solid #eee;
+    line-height: 1.55;
+}
+
+.translation-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.translation-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.col-submitted {
+    width: 22%;
+    font-style: italic;
+    color: #555;
+    font-size: 0.82rem;
+    word-break: break-word;
+}
+
+.col-official {
+    width: 45%;
+    color: #222;
+}
+
+.col-subtext {
+    width: 33%;
+    color: #888;
+    font-size: 0.82rem;
+    font-style: italic;
+}
+
+.no-matches {
+    padding: 1.5rem 1rem !important;
+    color: #999;
+    font-style: italic;
+    font-size: 0.88rem;
+    text-align: center;
+}
+
+/* Operational record */
+
+.pir-operational-record {
+    background: #f5f5f5;
+    border: 1px solid #d0d0d0;
+    border-left: 4px solid #999;
+    margin-bottom: 1.5rem;
+}
+
+.pir-or-header {
+    background: #e8e8e8;
+    border-bottom: 1px solid #d0d0d0;
+    padding: 0.6rem 1rem;
+}
+
+.pir-or-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #666;
+    margin: 0;
+}
+
+.pir-or-body {
+    padding: 0.75rem 1rem;
+}
+
+.pir-or-description {
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    font-style: italic;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.pir-or-note {
+    font-size: 0.72rem;
+    color: #aaa;
+    font-style: italic;
+    margin: 0.6rem 0 0;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 0.6rem;
+}
+
+/* Responsive */
+
+@media (max-width: 680px) {
+    .translation-table thead {
+        display: none;
+    }
+
+    .translation-table tbody tr {
+        display: block;
+        border-bottom: 2px solid #ddd;
+        padding: 0.5rem 0;
+    }
+
+    .translation-table tbody tr td {
+        display: block;
+        width: auto !important;
+        border-bottom: none;
+        padding: 0.35rem 1rem;
+    }
+
+    .col-submitted::before {
+        content: 'As submitted: ';
+        display: block;
+        font-weight: 700;
+        font-style: normal;
+        color: #666;
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.2rem;
+    }
+
+    .col-official::before {
+        content: 'Official language: ';
+        display: block;
+        font-weight: 700;
+        color: #666;
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.2rem;
+    }
+
+    .col-subtext::before {
+        content: 'Underlying qualifier: ';
+        display: block;
+        font-weight: 700;
+        font-style: normal;
+        color: #666;
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.2rem;
+    }
+}
