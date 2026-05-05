@@ -96,7 +96,7 @@
             const td = document.createElement('td');
             td.colSpan = 3;
             td.className = 'no-matches';
-            td.textContent = 'No recognised terminology identified. Submission does not meet the threshold for formal translation. Review and resubmit.';
+            td.textContent = 'No recognised terminology identified. That language is simply not in the dataset yet, which is a gap rather than a verdict. Review and try again.';
             tr.appendChild(td);
             tbody.appendChild(tr);
         } else {
