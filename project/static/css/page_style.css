@@ -78,6 +78,7 @@ p {
 
 @media screen and (min-width: 900px) {
   .page__article_white {
+    max-width: 860px;
     padding: 1rem 3rem;
   }
 }
@@ -395,6 +396,10 @@ input[type=submit]:hover {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 0 88px 0 rgba(0, 0, 0, 0.52);
+}
+
+.portfolio-grid-item:first-child {
+  align-self: start;
 }
 
 .portfolio-grid-item:hover {
@@ -732,6 +737,7 @@ input[type=submit]:hover {
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
+    max-width: none !important;
     background-color: #2A0A0A !important;
 }
 

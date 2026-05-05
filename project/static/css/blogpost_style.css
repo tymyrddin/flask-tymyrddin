@@ -1,6 +1,5 @@
 .blogpost-container {
-  margin: 1.0rem;
-  justify-content: center;
+  margin: 1rem;
   background-color: white;
   color: black;
 }
@@ -17,9 +16,14 @@
   }
 }
 
-@media screen and (min-width: 900px){
+@media screen and (min-width: 900px) {
   .blogpost-container {
-        margin: 3.0rem 15.0rem 1.0rem;
+    max-width: 900px;
+    margin: 2rem auto;
+  }
+
+  .blogpost-container.page-wide {
+    max-width: 1200px;
   }
 }
 
