@@ -1,7 +1,7 @@
 .blogpost-container {
   margin: 1rem;
-  background-color: white;
-  color: black;
+  background-color: #FDF6EC;
+  color: #1A1A1A;
 }
 
 @media screen and (max-width: 768px) {
@@ -129,12 +129,12 @@
 
 .blogpost__article a, .blogpost__article a:visited {
   text-decoration: none;
-  color: #cc6600;
+  color: #2A0A0A;
 }
 
 .blogpost__article a:hover {
   text-decoration: none;
-  color: #ff9933;
+  color: #9B2C2C;
 }
 
 .article__image {

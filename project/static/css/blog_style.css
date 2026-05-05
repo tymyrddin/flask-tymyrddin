@@ -34,7 +34,7 @@
 
 .blog-post-card__body a {
   text-decoration: none;
-  color: rgba(255,153,51,1);
+  color: #9B2C2C;
 }
 
 .blog-post-card__body p {
@@ -49,12 +49,12 @@
 .blog-post-card__link {
   padding: 0.5rem 1rem;
   border-radius: var(--radius);
-  background: #ff9933;
+  background: #FDF6EC;
   text-align: center;
 }
 
 .blog-post-card__link a {
   text-decoration: none;
-  color: black;
+  color: #2A0A0A;
   font-size: 1.0rem;
 }

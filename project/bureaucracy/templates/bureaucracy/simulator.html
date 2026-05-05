@@ -7,13 +7,20 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/material.css') }}" type="text/css">
 {% endblock %}
 
-{% block footer %}{% endblock %}
-
 {% block content %}
 <div class="blogpost-container card-overlay page-wide">
 <script type="application/json" id="phrase-bank-data">{{ phrase_bank | tojson }}</script>
 
+<h1 style="color: #2A0A0A;">The Process</h1>
+
 <div class="bureaucracy-container">
+
+    <p style="margin-bottom: 1.5rem; color: #1A1A1A;">
+        Submit a security concern and observe it pass through the five mandatory stages: intake, classification, routing,
+        preliminary assessment, and closure. Each stage generates the appropriate documentation. Whether the
+        underlying problem is resolved is a separate process, handled by parties not represented here, on a timeline
+        that is not tracked in this system.
+    </p>
 
     <div class="stage-progress" id="stage-progress">
         <div class="stage-dot" id="progress-submit">
@@ -43,10 +50,6 @@
     </div>
 
     <div class="stage-panel stage-active" id="stage-submit">
-        <div class="stage-header">
-            <h2>Security Concern Intake</h2>
-            <p class="stage-subtext">Enter your concern for processing</p>
-        </div>
         <div class="stage-body">
             <div class="field-group">
                 <label for="concern-description">Describe the security concern</label>

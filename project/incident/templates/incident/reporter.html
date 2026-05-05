@@ -7,21 +7,26 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/material.css') }}" type="text/css">
 {% endblock %}
 
-{% block footer %}{% endblock %}
+
 
 {% block content %}
 <div class="blogpost-container card-overlay page-wide">
 <script type="application/json" id="translation-rules">{{ rules | tojson }}</script>
 
+<h1 style="color: #2A0A0A;">Incident Report Translator</h1>
+
 <div class="incident-container">
+
+    <p style="margin-bottom: 1.5rem; color: #1A1A1A;">
+        This is not an AI. It is a lookup table drawn from real post-incident report language. Describe what happened
+        in plain terms and it will be matched against known translations into governance-compliant phrasing. If a
+        phrase comes back without matches, that language is simply not in the dataset yet, which is a gap rather than
+        a verdict. The operational record at the bottom retains what was actually submitted.
+    </p>
 
     <!-- Input form -->
     <div id="incident-form-section">
         <div class="incident-panel">
-            <div class="incident-header">
-                <h2>Incident Translation Service</h2>
-                <p class="incident-subtext">Describe what happened. The system translates it into language suitable for governance documentation.</p>
-            </div>
             <div class="incident-body">
                 <div class="field-group">
                     <label for="incident-input">Describe what happened</label>
