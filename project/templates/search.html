@@ -1,7 +1,16 @@
 {% extends "base.html" %}
+
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="search-page card-overlay">
-    <h1>Discover in Ty Myrddin docs</h1>
+<div class="blogpost-container card-overlay page-wide search-page">
+
+    <h1 style="color: #2A0A0A;">Discover in Ty Myrddin docs</h1>
+
+    <p style="text-align: center; color: #1A1A1A; margin-bottom: 2rem;">Full-text search across the Ty Myrddin documentation network, covering the red, blue, purple, green, and indigo sites.</p>
 
     <!-- Search input -->
     <form id="search-form" class="search-form" onsubmit="return false;">
@@ -13,6 +22,7 @@
 
     <!-- Pagination controls -->
     <div id="search-pagination" class="search-pagination"></div>
+
 </div>
 
 <!-- Include Lunr and search script -->

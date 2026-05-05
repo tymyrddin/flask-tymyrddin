@@ -57,6 +57,8 @@
     letter-spacing: 0.04em;
 }
 
+.field-group input[type=text],
+.field-group input[type=email],
 .field-group textarea {
     width: 100%;
     padding: 0.55rem 0.7rem;
@@ -70,6 +72,8 @@
     resize: vertical;
 }
 
+.field-group input[type=text]:focus,
+.field-group input[type=email]:focus,
 .field-group textarea:focus {
     outline: 2px solid #2A0A0A;
     outline-offset: 1px;

@@ -1,49 +1,51 @@
 {% extends "base.html" %}
 
 {% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/incident_style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="blogpost-container card-overlay">
+<div class="blogpost-container card-overlay page-wide">
 
-    <div class="page__article">
-        <h1>Contact</h1>
-    </div>
+    <h1 style="color: #2A0A0A;">Contact</h1>
 
-    <div class="page__article form">
-        <form
-            name="contact"
-            method="POST"
-            data-netlify="true"
-            netlify-honeypot="bot-field"
-            action="/thankyou/">
+    <div class="incident-container">
 
-            <!-- Hidden form-name field for Netlify -->
-            <input type="hidden" name="form-name" value="contact">
+        <p style="margin-bottom: 1.5rem; color: #1A1A1A;">Use this form to get in touch about security assessments, research, or anything else worth raising. Response times are not governed by any framework documented on this site.</p>
 
-            <!-- Honeypot field -->
-            <p class="hidden" style="opacity: 0;">
-                <label>
-                    Don’t fill this out if you’re human: <input name="bot-field" />
-                </label>
-            </p>
+        <div class="incident-panel">
+            <div class="incident-body">
+                <form
+                    name="contact"
+                    method="POST"
+                    data-netlify="true"
+                    netlify-honeypot="bot-field"
+                    action="/thankyou/">
 
-            <!-- Actual form fields -->
-            <p>
-                <label>Email: <input type="email" name="email" required /></label>
-            </p>
+                    <input type="hidden" name="form-name" value="contact">
 
-            <p>
-                <label>Message: <textarea name="message" required></textarea></label>
-            </p>
+                    <p style="opacity: 0; position: absolute;">
+                        <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+                    </p>
 
-            <!-- Submit button -->
-            <p>
-                <input type="submit" value="Send" class="page-post-card__link" style="color: white; text-decoration: none;" />
-            </p>
-        </form>
+                    <div class="field-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required />
+                    </div>
+
+                    <div class="field-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="6" required></textarea>
+                    </div>
+
+                    <button type="submit" class="proc-btn proc-btn-primary">Send</button>
+
+                </form>
+            </div>
+        </div>
+
     </div>
 </div>
 {% endblock %}
