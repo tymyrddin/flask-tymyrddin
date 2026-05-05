@@ -13,7 +13,7 @@
 <div class="blogpost-container card-overlay page-wide">
 <script type="application/json" id="translation-rules">{{ rules | tojson }}</script>
 
-<h1 style="color: #2A0A0A;">Incident Report Translator</h1>
+<h1 style="color: #2A0A0A;">Incident report translator</h1>
 
 <div class="incident-container">
 
@@ -21,7 +21,7 @@
         This is not an AI. It is a lookup table drawn from real post-incident report language. Describe what happened
         in plain terms and it will be matched against known translations into governance-compliant phrasing. If a
         phrase comes back without matches, that language is simply not in the dataset yet, which is a gap rather than
-        a verdict. The operational record at the bottom retains what was actually submitted.
+        a verdict. The operational record at the bottom retains what was actually entered.
     </p>
 
     <!-- Input form -->
@@ -32,7 +32,6 @@
                     <label for="incident-input">Describe what happened</label>
                     <textarea id="incident-input" rows="6"
                         placeholder="Describe the incident in plain language. Include what was found, how, and what you did about it."></textarea>
-                    <p class="form-hint">Your description will be translated into audit-compliant terminology. The original text will be retained in the operational record only.</p>
                 </div>
                 <button class="proc-btn proc-btn-primary" id="translate-btn">TRANSLATE</button>
             </div>
@@ -45,12 +44,12 @@
         <div class="translation-output-panel">
             <div class="translation-output-header">
                 <h2>Translation Record</h2>
-                <p>The following translation has been applied to the submitted description. All terminology conforms to the Incident Response Framework and is suitable for inclusion in governance documentation.</p>
+                <p>The following translation has been applied to the entered description. All terminology conforms to the Incident Response Framework and is suitable for inclusion in governance documentation.</p>
             </div>
             <table class="translation-table">
                 <thead>
                     <tr>
-                        <th class="col-submitted">As submitted</th>
+                        <th class="col-submitted">As entered</th>
                         <th class="col-official">Official language</th>
                         <th class="col-subtext">Underlying qualifier</th>
                     </tr>
@@ -67,7 +66,7 @@
             </div>
             <div class="pir-or-body">
                 <p class="pir-or-description" id="pir-or-input"></p>
-                <p class="pir-or-note">The above represents the raw operational input as submitted. This content was not retained in the governance record.</p>
+                <p class="pir-or-note">The above represents the raw operational input as entered. This content was not retained in the governance record.</p>
             </div>
         </div>
 
