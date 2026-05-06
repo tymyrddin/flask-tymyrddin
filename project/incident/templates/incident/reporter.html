@@ -13,68 +13,74 @@
 <div class="blogpost-container card-overlay page-wide">
 <script type="application/json" id="translation-rules">{{ rules | tojson }}</script>
 
-<h1 style="color: #2A0A0A;">Incident report translator</h1>
+    <h1 style="color: #2A0A0A;">Incident report translator</h1>
 
-<div class="incident-container">
+    <div class="incident-container">
 
-    <p style="margin-bottom: 1.5rem; color: #1A1A1A;">
-        This is not an AI. It is a lookup table drawn from real post-incident report language. Describe what happened
-        in plain terms and we try to match it against known translations into governance-compliant phrasing. If a
-        phrase comes back without matches, that language is simply not in the dataset yet, which is a gap rather than
-        a verdict. The operational record at the bottom retains what was actually entered.
-    </p>
+        <p style="margin-bottom: 1.5rem; color: #1A1A1A;">
+            This is not an AI. It is a lookup table drawn from real post-incident report language. Describe what
+            happened
+            in plain terms, and we try to match it against known translations into governance-compliant phrasing. If a
+            phrase comes back without matches, or a match does not fit, that language is simply not in the dataset yet,
+            or incorrect in the dataset, which is a gap rather than a verdict. The operational record at the bottom
+            retains
+            what was actually entered.
+        </p>
 
-    <!-- Input form -->
-    <div id="incident-form-section">
-        <div class="incident-panel">
-            <div class="incident-body">
-                <div class="field-group">
-                    <label for="incident-input">Describe what happened</label>
-                    <textarea id="incident-input" rows="6"
-                        placeholder="Describe the incident in plain language. Include what was found, how, and what you did about it."></textarea>
+        <!-- Input form -->
+        <div id="incident-form-section">
+            <div class="incident-panel">
+                <div class="incident-body">
+                    <div class="field-group">
+                        <label for="incident-input">Describe what happened</label>
+                        <textarea id="incident-input" rows="6"
+                                  placeholder="Describe the incident in plain language. Include what was found, how, and what you did about it."></textarea>
+                    </div>
+                    <button class="proc-btn proc-btn-primary" id="translate-btn">TRANSLATE</button>
                 </div>
-                <button class="proc-btn proc-btn-primary" id="translate-btn">TRANSLATE</button>
             </div>
         </div>
-    </div>
 
-    <!-- Translation output -->
-    <div id="translation-output" style="display:none;">
+        <!-- Translation output -->
+        <div id="translation-output" style="display:none;">
 
-        <div class="translation-output-panel">
-            <div class="translation-output-header">
-                <h2>Translation record</h2>
-                <p>The following translation has been applied to the entered description. All terminology conforms to the Incident Response Framework and is suitable for inclusion in governance documentation.</p>
-            </div>
-            <table class="translation-table">
-                <thead>
+            <div class="translation-output-panel">
+                <div class="translation-output-header">
+                    <h2>Translation record</h2>
+                    <p>The following translation has been applied to the entered description. All terminology conforms
+                        to the Incident Response Framework and is suitable for inclusion in governance
+                        documentation.</p>
+                </div>
+                <table class="translation-table">
+                    <thead>
                     <tr>
                         <th class="col-submitted">As entered</th>
                         <th class="col-official">Official language</th>
                         <th class="col-subtext">Underlying qualifier</th>
                     </tr>
-                </thead>
-                <tbody id="translation-tbody">
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Operational record -->
-        <div class="pir-operational-record">
-            <div class="pir-or-header">
-                <p class="pir-or-label">Operational Record</p>
+                    </thead>
+                    <tbody id="translation-tbody">
+                    </tbody>
+                </table>
             </div>
-            <div class="pir-or-body">
-                <p class="pir-or-description" id="pir-or-input"></p>
-                <p class="pir-or-note">The above represents the raw operational input as entered. This content was not retained in the governance record.</p>
-            </div>
-        </div>
 
-        <button class="proc-btn proc-btn-secondary" id="translate-again-btn">Translate Another Incident</button>
+            <!-- Operational record -->
+            <div class="pir-operational-record">
+                <div class="pir-or-header">
+                    <p class="pir-or-label">Operational Record</p>
+                </div>
+                <div class="pir-or-body">
+                    <p class="pir-or-description" id="pir-or-input"></p>
+                    <p class="pir-or-note">The above represents the raw operational input as entered. This content was
+                        not retained in the governance record.</p>
+                </div>
+            </div>
+
+            <button class="proc-btn proc-btn-secondary" id="translate-again-btn">Translate Another Incident</button>
+
+        </div>
 
     </div>
-
-</div>
 </div>
 
 <script src="{{ url_for('static', filename='js/incident.js') }}"></script>

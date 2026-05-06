@@ -45,11 +45,11 @@ TRANSLATION_RULES = [
     },
     {
         "keywords": ["piped", "piping secrets", "remote server", "to a remote",
-                     "exfiltrated", "sent to", "uploaded to", "POSTed to", "cURL to",
+                     "sent to", "uploaded to", "POSTed to", "cURL to",
                      "wget to", "transferring data out", "data leaving the network", "sending to an external IP",
                      "sending offsite", "beaconing data out"],
         "official": "Data was identified as having been transmitted to external infrastructure.",
-        "subtext": "no evidence of data exfiltration, meaning: evidence is what we happened to collect"
+        "subtext": "transmission identified, scope of further exfiltration defined by what we logged"
     },
     {
         "keywords": ["crypto mining", "cryptocurrency", "monero", "mining monero", "spin up", "compute instance",
@@ -107,7 +107,7 @@ TRANSLATION_RULES = [
                      "probably since the upgrade", "going on for", "has been happening for ages",
                      "how long? who knows?", "since at least", "dwelling for"],
         "official": "The matter had been present for an extended period prior to identification. The duration of the activity cannot be fully confirmed from available records.",
-        "subtext": "no indication of…, meaning: we did not look during this period"
+        "subtext": "duration confirmed retrospectively, period of non-detection reflects what we measured rather than what occurred"
     },
     {
         "keywords": ["c2 domain", "c2 server", "command and control", "c2 infrastructure", "found their c2",
@@ -143,7 +143,7 @@ TRANSLATION_RULES = [
                      "kept postponing", "backlog item", "to be done next sprint", "didn't get around to",
                      "still on the list"],
         "official": "A remediation action had been identified but not yet implemented at the time of the incident.",
-        "subtext": "at time of writing, meaning: this may change immediately"
+        "subtext": "remediation was identified, not completed, interval since identification not established"
     },
     {
         "keywords": ["ransomware gang", "well-known ransomware", "known gang", "ransomware group", "threat actor", "well-known gang",
@@ -207,14 +207,14 @@ TRANSLATION_RULES = [
                      "waiver granted", "exempted from", "deviation approved", "temp bypass",
                      "control override", "exception applied", "policy waived"],
         "official": "A security control exception had been applied without formal review. This is noted as an area for governance improvement.",
-        "subtext": "based on available evidence, evidence is what we happened to collect"
+        "subtext": "exception applied, formal review not completed, justification not subsequently reassessed"
     },
     {
         "keywords": ["monitoring.*absent", "monitoring was.*absent", "monitoring for.*was", "no monitoring", "monitoring not", "not monitored",
                      "no alerts set up", "nobody watching", "blind spot", "unmonitored", "lacking visibility",
                      "we had no idea", "no telemetry", "coverage gap"],
         "official": "Detection capability in the affected area has been identified as an area for improvement.",
-        "subtext": "no indication of…, meaning: we did not look"
+        "subtext": "monitoring absent in the affected area, absence of detection reflects absence of coverage rather than absence of activity"
     },
     {
         "keywords": ["phish", "fake docusign", "fake link", "credential harvesting", "credential phishing",
@@ -231,11 +231,11 @@ TRANSLATION_RULES = [
         "subtext": "detected by monitoring controls"
     },
     {
-        "keywords": ["by then", "already logged in", "already inside", "before we detected", "before we saw",
+        "keywords": ["already logged in", "already inside", "before we detected", "before we saw",
                      "dwell time", "they'd been in for", "first compromise was days ago", "breach older than",
                      "entry timestamp shows", "we missed them by"],
         "official": "Initial access preceded detection. The detection interval is noted as an area for improvement.",
-        "subtext": "at time of writing, this may change immediately"
+        "subtext": "detection interval established retrospectively, dwell time defined by what we logged"
     },
     {
         "keywords": ["nigerian ip", "foreign ip", "unexpected location", "unusual location", "overseas ip", "from a nigerian",
@@ -278,7 +278,7 @@ TRANSLATION_RULES = [
                      "logs helped", "we had logs", "SIEM data", "event logs", "forensics from logs",
                      "we traced it via", "audit records"],
         "official": "Investigation was supported by available audit log data.",
-        "subtext": "based on available evidence, evidence is what we happened to collect"
+        "subtext": "investigation scope bounded by log coverage, activity outside coverage not assessed"
     },
     {
         "keywords": ["mcas", "log mode", "log only", "logging mode", "observation mode", "only in log",
@@ -291,7 +291,7 @@ TRANSLATION_RULES = [
         "keywords": ["impossible travel", "travel alert", "geo alert", "geographic alert",
                      "geo impossible", "travel rule fired", "risky sign-in", "atypical travel"],
         "official": "The anomalous geographic access pattern was not actioned at the time of the event. Detection policy was not operating in enforcement mode.",
-        "subtext": "no indication of…, control existed but was not enforced"
+        "subtext": "alert generated, not actioned, control existed but was not enforced"
     },
     {
         "keywords": ["revoked the pat", "revoked.*credentials", "rotated.*secrets", "rotated all", "rotated credentials", "rotate secrets",
@@ -326,7 +326,7 @@ TRANSLATION_RULES = [
                      "probably.*intrusion", "we believe", "most likely", "our assumption",
                      "signs point to", "we suspect", "likely caused by", "hypothesised", "working theory"],
         "official": "Preliminary findings indicate a likely vector. Definitive attribution has not been established.",
-        "subtext": "as per current understanding, meaning: understanding is provisional but operationally final"
+        "subtext": "preliminary framing, treated operationally as final, attribution language may not be revisited"
     },
     {
         "keywords": ["db credential", "database credential", "database password", "db password", "rotated.*db", "db.*rotated", "rotated all db",
@@ -342,7 +342,7 @@ TRANSLATION_RULES = [
         "subtext": "configuration hardening implemented"
     },
     {
-        "keywords": ["checked prod", "prod.*clean", "clean)", "no footprint", "no similar footprint",
+        "keywords": ["checked prod", "no footprint", "no similar footprint",
                      "production unaffected", "prod looks okay", "did not find elsewhere",
                      "contained to nonprod", "other systems clean"],
         "official": "No similar indicators of compromise were identified in the broader production environment at time of investigation.",
@@ -451,7 +451,7 @@ TRANSLATION_RULES = [
         "keywords": ["cloudtrail", "logging disabled", "logs were not enabled", "logging wasn't enabled", "audit logging not", "cloud logging",
                      "no cloudtrail", "logging turned off", "audit log missing"],
         "official": "Audit logging was not active in the affected environment during the relevant period. The extent of activity during this period cannot be fully established.",
-        "subtext": "no indication of…, meaning: logging was not configured, so we did not look and could not"
+        "subtext": "logging not configured, extent of activity not recoverable, we did not look and could not"
     },
     {
         "keywords": ["ssrf", "metadata service", "instance metadata", "169.254.169.254",
@@ -1258,7 +1258,7 @@ TRANSLATION_RULES = [
         "subtext": "call attendance reviewed, relevant technical expertise availability during initial response assessed"
     },
     {
-        "keywords": ["twenty.*people on the call", "people on the call", "too many people on", "people joined the call", "wrong people on",
+        "keywords": ["twenty.*people on", "people on the call", "too many people on", "people joined the call", "wrong people on",
                      "overcrowded call"],
         "official": "Incident response call participation included personnel beyond those with a direct technical role in the response.",
         "subtext": "call composition assessed, signal-to-noise ratio during initial coordination period noted"
