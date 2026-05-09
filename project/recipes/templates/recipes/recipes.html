@@ -5,31 +5,77 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
 {% endblock %}
 
-{% block footer %}{% endblock %}
-
 {% block content %}
 <div class="blogpost-container card-overlay page-wide">
-    <div>
-        <h1 style="color: #2A0A0A;">The Situation, Clarified</h1>
 
-        <nav class="drift-steps" id="drift-steps" aria-label="Perspective">
-            <button class="drift-step active" data-index="0">The Organisational Narrative</button>
-            <button class="drift-step" data-index="1">The Operational Reality</button>
-            <button class="drift-step" data-index="2">How It Fails</button>
-            <button class="drift-step" data-index="3">Why It Persists</button>
-            <button class="drift-step" data-index="4">The Impact</button>
-        </nav>
+    <div class="page__article">
+        <p>Security, systems, and the people who run them under pressure. The technical part is usually the easier
+            half. Most of what is here is about the other half.</p>
+    </div>
 
-        <div class="drift-grid" id="drift-grid"></div>
+    <div class="portfolio-grid portfolio-grid--home">
 
-        <div class="drift-nav">
-            <button class="drift-nav-btn" id="drift-prev" disabled>&#8592;</button>
-            <button class="drift-nav-btn" id="drift-next">The Operational Reality &#8594;</button>
+        <div class="portfolio-grid-item portfolio-grid-item--text">
+            <a href="{{ url_for('recipes.services_recipes') }}">
+                <h3>Services</h3>
+                <p>Architecture and security work for IT, OT, and the awkward space between them. Architecture review,
+                    consulting, training, and the simulation environments that go with it.</p>
+            </a>
         </div>
 
-        <script type="application/json" id="concepts-data">{{ concepts | tojson }}</script>
-        <script src="{{ url_for('static', filename='js/truth_drift.js') }}"></script>
+        <div class="portfolio-grid-item portfolio-grid-item--text">
+            <a href="{{ url_for('recipes.about') }}">
+                <h3>About</h3>
+                <p>Background in IT and OT. Over time the work shifted from technical fixes to the human friction
+                    around them, with gratitude towards Montessori, Satir, and Weinberg.</p>
+            </a>
+        </div>
+
+        <div class="portfolio-grid-item portfolio-grid-item--text">
+            <a href="{{ url_for('recipes.portfolio_recipes') }}">
+                <h3>Projects</h3>
+                <p>Simulation environments with vulnerabilities baked into the systems rather than added as toggles.
+                    Notes from labs and CTFs, audit checks against the usual standards, and a small attic of code.</p>
+            </a>
+        </div>
 
     </div>
+
+    <div class="portfolio-grid portfolio-grid--home">
+
+        <div class="portfolio-grid-item portfolio-grid-item--text">
+            <a href="{{ url_for('bureaucracy.simulator') }}">
+                <h3>The Process</h3>
+                <p>An OT/ICS bureaucracy simulator. File a security concern and watch it pass through five mandatory
+                    stages, each producing the appropriate documentation.</p>
+            </a>
+        </div>
+
+        <div class="portfolio-grid-item portfolio-grid-item--text">
+            <a href="{{ url_for('incident.reporter') }}">
+                <h3>The Incident&rsquo;s Trial</h3>
+                <p>An incident report translator. Type plain notes; it matches them against governance-compliant
+                    phrasing drawn from real post-incident reports.</p>
+            </a>
+        </div>
+
+        <div class="portfolio-grid-item portfolio-grid-item--text">
+            <a href="{{ url_for('drift.drift') }}">
+                <h3>The Situation, Clarified</h3>
+                <p>Twelve familiar security claims, each held against four other perspectives: operational reality,
+                    how it fails, why it persists, and the impact when it does.</p>
+            </a>
+        </div>
+
+        <div class="portfolio-grid-item portfolio-grid-item--text">
+            <a href="https://broomstick.tymyrddin.dev" target="_blank" rel="noopener noreferrer">
+                <h3>Broomstick</h3>
+                <p>Occasional writing on security, governance, and the politics of practice. Hosted separately at
+                    broomstick.tymyrddin.dev.</p>
+            </a>
+        </div>
+
+    </div>
+
 </div>
 {% endblock %}

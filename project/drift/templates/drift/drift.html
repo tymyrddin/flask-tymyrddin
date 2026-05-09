@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/drift.css') }}">
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="blogpost-container card-overlay page-wide">
+    <div>
+        <h1 style="color: #2A0A0A;">The Situation, Clarified</h1>
+
+        <nav class="drift-steps" id="drift-steps" aria-label="Perspective">
+            <button class="drift-step active" data-index="0">The Organisational Narrative</button>
+            <button class="drift-step" data-index="1">The Operational Reality</button>
+            <button class="drift-step" data-index="2">How It Fails</button>
+            <button class="drift-step" data-index="3">Why It Persists</button>
+            <button class="drift-step" data-index="4">The Impact</button>
+        </nav>
+
+        <div class="drift-grid" id="drift-grid"></div>
+
+        <div class="drift-nav">
+            <button class="drift-nav-btn" id="drift-prev" disabled>&#8592;</button>
+            <button class="drift-nav-btn" id="drift-next">The Operational Reality &#8594;</button>
+        </div>
+
+        <script type="application/json" id="concepts-data">{{ concepts | tojson }}</script>
+        <script src="{{ url_for('static', filename='js/truth_drift.js') }}"></script>
+
+    </div>
+</div>
+{% endblock %}
