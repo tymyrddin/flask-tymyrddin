@@ -444,6 +444,74 @@ input[type=submit]:hover {
   transform: translateY(0);
 }
 
+/* Text-only variant for the home index */
+.portfolio-grid-item--text {
+  background: rgba(253, 246, 236, 0.95);
+  border: 1px solid #2A0A0A;
+  border-radius: var(--radius);
+  align-self: stretch;
+  overflow: visible;
+}
+
+.portfolio-grid--home .portfolio-grid-item:first-child {
+  align-self: stretch;
+}
+
+.portfolio-grid-item--text a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.25rem 1.5rem;
+  color: inherit;
+}
+
+.portfolio-grid-item--text a:visited {
+  color: inherit;
+}
+
+.portfolio-grid-item.portfolio-grid-item--text h3 {
+  margin: 0 0 0.6rem;
+  color: #2A0A0A;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.portfolio-grid-item.portfolio-grid-item--text p {
+  margin: 0;
+  color: #1A1A1A;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.portfolio-grid-item--text:hover h3 {
+  text-decoration: underline;
+}
+
+/* Home index grid: smaller cards, edge breathing room, smoother reflow */
+.portfolio-grid.portfolio-grid--home {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  padding: 0 1.5rem;
+  margin: 2rem 0;
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .portfolio-grid.portfolio-grid--home {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .portfolio-grid.portfolio-grid--home {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 0 0.75rem;
+    margin: 1rem 0;
+  }
+}
+
 @media screen and (max-width: 480px) {
   .portfolio-grid {
     grid-template-columns: 1fr;
@@ -506,116 +574,6 @@ input[type=submit]:hover {
     display: block;
     width: 100%;
     height: auto;
-}
-
-/* Truth drift engine */
-
-.drift-steps {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
-    justify-content: center;
-    margin: 3em auto 1em;
-    max-width: 1280px;
-    padding: 0 1em;
-    border: none;
-}
-
-.drift-step {
-    background: none;
-    border: 1px solid rgba(42,10,10,0.3);
-    border-radius: 3px;
-    color: #1A1A1A;
-    cursor: pointer;
-    font-size: 0.8em;
-    letter-spacing: 0.06em;
-    padding: 0.4em 0.9em;
-    text-transform: uppercase;
-    transition: color 0.15s, border-color 0.15s;
-}
-
-.drift-step:hover {
-    color: #2A0A0A;
-    border-color: #2A0A0A;
-}
-
-.drift-step.active {
-    border-color: #2A0A0A;
-    color: #2A0A0A;
-    font-weight: bold;
-}
-
-.drift-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1280px;
-    margin: 1.5em auto 2em;
-    padding: 0 1em;
-}
-
-.drift-nav-btn {
-    background: none;
-    border: 1px solid rgba(42,10,10,0.4);
-    border-radius: 3px;
-    color: #2A0A0A;
-    cursor: pointer;
-    font-size: 0.85em;
-    letter-spacing: 0.06em;
-    padding: 0.5em 1.2em;
-    text-transform: uppercase;
-    transition: background 0.15s;
-}
-
-.drift-nav-btn:hover:not(:disabled) {
-    background: rgba(42,10,10,0.1);
-}
-
-.drift-nav-btn:disabled {
-    opacity: 0.25;
-    cursor: default;
-}
-
-.drift-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    grid-auto-rows: 22em;
-    gap: 1em;
-    max-width: 1280px;
-    margin: 0 auto 2em;
-    padding: 0 1em;
-}
-
-.drift-card {
-    background: #FDF6EC;
-    border: 1px solid rgba(42,10,10,0.2);
-    border-radius: 4px;
-    padding: 1em 1.2em;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.drift-card-name {
-    font-size: 0.8em;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #2A0A0A;
-    margin: 0 0 0.5em;
-}
-
-.drift-card-text {
-    font-size: 0.95em;
-    color: #1A1A1A;
-    margin: 0;
-    line-height: 1.5;
-}
-
-@media (max-width: 600px) {
-    .drift-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* Page container adjustments for small screens */
