@@ -1,0 +1,109 @@
+/* Truth drift engine */
+
+.drift-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    justify-content: center;
+    margin: 3em auto 1em;
+    max-width: 1280px;
+    padding: 0 1em;
+    border: none;
+}
+
+.drift-step {
+    background: none;
+    border: 1px solid rgba(42,10,10,0.3);
+    border-radius: 3px;
+    color: #1A1A1A;
+    cursor: pointer;
+    font-size: 0.8em;
+    letter-spacing: 0.06em;
+    padding: 0.4em 0.9em;
+    text-transform: uppercase;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.drift-step:hover {
+    color: #2A0A0A;
+    border-color: #2A0A0A;
+}
+
+.drift-step.active {
+    border-color: #2A0A0A;
+    color: #2A0A0A;
+    font-weight: bold;
+}
+
+.drift-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1280px;
+    margin: 1.5em auto 2em;
+    padding: 0 1em;
+}
+
+.drift-nav-btn {
+    background: none;
+    border: 1px solid rgba(42,10,10,0.4);
+    border-radius: 3px;
+    color: #2A0A0A;
+    cursor: pointer;
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+    padding: 0.5em 1.2em;
+    text-transform: uppercase;
+    transition: background 0.15s;
+}
+
+.drift-nav-btn:hover:not(:disabled) {
+    background: rgba(42,10,10,0.1);
+}
+
+.drift-nav-btn:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+.drift-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-auto-rows: 22em;
+    gap: 1em;
+    max-width: 1280px;
+    margin: 0 auto 2em;
+    padding: 0 1em;
+}
+
+.drift-card {
+    background: #FDF6EC;
+    border: 1px solid rgba(42,10,10,0.2);
+    border-radius: 4px;
+    padding: 1em 1.2em;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.drift-card-name {
+    font-size: 0.8em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #2A0A0A;
+    margin: 0 0 0.5em;
+}
+
+.drift-card-text {
+    font-size: 0.95em;
+    color: #1A1A1A;
+    margin: 0;
+    line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+    .drift-grid {
+        grid-template-columns: 1fr;
+    }
+}
