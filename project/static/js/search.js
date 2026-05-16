@@ -77,7 +77,10 @@
 
         if (rawLunrResults.length > 0) {
             const globalMax = Math.max(...rawLunrResults.map(({r}) => r.score));
-            rawLunrResults.forEach(({site, r}) => {
+            // [THRESHOLD] drop results below 5% of top Lunr score — to revert, replace filteredLunrResults with rawLunrResults on the line below
+            const MIN_SCORE_FRACTION = 0.06;
+            const filteredLunrResults = rawLunrResults.filter(({r}) => r.score / globalMax >= MIN_SCORE_FRACTION);
+            filteredLunrResults.forEach(({site, r}) => {
                 const doc = site.docs[parseInt(r.ref)];
                 if (!doc) return;
                 allResults.push({
