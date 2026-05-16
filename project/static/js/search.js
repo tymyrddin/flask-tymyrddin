@@ -1,73 +1,10 @@
-// Fetch excerpt from page
-    async function fetchExcerpt(url, searchTerms) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) return '';
-            
-            const html = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            
-            // Get main content, avoid nav/footer
-            const main = doc.querySelector('main') || doc.querySelector('article') || doc.body;
-            const bodyText = main.innerText;
-            
-            // Find first occurrence of any search term
-            let bestIndex = -1;
-            let bestTerm = '';
-            
-            searchTerms.forEach(term => {
-                const index = bodyText.toLowerCase().indexOf(term);
-                if (index !== -1 && (bestIndex === -1 || index < bestIndex)) {
-                    bestIndex = index;
-                    bestTerm = term;
-                }
-            });
-            
-            if (bestIndex === -1) {
-                // No term found, return beginning
-                return bodyText.substring(0, 200).trim() + '...';
-            }
-            
-            // Extract ~50 words before and after
-            const words = bodyText.split(/\s+/);
-            let wordIndex = 0;
-            let charCount = 0;
-            
-            // Find which word contains our match
-            for (let i = 0; i < words.length; i++) {
-                if (charCount >= bestIndex) {
-                    wordIndex = i;
-                    break;
-                }
-                charCount += words[i].length + 1;
-            }
-            
-            const startWord = Math.max(0, wordIndex - 50);
-            const endWord = Math.min(words.length, wordIndex + 50);
-            const excerpt = words.slice(startWord, endWord).join(' ');
-            
-            // Highlight search terms
-            let highlighted = excerpt;
-            searchTerms.forEach(term => {
-                const regex = new RegExp(`(${escapeRegex(term)})`, 'gi');
-                highlighted = highlighted.replace(regex, '<mark>$1</mark>');
-            });
-            
-            return (startWord > 0 ? '...' : '') + highlighted + (endWord < words.length ? '...' : '');
-        } catch (error) {
-            console.error('Error fetching excerpt:', error);
-            return '';
-        }
-    }
-
-    // Escape regex special characters
-    function escapeRegex(text) {
-        return text.replace(/[.*+?^${}()|[\]\\]/g, '\\');
-    }(function() {
+(function() {
     let searchData = null;
+    let lunrIndexes = {};
     let isLoading = true;
+    let currentQuery = '';
     const resultsPerPage = 10;
+    const SITE_WEIGHTS = { 'Blue': 0.5, 'Red': 0.5, 'Purple': 1.8, 'Green': 1.4, 'Indigo': 1.4, 'Broomstick': 1.1 };
     let currentPage = 1;
     let currentResults = [];
 
@@ -76,8 +13,26 @@
         try {
             const response = await fetch('/static/search/index.json');
             searchData = await response.json();
+
+            // Build Lunr indexes one site at a time, yielding between each
+            // to keep the browser responsive while typing
+            for (const site of searchData.sites) {
+                if (site.docs) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                    lunrIndexes[site.name] = lunr(function() {
+                        this.ref('id');
+                        this.field('title', { boost: 10 });
+                        this.field('content');
+                        site.docs.forEach(doc => this.add(doc));
+                    });
+                }
+            }
+
             isLoading = false;
             console.log(`Loaded search index: ${searchData.metadata.total_sites} sites, ${searchData.metadata.total_documents} documents`);
+            if (searchInput && searchInput.value.trim()) {
+                performSearch(searchInput.value);
+            }
         } catch (error) {
             console.error('Error loading search index:', error);
             displayError('Failed to load search index. Please try again later.');
@@ -103,15 +58,39 @@
             return;
         }
 
+        currentQuery = query;
         const searchTerms = query.toLowerCase().split(/\s+/).filter(t => t.length > 1);
         let allResults = [];
+        const rawLunrResults = [];
 
         searchData.sites.forEach(site => {
-            const siteResults = searchInIndex(site.index_data, searchTerms, site);
-            allResults = allResults.concat(siteResults);
+            if (site.docs) {
+                const index = lunrIndexes[site.name];
+                if (!index) return;
+                try {
+                    index.search(query).forEach(r => rawLunrResults.push({site, r}));
+                } catch(e) {}
+            } else {
+                allResults = allResults.concat(searchInIndex(site.index_data, searchTerms, site));
+            }
         });
 
-        // Sort by relevance score
+        if (rawLunrResults.length > 0) {
+            const globalMax = Math.max(...rawLunrResults.map(({r}) => r.score));
+            rawLunrResults.forEach(({site, r}) => {
+                const doc = site.docs[parseInt(r.ref)];
+                if (!doc) return;
+                allResults.push({
+                    title: doc.title,
+                    url: doc.url,
+                    content: doc.content,
+                    site: site.name,
+                    siteUrl: site.url,
+                    score: (r.score / globalMax) * 10 * (SITE_WEIGHTS[site.name] || 1.0),
+                });
+            });
+        }
+
         allResults.sort((a, b) => b.score - a.score);
 
         currentResults = allResults;
@@ -119,7 +98,7 @@
         displayResults();
     }
 
-    // Search within a single Sphinx index
+    // Search within a single Sphinx index (fallback for sites without local sources)
     function searchInIndex(indexData, searchTerms, site) {
         const results = [];
         const titles = indexData.titles || [];
@@ -127,11 +106,9 @@
         const terms = indexData.terms || {};
         const titleterms = indexData.titleterms || {};
 
-        // Create a map of document scores
         const docScores = {};
 
         searchTerms.forEach(term => {
-            // Search in content terms
             if (terms[term]) {
                 const docIndices = Array.isArray(terms[term]) ? terms[term] : [terms[term]];
                 docIndices.forEach(docIndex => {
@@ -139,7 +116,6 @@
                 });
             }
 
-            // Search in title terms (higher weight)
             if (titleterms[term]) {
                 const docIndices = Array.isArray(titleterms[term]) ? titleterms[term] : [titleterms[term]];
                 docIndices.forEach(docIndex => {
@@ -147,7 +123,6 @@
                 });
             }
 
-            // Partial matches in terms (for stemming/prefix matching)
             Object.keys(terms).forEach(indexTerm => {
                 if (indexTerm.startsWith(term) && indexTerm !== term) {
                     const docIndices = Array.isArray(terms[indexTerm]) ? terms[indexTerm] : [terms[indexTerm]];
@@ -157,7 +132,6 @@
                 }
             });
 
-            // Partial matches in titles
             titles.forEach((title, docIndex) => {
                 if (title && title.toLowerCase().includes(term)) {
                     docScores[docIndex] = (docScores[docIndex] || 0) + 3;
@@ -165,26 +139,56 @@
             });
         });
 
-        // Convert to results array
         Object.keys(docScores).forEach(docIndex => {
             const idx = parseInt(docIndex);
             if (titles[idx] && docurls[idx]) {
-                const docurl = docurls[idx];
-                // docurls already contain the full path, just prepend site URL
-                const url = `${site.url}/${docurl}`;
-
                 results.push({
                     title: titles[idx],
-                    docurl: docurl,
-                    url: url,
+                    url: `${site.url}/${docurls[idx]}`,
                     site: site.name,
                     siteUrl: site.url,
-                    score: docScores[docIndex]
+                    score: docScores[docIndex],
                 });
             }
         });
 
         return results;
+    }
+
+    // Build a context snippet: 20 words either side of the first match, term highlighted
+    function buildSnippet(content, query) {
+        if (!content) return '';
+        const terms = query.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+        if (terms.length === 0) return '';
+
+        const lowerContent = content.toLowerCase();
+        let bestPos = -1;
+        terms.forEach(term => {
+            const pos = lowerContent.indexOf(term);
+            if (pos !== -1 && (bestPos === -1 || pos < bestPos)) bestPos = pos;
+        });
+
+        const words = content.split(/\s+/);
+        let wordPos = 0;
+
+        if (bestPos !== -1) {
+            let charCount = 0;
+            for (let i = 0; i < words.length; i++) {
+                if (charCount + words[i].length >= bestPos) { wordPos = i; break; }
+                charCount += words[i].length + 1;
+            }
+        }
+
+        const start = Math.max(0, wordPos - 40);
+        const end = Math.min(words.length, wordPos + 41);
+        let excerpt = escapeHtml(words.slice(start, end).join(' '));
+
+        terms.forEach(term => {
+            const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            excerpt = excerpt.replace(regex, '<mark>$1</mark>');
+        });
+
+        return (start > 0 ? '...' : '') + excerpt + (end < words.length ? '...' : '');
     }
 
     // Display search results
@@ -195,17 +199,16 @@
             return;
         }
 
-        // Calculate pagination
         const totalPages = Math.ceil(currentResults.length / resultsPerPage);
         const startIndex = (currentPage - 1) * resultsPerPage;
         const endIndex = Math.min(startIndex + resultsPerPage, currentResults.length);
         const pageResults = currentResults.slice(startIndex, endIndex);
 
-        // Display results
         const siteCount = searchData.metadata.total_sites;
-        let html = `<p class="results-count">Found ${currentResults.length} result${currentResults.length !== 1 ? 's' : ''} across ${siteCount} documentation site${siteCount !== 1 ? 's' : ''}</p>`;
+        let html = `<p class="results-count">Found ${currentResults.length} result${currentResults.length !== 1 ? 's' : ''} across ${siteCount} source${siteCount !== 1 ? 's' : ''}</p>`;
 
         pageResults.forEach(result => {
+            const snippet = buildSnippet(result.content, currentQuery);
             html += `
                 <div class="search-result">
                     <span class="result-site-badge" data-site="${escapeHtml(result.site)}">${escapeHtml(result.site)}</span>
@@ -214,6 +217,7 @@
                             ${escapeHtml(result.title)}
                         </a>
                     </h3>
+                    ${snippet ? `<p class="result-snippet">${snippet}</p>` : ''}
                     <a href="${escapeHtml(result.url)}" class="result-url" target="_blank" rel="noopener noreferrer">
                         ${escapeHtml(result.url)}
                     </a>
@@ -223,7 +227,6 @@
 
         searchResults.innerHTML = html;
 
-        // Display pagination
         if (totalPages > 1) {
             displayPagination(totalPages);
         } else {
@@ -235,12 +238,10 @@
     function displayPagination(totalPages) {
         let html = '<div class="pagination-controls">';
 
-        // Previous button
         if (currentPage > 1) {
             html += `<button class="page-btn" data-page="${currentPage - 1}">← Previous</button>`;
         }
 
-        // Page numbers
         const maxButtons = 7;
         let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
         let endPage = Math.min(totalPages, startPage + maxButtons - 1);
@@ -263,7 +264,6 @@
             html += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
         }
 
-        // Next button
         if (currentPage < totalPages) {
             html += `<button class="page-btn" data-page="${currentPage + 1}">Next →</button>`;
         }
@@ -271,7 +271,6 @@
         html += '</div>';
         searchPagination.innerHTML = html;
 
-        // Add click handlers to pagination buttons
         document.querySelectorAll('.page-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 currentPage = parseInt(this.dataset.page);
@@ -281,20 +280,17 @@
         });
     }
 
-    // Display error message
     function displayError(message) {
         searchResults.innerHTML = `<p class="search-error">${escapeHtml(message)}</p>`;
         searchPagination.innerHTML = '';
     }
 
-    // Escape HTML to prevent XSS
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
 
-    // Debounce function
     function debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {
@@ -307,12 +303,10 @@
         };
     }
 
-    // Get DOM elements
     const searchInput = document.getElementById('search-input');
     const searchResults = document.getElementById('search-results');
     const searchPagination = document.getElementById('search-pagination');
 
-    // Event listeners
     if (searchInput) {
         const debouncedSearch = debounce(function(e) {
             performSearch(e.target.value);
@@ -326,10 +320,8 @@
             }
         });
 
-        // Auto-focus search input
         searchInput.focus();
     }
 
-    // Initialize - load the combined search index
     loadSearchIndex();
 })();

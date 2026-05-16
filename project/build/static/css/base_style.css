@@ -521,6 +521,25 @@ pre code {
     color: #FDF6EC;
 }
 
+.result-site-badge[data-site="Broomstick"] {
+    background-color: #B5621A;
+    color: #FDF6EC;
+}
+
+.result-snippet {
+    margin: 0.35rem 0 0.4rem;
+    font-size: 0.9rem;
+    color: #3A2A1A;
+    line-height: 1.5;
+}
+
+.result-snippet mark {
+    background-color: #F5D98B;
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 0.15em;
+}
+
 .search-pagination {
     margin-top: 2rem;
     padding: 1rem 0;
