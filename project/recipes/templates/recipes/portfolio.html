@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/blogpost_style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/page_style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/material.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bureaucracy_style.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -12,183 +13,127 @@
     <div class="page__article">
         <h1>Projects</h1>
         <h2>⚙ On the Clacks ⚙</h2>
-        <p style="color: #a7b7be; font-style: italic; margin-top: 1rem;">GNU Terry Pratchett ~ The code is never dead if it's still running somewhere</p>
+        <p style="color: #a7b7be; font-style: italic; margin-top: 1rem;">GNU Terry Pratchett ~ The code is never dead if
+            it's still running somewhere</p>
     </div>
 
+    <div class="bureaucracy-container">
 
-    <div class="portfolio-grid">
+        <h2>Regulation, audit and response</h2>
+        <p>Where the rulebook meets the wiring. The European regime (NIS2, DORA, CER and the audit standards behind
+            them), the detection that has to earn its keep, and an incident programme built to report inside the
+            deadline. Compliance read as behaviour observed under load, not documentation filed on time.</p>
 
-        <div class="portfolio-grid-item">
-        <h2>Ready to run</h2>
+        <div class="portfolio-grid">
 
-        <p>Real problems, fake names. We treat the absurd with absolute gravity because the logic is identical. Once
-            you realise you can't get fired here, honesty gets cheap, and the muscle memory walks home with you.</p>
+            <div class="portfolio-grid-item">
+                <a href="https://purple.tymyrddin.dev/docs/audits/">
+                    <img src="{{ url_for('static', filename='img/audits-and-assessments.png') }}"
+                         alt="ICS access and persistence SimLab">
+                    <div class="portfolio-tooltip">Audits and assessments</div>
+                </a>
+            </div>
+
+            <div class="portfolio-grid-item">
+                <a href="https://purple.tymyrddin.dev/docs/incident-response/">
+                    <img src="{{ url_for('static', filename='img/incident.png') }}" alt="incident">
+                    <div class="portfolio-tooltip">Incident response & crisis facilitation</div>
+                </a>
+            </div>
+
+            <div class="portfolio-grid-item">
+                <a href="https://blue.tymyrddin.dev/docs/counter/">
+                    <img src="{{ url_for('static', filename='img/countermoves.png') }}" alt="Counter moves">
+                    <div class="portfolio-tooltip">Defence blues: Counter moves</div>
+                </a>
+            </div>
 
         </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://red.tymyrddin.dev/docs/power/">
-                <img src="{{ url_for('static', filename='img/ot-company-location.png') }}" alt="ICS access and persistence SimLab">
-                <div class="portfolio-tooltip">Unseen University Power & Light Co.</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://blue.tymyrddin.dev/#fictional-premises">
-                <img src="{{ url_for('static', filename='img/fictional-premises.png') }}" alt="overview, literally">
-                <div class="portfolio-tooltip">A turtle-shaped defence theatre</div>
-            </a>
-        </div>
-
-<!--            <div class="portfolio-grid-item">
-            <a href="https://github.com/tymyrddin/healthcare-simlab">
-                <img src="{{ url_for('static', filename='img/simlab-health.png') }}" alt="health simlab">
-                <div class="portfolio-tooltip">Healthcare SimLab (In mind)</div>
-            </a>
-        </div>-->
     </div>
 
-    <div class="portfolio-grid">
-        <div class="portfolio-grid-item">
-        <h2>Notes and research</h2>
+    <div class="bureaucracy-container">
 
-        <p>Notes built up through labs, CTF challenges, researching, and the thinking that follows.
-            Traces of how understanding develops: what broke, what that
-            revealed, and what it connects to. Organised by colourful domain.</p>
+        <h2>Critical infrastructure and OT</h2>
+        <p>The part of the estate that predates the internet and cannot be rebooted at will. A power utility taken
+            apart from the attacker's side, the same ground held from the defender's, and a lab you can actually run.
+            Energy, protocols, safety systems, and the long half-life of equipment installed when the plans were still
+            on paper.</p>
+
+        <div class="portfolio-grid">
+
+            <div class="portfolio-grid-item">
+                <a href="https://red.tymyrddin.dev/docs/power/">
+                    <img src="{{ url_for('static', filename='img/ot-company-location.png') }}"
+                         alt="ICS access and persistence SimLab">
+                    <div class="portfolio-tooltip">Unseen University Power & Light Co.</div>
+                </a>
+            </div>
+
+            <div class="portfolio-grid-item">
+                <a href="https://blue.tymyrddin.dev/docs/ot/">
+                    <img src="{{ url_for('static', filename='img/ot-ics-blue.png') }}"
+                         alt="OT/ICS defence">
+                    <div class="portfolio-tooltip">OT and ICS security</div>
+                </a>
+            </div>
+
+            <div class="portfolio-grid-item">
+                <a href="https://github.com/tymyrddin/ics-access-simlab">
+                    <img src="{{ url_for('static', filename='img/ot-ics-simlab-repo.png') }}" alt="OT/ICS repo">
+                    <div class="portfolio-tooltip">ICS access and persistence SimLab</div>
+                </a>
+            </div>
 
         </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://purple.tymyrddin.dev/">
-                <img src="{{ url_for('static', filename='img/purple-lantern.png') }}" alt="Purple Lantern Practice Ltd.">
-                <div class="portfolio-tooltip">Purple crossroads</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://green.tymyrddin.dev/">
-                <img src="{{ url_for('static', filename='img/playground.png') }}" alt="Privacy playground">
-                <div class="portfolio-tooltip">Privacy greenhouse</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://red.tymyrddin.dev/">
-                <img src="{{ url_for('static', filename='img/red-lanterns.png') }}" alt="Unseen University Power & Light Co.">
-                <div class="portfolio-tooltip">Red tradecraft</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://blue.tymyrddin.dev/">
-                <img src="{{ url_for('static', filename='img/ngo.png') }}" alt="The Home for Bewildered Beasts of Legend">
-                <div class="portfolio-tooltip">Defence blues</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://indigo.tymyrddin.dev/">
-                <img src="{{ url_for('static', filename='img/patrician.png') }}" alt="The patrician surveys the chaos">
-                <div class="portfolio-tooltip">Indigo observatory</div>
-            </a>
-        </div>
-
     </div>
 
-    <div class="portfolio-grid">
+    <div class="bureaucracy-container">
 
-        <div class="portfolio-grid-item">
-            <h2>Audit notes</h2>
+        <h2>Policy, data protection and systems</h2>
+        <p>The wider garden, where the landscaping decisions get made somewhere else. EU data-protection policy and its
+            national-security holes, an open-data aggregation study built from real public records, and the
+            systems reasoning underneath: leverage points, incentives, and why sound advice keeps losing to the status
+            quo. Diagnosis more than checklist.</p>
 
-            <p>Real security comes first; audits merely verify what is already there. These notes help with post-work checks to spot gaps, strengthen defences, and catch what might have slipped through. Useful checks, not a compliance shortcut.</p>
+        <div class="portfolio-grid">
+
+            <div class="portfolio-grid-item">
+                <a href="https://green.tymyrddin.dev/docs/threat-models/infrastructure-aggregation/">
+                    <img
+                            src="{{ url_for('static', filename='img/sos.png') }}"
+                            alt="SOS extended dashboard"
+                            class="card__image"/>
+                    <div class="portfolio-tooltip">Open records: an aggregation threat model</div>
+                </a>
+            </div>
+
+            <div class="portfolio-grid-item">
+                <a href="https://green.tymyrddin.dev/docs/strategy/">
+                    <img
+                            src="{{ url_for('static', filename='img/defensive-strategies.png') }}"
+                            alt="Defensive strategies"
+                            class="card__image"/>
+                    <div class="portfolio-tooltip">Defensive strategies</div>
+                </a>
+            </div>
+
+            <div class="portfolio-grid-item">
+                <a href="https://indigo.tymyrddin.dev/docs/debt/">
+                    <img
+                            src="{{ url_for('static', filename='img/security-debt.png') }}"
+                            alt="Security debt"
+                            class="card__image"/>
+                    <div class="portfolio-tooltip">Technical security debt</div>
+                </a>
+            </div>
+
         </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://purple.tymyrddin.dev/docs/audits/iso22301/">
-                <img
-                    src="{{ url_for('static', filename='img/iso22301.png') }}"
-                    alt="Resilient factory"
-                    class="card__image" />
-                <div class="portfolio-tooltip">The ISO 22301 resilient factory</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://purple.tymyrddin.dev/docs/audits/iec62443/">
-                <img
-                    src="{{ url_for('static', filename='img/iec62443.png') }}"
-                    alt="Factory fortress"
-                    class="card__image" />
-                <div class="portfolio-tooltip">The IEC 62443 fortress factory</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://purple.tymyrddin.dev/docs/audits/nis2/">
-                <img
-                    src="{{ url_for('static', filename='img/river.png') }}"
-                    alt="The NIS2 river crossing"
-                    class="card__image" />
-                <div class="portfolio-tooltip">The NIS2 river crossing</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://purple.tymyrddin.dev/docs/audits/resilience/">
-                <img
-                    src="{{ url_for('static', filename='img/beehive.png') }}"
-                    alt="Organisational risk audits & resilience assessments"
-                    class="card__image" />
-                <div class="portfolio-tooltip">Organisational risk audits & resilience assessments</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://purple.tymyrddin.dev/docs/audits/iso27001/">
-                <img
-                    src="{{ url_for('static', filename='img/mountain.png') }}"
-                    alt="The ISO 27001 mountain expedition"
-                    class="card__image" />
-                <div class="portfolio-tooltip">The ISO 27001 mountain expedition</div>
-            </a>
-        </div>
-
     </div>
 
-    <div class="portfolio-grid">
-
-        <div class="portfolio-grid-item">
-        <h2>Miscellaneous</h2>
-
-        <p>This miscellaneous trove has accumulated like a wizard’s dusty spellbook: useful, surprising, and occasionally slightly dangerous. The attic of ideas: rummage at will, but don’t be shocked if something old suddenly teaches you something new.</p>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://github.com/tymyrddin/smart-grid-sim">
-                <img src="{{ url_for('static', filename='img/smartgrid-demo.png') }}" alt="Ankh Morpork sim">
-                <div class="portfolio-tooltip">Smart grid demo</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://github.com/tymyrddin/ankh-crisis-sim">
-                <img src="{{ url_for('static', filename='img/ankh-morpork-sim.png') }}" alt="Ankh Morpork sim">
-                <div class="portfolio-tooltip">Ankh Morpork crises simulation</div>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item">
-            <a href="https://github.com/tymyrddin/vulnforge">
-                <img src="{{ url_for('static', filename='img/foundry.png') }}" alt="Vulnforge">
-                <div class="portfolio-tooltip">Vulnforge experiment</div>
-            </a>
-        </div>
-
-    </div>
 
     <div class="page__article">
         <div class="page-post-card__link">
-            <a href="{{ url_for('recipes.contact') }}">What's your Tower's weakness?</a>
+            <a href="{{ url_for('recipes.contact') }}">Contact</a>
         </div>
     </div>
 
