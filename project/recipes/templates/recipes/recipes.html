@@ -9,8 +9,11 @@
 <div class="blogpost-container card-overlay page-wide">
 
     <div class="page__article">
-        <p>Security, systems, and the people who run them under pressure. The technical part is usually the easier
-            half. Most of what is here is about the other half.</p>
+        <p>The 'air gap' has quietly grown a WiFi point, for a contractor's convenience. The on-call rota
+            lists two people who moved teams a year ago. Three options went to the board; the middle one won,
+            the way it always does.</p>
+        <p>None of these is really a technical problem. The technical half tends to be the easier half. This is
+            mostly about the other one, and the people holding it together under pressure.</p>
     </div>
 
     <div class="portfolio-grid portfolio-grid--home">
@@ -18,66 +21,32 @@
         <div class="portfolio-grid-item portfolio-grid-item--text">
             <a href="{{ url_for('recipes.services_recipes') }}">
                 <h3>Services</h3>
-                <p>Architecture review, security consulting, training, and the simulation environments that go with
-                    them. Aimed at IT, OT, and the awkward space between, particularly at startups and scale-ups
-                    where the operating reality tends to outpace the documentation.</p>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item portfolio-grid-item--text">
-            <a href="{{ url_for('recipes.about') }}">
-                <h3>About</h3>
-                <p>Technically fluent, organisationally alert, situationally paranoid; partial to cats, Pratchett,
-                    Nature walks, and CTFs. The work shifted over time toward the human friction around technical
-                    fixes, where the harder problems mostly sit.</p>
+                <p>Where I come in when the other half is the problem: OT and critical-infrastructure security,
+                    assurance, incident response, and the calls without a clean answer.</p>
             </a>
         </div>
 
         <div class="portfolio-grid-item portfolio-grid-item--text">
             <a href="{{ url_for('recipes.portfolio_recipes') }}">
                 <h3>Projects</h3>
-                <p>Simulation environments with vulnerabilities baked into the systems. Notes from labs, CTFs,
-                    research, and the thinking that follows, organised by colourful domain. Audit notes for post-work
-                    checks on security already in place, and a small attic of code worth keeping.</p>
+                <p>The notes, labs and audit work that came out of paying attention to it.</p>
+            </a>
+        </div>
+
+        <div class="portfolio-grid-item portfolio-grid-item--text">
+            <a href="{{ url_for('recipes.about') }}">
+                <h3>About</h3>
+                <p>Technically fluent, organisationally alert, situationally paranoid. The person paying the
+                    attention.</p>
             </a>
         </div>
 
     </div>
 
-    <div class="portfolio-grid portfolio-grid--home">
-
-        <div class="portfolio-grid-item portfolio-grid-item--text">
-            <a href="{{ url_for('bureaucracy.simulator') }}">
-                <h3>The Process</h3>
-                <p>An OT/ICS bureaucracy simulator. File a security concern and watch it pass through five mandatory
-                    stages, each producing the appropriate documentation.</p>
-            </a>
+    <div class="page__article">
+        <div class="page-post-card__link">
+            <a href="{{ url_for('recipes.contact') }}">Get in touch</a>
         </div>
-
-        <div class="portfolio-grid-item portfolio-grid-item--text">
-            <a href="{{ url_for('incident.reporter') }}">
-                <h3>The Incident&rsquo;s Trial</h3>
-                <p>An incident report translator. Type plain notes; it matches them against governance-compliant
-                    phrasing drawn from real post-incident reports.</p>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item portfolio-grid-item--text">
-            <a href="{{ url_for('drift.drift') }}">
-                <h3>The Situation, Clarified</h3>
-                <p>Twelve familiar security claims, each held against four other perspectives: operational reality,
-                    how it fails, why it persists, and the impact when it does.</p>
-            </a>
-        </div>
-
-        <div class="portfolio-grid-item portfolio-grid-item--text">
-            <a href="https://broomstick.tymyrddin.dev" target="_blank" rel="noopener noreferrer">
-                <h3>Broomstick</h3>
-                <p>Occasional writing on security, governance, and the politics of practice. Hosted separately at
-                    broomstick.tymyrddin.dev.</p>
-            </a>
-        </div>
-
     </div>
 
 </div>
