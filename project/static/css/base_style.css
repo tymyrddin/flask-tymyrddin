@@ -170,6 +170,66 @@ header h1 a {
   }
 }
 
+/* Kafkaesque submenu */
+.nav__sub-label {
+  cursor: default;
+}
+
+.nav__sub-label::after {
+  content: " \25BE";
+}
+
+/* Mobile: submenu always expanded, indented under its label */
+#site-nav .nav__sub {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+  margin: 0.6rem 0 0;
+  padding: 0 1rem 0 0;
+}
+
+#site-nav .nav__sub .nav__item {
+  margin: 0;
+}
+
+#site-nav .nav__sub .nav__link {
+  font-size: 0.8rem;
+}
+
+/* Desktop: submenu as hover/focus dropdown */
+@media screen and (min-width: 1081px) {
+  .nav__item--has-sub {
+    position: relative;
+  }
+
+  #site-nav .nav__sub {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background-color: rgba(22, 5, 5, 0.95);
+    box-shadow: 0 0 88px 0 rgba(0, 0, 0, 0.52);
+    margin: 0;
+    padding: 0.8rem 1rem;
+    min-width: max-content;
+    z-index: 10;
+  }
+
+  #site-nav .nav__item--has-sub:hover .nav__sub,
+  #site-nav .nav__item--has-sub:focus-within .nav__sub {
+    display: flex;
+  }
+
+  #site-nav .nav__sub .nav__link {
+    font-size: 0.9rem;
+  }
+}
+
 /* Cards */
 .recipe-container {
   margin: 2.0rem;

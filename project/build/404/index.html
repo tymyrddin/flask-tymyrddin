@@ -21,7 +21,9 @@
 
         <!-- Additional Styling -->
         
-        
+<link rel="stylesheet" href="/static/css/blogpost_style.css">
+<link rel="stylesheet" href="/static/css/page_style.css">
+
     </head>
 
     <body>
@@ -34,9 +36,14 @@
                     <li class="nav__item"><a href="/about/" class="nav__link">About</a></li>
                     <li class="nav__item"><a href="/portfolio/" class="nav__link">Projects</a></li>
                     <li class="nav__item"><a href="/search/" class="nav__link">Discovery</a></li>
-                    <li class="nav__item"><a href="/bureaucracy/" class="nav__link">The Process</a></li>
-                    <li class="nav__item"><a href="/incident/" class="nav__link">The Incident’s Trial</a></li>
-                    <li class="nav__item"><a href="/drift/" class="nav__link">DRIFT</a></li>
+                    <li class="nav__item nav__item--has-sub">
+                        <span class="nav__link nav__sub-label" tabindex="0" aria-haspopup="true">Kafkaesque</span>
+                        <ul class="nav__sub">
+                            <li class="nav__item"><a href="/bureaucracy/" class="nav__link">The Process</a></li>
+                            <li class="nav__item"><a href="/incident/" class="nav__link">The Incident’s Trial</a></li>
+                            <li class="nav__item"><a href="/drift/" class="nav__link">DRIFT</a></li>
+                        </ul>
+                    </li>
                     <li class="nav__item"><a href="https://broomstick.tymyrddin.dev" class="nav__link">Broomstick</a></li>
                     <li class="nav__item"><a href="/contact/" class="nav__link">Contact</a></li>
                     <li class="nav__item"><a href="/documents/" class="nav__link">Legalities</a></li>
@@ -48,24 +55,16 @@
         <main class="content">
             <!-- child template -->
             
-<h1 class="errorpage-title" style="color:Orange;">Uh,oh, 404, not found</h1>
-<div class="errorpage-section">
-    <a href="/">
-          <img
-          src="/static/img/404-no-panic.png"
-          alt="Wyrd sisters"
-          class="blog-post-card__image" />
-    </a>
-  <h2><br /><a href="/" style="color:Orange;text-decoration:none;text-transform:uppercase;">
-      Here, for whatever reason, is the world. <br />
-      And it revolves around a small unregarded yellow sun at <br />
-      nine hundred miles an hour (nineteen miles a second), <br />
-      far out in the uncharted backwaters of the unfashionable end of <br />
-      the western spiral arm of a Galaxy. <br />
-      A Galaxy containing a hundred billion stars, a hundred thousand <br />
-      light years side to side, bulging in the middle. <br />
-      Out by us, it is only three thousand light years wide. That planet. <br />
-      With you and me on it, for now.</a></h2>
+<div class="blogpost-container card-overlay page-wide">
+
+    <div class="page__article">
+        <h1>404</h1>
+    </div>
+
+    <div class="page__article_white2">
+        <p style="text-align: center;">We could not find that page. It may have moved, or the address may not be quite right.</p>
+    </div>
+
 </div>
 
         </main>
