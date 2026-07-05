@@ -14,131 +14,68 @@
     </div>
 
     <div class="page__article_white">
-        <!-- Core belief -->
 
         <p>
-            I am a systems architect with experience across IT and OT environments, from engineering and security to
-            architecture and consulting, including adversarial and industrial systems. That breadth allows me to
-            approach systems from multiple angles: not just how they should work, but how they actually behave under
-            load, failure, and adversarial conditions.
-        </p>
-        <p>I design for systems that hold up in practice. That means accounting for the gap between models and reality,
-            understanding where organisations resist their own architecture, and recognising that people have valid
-            reasons not to follow the path the design assumes.
-        </p>
-        <p>The aim is straightforward: systems that continue to function under real-world conditions. Especially when
-            those conditions include people.</p>
-
-        <h2>Systems architecture</h2>
-
-        <p>
-            I help organisations design and maintain their systems architectures. The design work is the visible
-            part: understanding what the organisation needs, translating that into structures and responsibilities,
-            making the technical and process trade-offs explicit. The maintenance work is less often named but just
-            as important. An architecture encodes assumptions,
-            <a href="https://purple.tymyrddin.dev/docs/systems-architecture/architecture-as-model">and those assumptions drift</a>
-            as the system changes, the organisation changes, and conditions change. The gap between what the
-            architecture says and what the system actually does is a normal consequence of time, not a sign that
-            something went wrong. Managing that gap honestly is part of the work.
-        </p>
-        <p>
-            I start from what is already there, ask a lot of questions, and pay attention to three things that
-            tend not to appear in job descriptions for this role: where the model no longer matches reality, where the
-            organisation is resisting the architecture
-            <a href="https://purple.tymyrddin.dev/docs/systems-architecture/change-and-homeostasis"> for reasons worth understanding rather than overriding</a>, and
-            where the people involved
-            <a href="https://purple.tymyrddin.dev/docs/systems-architecture/the-human-layers">have stakes in the current system</a>
-            that a technically correct redesign usually does not account for. The result is an architecture that is not only sound on paper but sustainable in practice.
+            Most of my work sits where the technical and human layers of a system meet, for organisations
+            running critical or regulated infrastructure that has to stay standing under pressure: an audit, an
+            incident, a change the organisation is quietly resisting. The tooling is rarely the hard part.
+            Whether the controls survive contact with real conditions, and the people operating them, is.
         </p>
 
-        <h2>
-            Security consulting and advisory
-        </h2>
+        <h2>Critical infrastructure and OT</h2>
         <p>
-            I help organisations work through security problems where the answer is not obvious and the trade offs are real.
-            That can mean architecture reviews, risk assessments, incident retrospectives, or advising stakeholders who all
-            want different things from the same system. Security, operational continuity, cost, usability, and delivery
-            pressure all have to be balanced, usually by people operating with incomplete information and limited time.
-        </p>
-        <p>
-            I start with real security rather than checklist theatre. When the underlying controls genuinely work, compliance
-            often follows naturally. What frameworks cannot tell you is
-            <a href="https://purple.tymyrddin.dev/docs/systems-architecture/reliability-performance-security">whether those controls survive operational pressure</a>,
-            who maintains them once they become inconvenient, or how much risk the organisation is actually willing to carry
-            when circumstances turn awkward.
+            On an ICS or OT estate you cannot
+            <a href="https://red.tymyrddin.dev/docs/power/territory/difference">test the way you would test
+                IT</a>: a live scan can trip a safety system, and nothing here reboots to order. So I threat-model
+            and review the architecture, and where an attack has to be proven I stand it up in a simulator that
+            mirrors the estate closely enough to be causally honest. The
+            <a href="https://github.com/tymyrddin/ics-access-simlab">ics-access-simlab</a> is one such build: the disaster on demand, the lights left on.
         </p>
 
-        <h2>
-            Training and coaching
-        </h2>
+        <h2>Assurance, audit and incident response</h2>
         <p>
-            I work with security professionals, architects, and team leads through group training and one-on-one
-            coaching. Group sessions are built around realistic exercises: participants work through problems based
-            on real attack patterns and incidents, encounter genuine obstacles, and figure out together what to do
-            when standard approaches do not work. The sessions can be deeply technical or more about process, but the
-            method is the same.
-            <a href="https://purple.tymyrddin.dev/docs/foundations/montessori/prepared-environment">I prepare the environment</a>,
-            set the problem, and step back. My job in the room is to
-            <a href="https://purple.tymyrddin.dev/docs/foundations/montessori/facilitation">ask the questions</a> that help people articulate what they are learning, not to explain what the right answer
-            was.
+            A <a href="https://purple.tymyrddin.dev/docs/audits/">NIS2, DORA, CER or ISO</a> audit measures
+            what you can show, not whether the controls stand up on a bad day. I work the half it misses:
+            controls that survive operational pressure and not just an assessor, incident-response programmes
+            built and then exercised, resilience and continuity that hold when conditions turn awkward.
+            Compliance follows real security; it rarely leads it.
+        </p>
+
+        <h2>Advisory on the hard decisions</h2>
+        <p>
+            The hard security calls are the ones where the trade-offs are real and the technically correct
+            answer is not the one you can implement. I work those with the people who have to make them:
+            <a href="https://purple.tymyrddin.dev/docs/thirteen/">framing the options so the middle one does
+                not win by default</a>, calibrating how much confidence the evidence actually carries, and
+            stress-testing the decision before it lands. And when one goes wrong, the retrospective
+            looks at the organisation, not just the timeline.
+        </p>
+
+        <h2>How I work</h2>
+        <p>
+            Where it helps, I <a href="https://purple.tymyrddin.dev/docs/crucible/">build simulations and run
+            exercises</a>: realistic environments where a team can make decisions that fail, watch what breaks,
+            and understand why, with nothing real at stake. The debrief is where the value accumulates; a
+            simulation without one stays in the room. The method is the same in any setting: I set up the
+            environment, pose the problem, step back, and ask the questions that help people see what they are
+            learning rather than being told the answer.
         </p>
 
         <p>
-            One-on-one coaching goes deeper into specific technical challenges, architecture decisions, or the
-            organisational side of the job: the politics, the pressure, the situations where the technically correct
-            answer is not the one you can actually implement. Each session is shaped by what you are trying to get
-            better at.
-        </p>
-
-        <h2>
-            Simulations and exercises
-        </h2>
-        <p>
-            I build simulation environments and run realistic security exercises. The environments model real
-            system architectures, protocols, and adversarial behaviour, currently focused on OT/ICS, smart grid,
-            and healthcare infrastructure. A simulation creates a space where participants can make decisions that
-            fail, observe what breaks, and understand why, without the consequences being real. That is not a
-            soft version of the work. It is the condition under which the honest questions get asked: what did we
-            not anticipate, what assumptions turned out to be wrong, and what would we do differently.
-        </p>
-        <p>
-            The debrief is where the value accumulates. A simulation without a debrief is an experience that
-            stays in the room. I design the debrief to turn what happened in the simulation into something the
-            group can use the next day.
-        </p>
-
-        <h2>
-            For a change
-        </h2>
-        <p>
-            I teach mathematics and biology from time to time. On the surface it looks different, but the
-            underlying question is the same: how do you
-            <a href="https://purple.tymyrddin.dev/docs/foundations/montessori/">set up an environment</a>
-            where someone can learn something that seems difficult, at the right level of challenge, without
-            unnecessary obstacles or unnecessary hand-holding? Whether that is in a classroom or a coaching session,
-            the answer involves paying close
-            attention to the individual, stepping back from the instinct to explain, and trusting that productive
-            struggle is how learning happens.
+            Whether that is an engagement or a role is open. The work is the same either way.
         </p>
 
     </div>
 
     <div class="page__article">
         <div class="page-post-card__link">
-            <a href="{{ url_for('recipes.portfolio_recipes') }}">See some of my current projects</a>
+            <a href="{{ url_for('recipes.portfolio_recipes') }}">See the work behind this</a>
         </div>
     </div>
 
     <p><br/></p>
 
     <div class="small-grid">
-
-        <div class="small-grid-item">
-            <a href="https://app.flexonderwijs.nl/nienke">
-                <img src="{{ url_for('static', filename='img/flexonderwijs.png') }}" alt="Flexonderwijs">
-                <div class="small-tooltip">Flexonderwijs</div>
-            </a>
-        </div>
 
         <div class="small-grid-item">
             <a href="https://github.com/tymyrddin">
@@ -149,7 +86,7 @@
 
         <div class="small-grid-item">
             <a href="https://www.linkedin.com/in/nina-barzh/">
-                <img src="{{ url_for('static', filename='img/linkedin.png') }}" alt="LInkedIn">
+                <img src="{{ url_for('static', filename='img/linkedin.png') }}" alt="LinkedIn">
                 <div class="small-tooltip">LinkedIn</div>
             </a>
         </div>
@@ -163,6 +100,4 @@
 
     </div>
 </div>
-
-
 {% endblock %}
