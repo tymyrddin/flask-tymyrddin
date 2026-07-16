@@ -15,7 +15,7 @@ SUBDOMAINS = [
     {"name": "Blue", "url": "https://blue.tymyrddin.dev", "index": "https://blue.tymyrddin.dev/searchindex.js", "sources": "/home/nina/Development/github/blue/build/html/_sources"},
     {"name": "Green", "url": "https://green.tymyrddin.dev", "index": "https://green.tymyrddin.dev/searchindex.js", "sources": "/home/nina/Development/github/green/build/html/_sources"},
     {"name": "Purple", "url": "https://purple.tymyrddin.dev", "index": "https://purple.tymyrddin.dev/searchindex.js", "sources": "/home/nina/Development/github/purple/build/html/_sources"},
-    {"name": "Red", "url": "https://red.tymyrddin.dev", "index": "https://red.tymyrddin.dev/searchindex.js", "sources": "/home/nina/Development/github/red/build/html/_sources"},
+    {"name": "Red", "url": "https://red.tymyrddin.dev", "index": "https://red.tymyrddin.dev/searchindex.js", "sources": "/home/nina/Development/github/red/build/html/_sources", "exclude": ["docs/ankh-morpork/"]},
     {"name": "Indigo", "url": "https://indigo.tymyrddin.dev", "index": "https://indigo.tymyrddin.dev/searchindex.js", "sources": "/home/nina/Development/gitlab/roadmaps/build/html/_sources"},
 ]
 
@@ -99,7 +99,7 @@ def extract_from_html(html_content):
     return extractor.get_text()
 
 
-def read_sources(sources_path, site_url):
+def read_sources(sources_path, site_url, exclude=()):
     """Walk _sources/, pair each file with its built HTML, return flat docs list."""
     sources_root = Path(sources_path)
     if not sources_root.exists():
@@ -116,6 +116,8 @@ def read_sources(sources_path, site_url):
     for i, src_file in enumerate(files):
         try:
             rel = str(src_file.relative_to(sources_root)).replace('.md.txt', '').replace('.rst.txt', '')
+            if any(rel.startswith(p) for p in exclude):
+                continue  # private subtree, kept out of the discovery index
             html_file = html_root / (rel + '.html')
             url = f"{site_url}/{rel}"
 
@@ -204,7 +206,7 @@ def process_site(site):
         # Use local sources for full-content Lunr indexing if available
         sources_path = site.get("sources")
         if sources_path:
-            docs = read_sources(sources_path, site["url"])
+            docs = read_sources(sources_path, site["url"], site.get("exclude", ()))
             if docs:
                 print(f"  ✓ Loaded {len(docs)} documents from {site['name']} (with content)")
                 return {
